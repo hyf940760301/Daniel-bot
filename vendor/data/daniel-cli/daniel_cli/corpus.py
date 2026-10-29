@@ -429,13 +429,39 @@ def read_skill(name, section=None, grep=None, max_bytes=DEFAULT_MAX_BYTES,
         raise CorpusError("切片文件缺失：%s" % src["路径"])
     text = _read_text(src["路径"])
     piece, info = _chunk(text, max_bytes, offset)
-    return dict(head, 模式="正文",
-                切片号=src["切片号"],
-                切片文件=src["文件"],
-                源节标题=src["源节标题"],
-                源行区间=src["源行区间"],
-                分片=info,
-                正文=piece)
+    payload = dict(head, 模式="正文",
+                   切片号=src["切片号"],
+                   切片文件=src["文件"],
+                   源节标题=src["源节标题"],
+                   源行区间=src["源行区间"],
+                   分片=info,
+                   正文=piece)
+    _attach_ontology(payload, src)
+    return payload
+
+
+def _attach_ontology(payload, src):
+    """把正文引用到的语义登记项展开附在末尾（不新增工具，随 skills read 一起返回）。
+
+    未启用登记表的老包（无 `_ONTOLOGY.json`）走原样返回，不报错。
+    """
+    try:
+        from . import ontology
+    except Exception:
+        return
+    doc = ontology.load()
+    if not doc:
+        return
+    text = payload.get("正文") or ""
+    ids = ontology.refs_in(text)
+    entries = ontology.resolve(ids)
+    if not entries and str(src.get("文件", "")).startswith(ontology.REGISTRY_SLICE_PREFIX):
+        entries = doc.get("entries", [])
+    if not entries:
+        return
+    block = "\n\n语义登记（本次引用 %d 条，口径以登记项为准）\n" % len(entries) + ontology.render(entries)
+    payload["正文"] = text + block
+    payload["语义登记引用"] = [e["id"] for e in entries]
 
 
 def _grep(name, pattern, section, max_hits):

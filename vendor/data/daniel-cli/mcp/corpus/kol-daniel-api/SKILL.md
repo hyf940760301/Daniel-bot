@@ -6,7 +6,7 @@ whenToUse: "任何要走 Daniel 接口的任务开工前加载；写操作前先
 metadata:
   corpus_version: "0.9.204"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd"
+  corpus_sha256: "b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986"
   corpus_slices: "L5008-L5721,L5722-L5900,L5901-L6376"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
@@ -217,7 +217,7 @@ ct.campaigns.create({ brandId, title, brandName, brandHandle, brandYoutubeChanne
 |---|---|
 | 语料版本 | `0.9.204` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd` |
+| 源文件 sha256 | `b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986` |
 | 本束源行区间 | `L5008-L5721,L5722-L5900,L5901-L6376` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |

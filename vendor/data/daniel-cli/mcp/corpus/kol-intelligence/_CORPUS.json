@@ -2,8 +2,8 @@
  "skill": "kol-intelligence",
  "corpus_version": "0.9.204",
  "source": "docs/marketing/skills/kol-intelligence.md",
- "source_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
- "source_lines": 6894,
+ "source_sha256": "b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986",
+ "source_lines": 6972,
  "slices": [
   {
    "file": "references/00-header.md",
@@ -76,6 +76,12 @@
    "start": 6767,
    "end": 6894,
    "title": "附录 A 成熟平台基准对照（参照非接入）"
+  },
+  {
+   "file": "references/12-ontology-registry.md",
+   "start": 6895,
+   "end": 6973,
+   "title": "附录 B 语义登记（指标／判据／表达的口径登记）"
   }
  ]
 }

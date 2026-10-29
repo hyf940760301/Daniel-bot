@@ -12,3 +12,8 @@ __pycache__/
 # 本地临时
 *.log
 _tmp/
+
+# 改造期开发产物（不随包）
+_skills-src/
+vendor/docs
+vendor/.agents/

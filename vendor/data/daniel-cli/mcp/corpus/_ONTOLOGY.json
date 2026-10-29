@@ -1,0 +1,39 @@
+{
+ "kind": "daniel.ontology.v1",
+ "corpus_version": "0.9.204",
+ "entry_count": 3,
+ "entries": [
+  {
+   "id": "metric.creator.avg_views_long",
+   "type": "metric",
+   "label": "长视频均播",
+   "owner": "业务-红人组",
+   "status": "active",
+   "stage": "",
+   "availability": [],
+   "raw": "id: metric.creator.avg_views_long\ntype: metric\nlabel: 长视频均播\naxes:\n  content_form: long\nsurfaces:\n  reported:\n    kind: mean\n    window: latest_30_videos\n    sample_rule: 最新 30 条里的长视频\n    min_sample: 5\n  median:\n    kind: median\n    window: last_28_days\n    sample_rule: 近 28 天、时长 > 60 秒的视频\n    min_sample: 5\nexternal_only: median\nowner: 业务-红人组\nversion: 1.0.0"
+  },
+  {
+   "id": "criterion.creator.screen",
+   "type": "criterion",
+   "label": "找红人 · 筛选维度",
+   "owner": "业务-红人组",
+   "status": "active",
+   "stage": "screening",
+   "availability": [
+    "auto"
+   ],
+   "raw": "id: criterion.creator.screen\ntype: criterion\nlabel: 找红人 · 筛选维度\nstage: screening\nowner: 业务-红人组\nresolution: ask_once_per_task\ngroups:\n  - key: performance\n    label: 表现与规模\n    dims:\n      - key: avg_views_long\n        ask: 长视频均播下限？\n        default: 500000\n        availability: auto\n      - key: engagement_rate\n        ask: 互动率下限？\n        default: 0.05\n        availability: auto\n  - key: audience\n    label: 受众与地域\n    dims:\n      - key: market_country\n        ask: 主要市场国家或地区？\n        availability: auto"
+  },
+  {
+   "id": "expr.kol_list",
+   "type": "expression",
+   "label": "红人名单交付",
+   "owner": "业务-红人组",
+   "status": "active",
+   "stage": "",
+   "availability": [],
+   "raw": "id: expr.kol_list\ntype: expression\nlabel: 红人名单交付\nowner: 业务-红人组\nsections: [概览, 名单, 每条依据, 覆盖率与缺口, 下一步]\nrequired: [数字必须带口径与时间点, 不确定写待确认]\nbanned: [非常好, 绝对, 肯定没问题, 大概]"
+  }
+ ]
+}

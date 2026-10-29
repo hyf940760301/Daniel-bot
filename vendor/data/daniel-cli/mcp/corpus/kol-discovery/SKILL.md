@@ -6,7 +6,7 @@ whenToUse: "阶段 1（发现）与名单产线开工前加载；排除规则是
 metadata:
   corpus_version: "0.9.204"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd"
+  corpus_sha256: "b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986"
   corpus_slices: "L83-L1454"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
@@ -95,7 +95,7 @@ metadata:
 |---|---|
 | 语料版本 | `0.9.204` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd` |
+| 源文件 sha256 | `b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986` |
 | 本束源行区间 | `L83-L1454` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |

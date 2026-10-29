@@ -6,8 +6,8 @@ whenToUse: "任务开局先加载本束做路由；交付前用 §10 自查清�
 metadata:
   corpus_version: "0.9.204"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd"
-  corpus_slices: "L1-L45,L46-L67,L68-L82,L3982-L3991,L3992-L4038,L4039-L4063,L4064-L4092,L6377-L6487,L6488-L6625,L6626-L6722,L6723-L6766,L6767-L6894"
+  corpus_sha256: "b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986"
+  corpus_slices: "L1-L45,L46-L67,L68-L82,L3982-L3991,L3992-L4038,L4039-L4063,L4064-L4092,L6377-L6487,L6488-L6625,L6626-L6722,L6723-L6766,L6767-L6894,L6895-L6973"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
 
@@ -31,6 +31,7 @@ metadata:
 | `references/09-outward-quality.md` | L6626–L6722 | §20 对外事实与话术质量层 |
 | `references/10-count-consistency.md` | L6723–L6766 | §21 对外汇报文档的计数自洽 |
 | `references/11-appendix-a.md` | L6767–L6894 | 附录 A 成熟平台基准对照（参照非接入） |
+| `references/12-ontology-registry.md` | L6895–L6973 | 附录 B 语义登记（指标／判据／表达的口径登记） |
 
 > 读法：先看本文件的「核心判据速查」；需要完整判据时按上表 `read` 对应切片。
 
@@ -549,14 +550,77 @@ python3 .kol-tools/route_capability.py --self-test
 
 > ⟪摘录止于 L6819；`references/11-appendix-a.md` 尚有 L6820–L6894 未摘录⟫
 
+### 附录 B 语义登记（指标／判据／表达的口径登记）（源 L6895–L6952 逐字摘录）
+
+
+## 附录 B · 语义登记（Ontology Registry）
+
+> 本附录是**机器可读的判据登记**，由切分器切为 `references/12-ontology-registry.md`，再由段三抽取为 `mcp/corpus/_ONTOLOGY.json`。
+> 登记项只回答三件事：**这个概念怎么定义、这个数怎么算、这条判据该问什么**。流程本身仍在工序表（`intake/processes.json`），本附录不重复。
+
+### B.1 登记项：指标 metric.creator.avg_views_long
+
+```yaml
+id: metric.creator.avg_views_long
+type: metric
+label: 长视频均播
+axes:
+  content_form: long
+surfaces:
+  reported:
+    kind: mean
+    window: latest_30_videos
+    sample_rule: 最新 30 条里的长视频
+    min_sample: 5
+  median:
+    kind: median
+    window: last_28_days
+    sample_rule: 近 28 天、时长 > 60 秒的视频
+    min_sample: 5
+external_only: median
+owner: 业务-红人组
+version: 1.0.0
+```
+
+### B.2 登记项：判据 criterion.creator.screen
+
+```yaml
+id: criterion.creator.screen
+type: criterion
+label: 找红人 · 筛选维度
+stage: screening
+owner: 业务-红人组
+resolution: ask_once_per_task
+groups:
+  - key: performance
+    label: 表现与规模
+    dims:
+      - key: avg_views_long
+        ask: 长视频均播下限？
+        default: 500000
+        availability: auto
+      - key: engagement_rate
+        ask: 互动率下限？
+        default: 0.05
+        availability: auto
+  - key: audience
+    label: 受众与地域
+    dims:
+      - key: market_country
+        ask: 主要市场国家或地区？
+        availability: auto
+```
+
+> ⟪摘录止于 L6952；`references/12-ontology-registry.md` 尚有 L6953–L6973 未摘录⟫
+
 ## 三、版本与追溯（E6）
 
 | 项 | 值 |
 |---|---|
 | 语料版本 | `0.9.204` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd` |
-| 本束源行区间 | `L1-L45,L46-L67,L68-L82,L3982-L3991,L3992-L4038,L4039-L4063,L4064-L4092,L6377-L6487,L6488-L6625,L6626-L6722,L6723-L6766,L6767-L6894` |
+| 源文件 sha256 | `b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986` |
+| 本束源行区间 | `L1-L45,L46-L67,L68-L82,L3982-L3991,L3992-L4038,L4039-L4063,L4064-L4092,L6377-L6487,L6488-L6625,L6626-L6722,L6723-L6766,L6767-L6894,L6895-L6973` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |
 

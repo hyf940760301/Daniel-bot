@@ -2,8 +2,8 @@
  "skill": "kol-outreach",
  "corpus_version": "0.9.204",
  "source": "docs/marketing/skills/kol-intelligence.md",
- "source_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
- "source_lines": 6894,
+ "source_sha256": "b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986",
+ "source_lines": 6972,
  "slices": [
   {
    "file": "references/30-outreach.md",

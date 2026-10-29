@@ -390,7 +390,7 @@
           }
         }
       },
-      "sha256": "c01fec2da9601832daf358d22b468bf4969a91a5ca011ac596e835b50435bc61"
+      "sha256": "e94c158e61a66db6b19bcc94f4b498accbe92887ae3405e187d178c88651735b"
     },
     "skills_read_index": {
       "tool": "daniel_skills_read",
@@ -664,7 +664,7 @@
                     },
                     "切片": {
                       "t": "array",
-                      "len": 12,
+                      "len": 13,
                       "item": {
                         "t": "object",
                         "props": {
@@ -724,7 +724,7 @@
                     },
                     "文件清单": {
                       "t": "array",
-                      "len": 14,
+                      "len": 15,
                       "item": {
                         "t": "object",
                         "props": {
@@ -788,7 +788,7 @@
           }
         }
       },
-      "sha256": "b13b63868b092b9d924af607440b0576916f2ded002c9f6c022a732291b894cb"
+      "sha256": "ca02989f12964d21c6aba9a34c96aca2cb0a5c3b9c7a304dec966b4421bee2e7"
     },
     "batch_empty": {
       "tool": "daniel_batch",
@@ -964,7 +964,7 @@
                               },
                               "切片": {
                                 "t": "array",
-                                "len": 12,
+                                "len": 13,
                                 "item": {
                                   "t": "object",
                                   "props": {
@@ -1024,7 +1024,7 @@
                               },
                               "文件清单": {
                                 "t": "array",
-                                "len": 14,
+                                "len": 15,
                                 "item": {
                                   "t": "object",
                                   "props": {
@@ -1083,7 +1083,7 @@
           }
         }
       },
-      "sha256": "2a3a1c24e9d20c0b027dcf37a11459c0a380deefd0d39d6e7d77c7dcc70f34d1"
+      "sha256": "628efb9aefd9bdfb82720bd1d53f6c547d1327a72bca7f4ac845d9bfc49bdd97"
     },
     "write_plan_empty": {
       "tool": "daniel_write_plan",
@@ -1820,6 +1820,30 @@
           "daniel_clarify"
         ]
       }
+    },
+    {
+      "at": "2026-10-29T09:21:46.574Z",
+      "tools": [
+        "skills_list",
+        "run_skills_list",
+        "batch_skills_list"
+      ],
+      "reason": "语义登记表：kol-intelligence 新增第 13 片（附录 B），skills 清单长度 12→13、文件 14→15",
+      "changedCases": []
+    },
+    {
+      "at": "2026-10-29T09:22:17.887Z",
+      "tools": [
+        "daniel_skills_list",
+        "daniel_run",
+        "daniel_batch"
+      ],
+      "reason": "语义登记表：kol-intelligence 新增第 13 片（附录 B），skills 清单长度 12→13、文件 14→15",
+      "changedCases": [
+        "skills_list",
+        "run_skills_list",
+        "batch_skills_list"
+      ]
     }
   ]
 }

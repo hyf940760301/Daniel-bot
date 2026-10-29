@@ -6,7 +6,7 @@ whenToUse: "出合同前加载；交付前必过保真检查，不过不得交�
 metadata:
   corpus_version: "0.9.204"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd"
+  corpus_sha256: "b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986"
   corpus_slices: "L4342-L5007"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
@@ -92,7 +92,7 @@ python3 .kol-tools/check_contract_fidelity.py --template <母版> --new <新件>
 |---|---|
 | 语料版本 | `0.9.204` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd` |
+| 源文件 sha256 | `b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986` |
 | 本束源行区间 | `L4342-L5007` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |
