@@ -1,0 +1,16 @@
+# 把下面这一项追加到你 DSH profile 的 cordis.patch.yml（顶层 YAML 数组）里：
+#   文件：$DSH_HOME/profiles/<profile>/cordis.patch.yml   （web 界面用 web profile）
+# 说明：id 可自定义；name 必须是已安装的插件包名；config **全部可选**。
+#
+# 🔴 2026-10-22 用户裁决：**本文件不许出现任何写死的本机绝对路径**。
+#    什么都不配就是正确用法 —— 入口与数据落点都由包自身解析（包内 vendor ＋ 用户主目录）。
+#    只有下面两种"确实要覆盖"的情形才取消注释，并把尖括号换成你自己的值：
+#      · entry    ：想用**别处**的 Daniel 入口（例如服务端代理脚本）
+#      · danielHome：想让插件不用默认落点，单独指向某个数据目录
+- id: daniel
+  name: daniel-dsh-plugin
+  config:
+    # entry: <你自己的 daniel 可执行文件绝对路径>      # 不配 ⇒ 用包内 vendor
+    python: python3
+    # danielHome: <你的数据落点>                        # 不配 ⇒ 本机已有落点/包外降级
+    timeoutMs: 120000

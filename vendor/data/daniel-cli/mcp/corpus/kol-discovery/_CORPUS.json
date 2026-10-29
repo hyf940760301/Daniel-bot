@@ -1,0 +1,15 @@
+{
+ "skill": "kol-discovery",
+ "corpus_version": "0.9.204",
+ "source": "docs/marketing/skills/kol-intelligence.md",
+ "source_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+ "source_lines": 6894,
+ "slices": [
+  {
+   "file": "references/10-discovery-steps.md",
+   "start": 83,
+   "end": 1454,
+   "title": "§2 阶段 1 · 发现：执行步骤与检查清单（含 §2.1／§2.2／§2.3）"
+  }
+ ]
+}

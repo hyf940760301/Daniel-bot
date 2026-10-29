@@ -1,0 +1,217 @@
+{
+ "manifestVersion": "2.0",
+ "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）",
+ "generated_at": "2026-10-16T19:04:04+0800",
+ "已脱敏": false,
+ "脱敏说明": "当前口径（用户 2026-10-15 裁决）：内部推广阶段默认全部语料通过、不做脱敏；范围清单见 **飞书《测试与结论》第四节 TC-09 模块**",
+ "脱敏工具": null,
+ "corpus_version": "0.9.204",
+ "source": "docs/marketing/skills/kol-intelligence.md",
+ "source_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+ "source_lines": 6894,
+ "source_bundles": ".agents/skills",
+ "source_splitter": "docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py",
+ "source_doc": "docs/marketing/skills/kol-intelligence.md",
+ "bundles": {
+  "kol-intelligence": {
+   "corpus_version": "0.9.204",
+   "source_doc": "docs/marketing/skills/kol-intelligence.md",
+   "source_doc_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+   "source_doc_lines": 6894,
+   "source_bundle": ".agents/skills/kol-intelligence",
+   "source_bundle_sha256": "a00dd7f6fb4bb4e23ac62686aa02f139777737d11d856edb6e97410839509a3f",
+   "bundle_sha256": "a00dd7f6fb4bb4e23ac62686aa02f139777737d11d856edb6e97410839509a3f",
+   "bytes": 229977,
+   "files": 14,
+   "slices": 12,
+   "files_sha256": {
+    "SKILL.md": "e02e9c5fb4571e08822e08b4431c4c914765e6ba8f9f94a4f7280c80728daddd",
+    "_CORPUS.json": "4e36848f5aa8b0414ad1b5e7cc3c567056c1b3901d57752f7ac4c1ed82a0bab0",
+    "references/00-header.md": "dbc346febe980c31a0eb636e7b567c56ed6ce6f7f27b2aa624f7adc46f19b0ec",
+    "references/01-user-first-principle.md": "6e2dc8e70bc9cc95b3a7aec96dece7600acab954474910a89dd801a8456c7e4f",
+    "references/02-capability-map.md": "2efa449472bcdcb048ec2e3afa7751ccc556371bea50419207cd1d273d8539af",
+    "references/03-data-redlines.md": "1893b4aa448092c8417677b217ef25846b5609ff76e7c6a8cf29bff59cc1c73a",
+    "references/04-preflight-checklist.md": "61b33ff4e9cbd024d3ecec3ff24e8c9eaec22756b36c056f43524f76ed7ba264",
+    "references/05-retro-archive.md": "3f90165d26c0e242d38f590b1aaa8c070e108e6069d869ed1c19b9fed8893167",
+    "references/06-editing-discipline.md": "631a34929f236a487c665cf2f048feccdbfa3727ac1f49290de445668f0ce578",
+    "references/07-routing.md": "18891853ab48631b1b45f8b65d9a09e624905712a5ef7b5b3022936ed3c18517",
+    "references/08-hygiene.md": "bd6f6dbd64b7e4a084dfc8bc67bd6dde16f70fa446ef5d450a046ce7a5b7e82b",
+    "references/09-outward-quality.md": "f5e3ea35bc60d439a9dd371e373cdf01f9a310185ecf510b95b8370e8f43ddbe",
+    "references/10-count-consistency.md": "9b4a4d459efffa526960383421281352c99d352ca56091d51c0826309fd7be20",
+    "references/11-appendix-a.md": "07c4b92173ffd77e4a84282f5e4aaff07b16eabaf989cac8b3221c3526218f4c"
+   },
+   "generated_at": "2026-10-16T19:04:04+0800",
+   "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
+  },
+  "kol-discovery": {
+   "corpus_version": "0.9.204",
+   "source_doc": "docs/marketing/skills/kol-intelligence.md",
+   "source_doc_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+   "source_doc_lines": 6894,
+   "source_bundle": ".agents/skills/kol-discovery",
+   "source_bundle_sha256": "2f794c7d5c912f0438ee11c93cb4fdd840315c84fa9fbb95cc5c5cd80511efa1",
+   "bundle_sha256": "2f794c7d5c912f0438ee11c93cb4fdd840315c84fa9fbb95cc5c5cd80511efa1",
+   "bytes": 480611,
+   "files": 3,
+   "slices": 1,
+   "files_sha256": {
+    "SKILL.md": "74bde6ff225a261f8e9206b7851d91019f246c78e3a54b887b49ccfbb4344cf4",
+    "_CORPUS.json": "57d6a04951fc4c067923f2efbd5ecd3ade8cf9f0601bb1974991e899eec566a2",
+    "references/10-discovery-steps.md": "b746ffed93e006bace656afc765c0526b1b881b79c8be21ebae0cf326d77c67b"
+   },
+   "generated_at": "2026-10-16T19:04:04+0800",
+   "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
+  },
+  "kol-screening": {
+   "corpus_version": "0.9.204",
+   "source_doc": "docs/marketing/skills/kol-intelligence.md",
+   "source_doc_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+   "source_doc_lines": 6894,
+   "source_bundle": ".agents/skills/kol-screening",
+   "source_bundle_sha256": "6b22455e19a8c6adf53e516dbe8c7b76cc6578d545055cb626f32b393c1328a7",
+   "bundle_sha256": "6b22455e19a8c6adf53e516dbe8c7b76cc6578d545055cb626f32b393c1328a7",
+   "bytes": 9253,
+   "files": 3,
+   "slices": 1,
+   "files_sha256": {
+    "SKILL.md": "987abbdd839292856080d5b6ccfe390d1df33e6d560e81f69aa94e28a3b100f4",
+    "_CORPUS.json": "a8c198b46caf1a3996a6ba3ae6a5bd5b3ccaf547d7142a7483e2a7e318088c2a",
+    "references/20-due-diligence.md": "c6fb08f48a70ae91386018a99708fb24f4f61440e68696eb8134cea751962199"
+   },
+   "generated_at": "2026-10-16T19:04:04+0800",
+   "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
+  },
+  "kol-outreach": {
+   "corpus_version": "0.9.204",
+   "source_doc": "docs/marketing/skills/kol-intelligence.md",
+   "source_doc_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+   "source_doc_lines": 6894,
+   "source_bundle": ".agents/skills/kol-outreach",
+   "source_bundle_sha256": "cb44d2736f5ed70b7669b35f1911039505f5e43bb018d85ebb0c1e2d5e3a64cd",
+   "bundle_sha256": "cb44d2736f5ed70b7669b35f1911039505f5e43bb018d85ebb0c1e2d5e3a64cd",
+   "bytes": 163888,
+   "files": 3,
+   "slices": 1,
+   "files_sha256": {
+    "SKILL.md": "750102769f1f2e0e7aba0b0871bf0d6e4e6adef9940351db3b650c9699ace9a5",
+    "_CORPUS.json": "e69a0e0cc4becb5d163916decc4f0b21cea4c327d52519bff78ad0c967121f02",
+    "references/30-outreach.md": "eec83679be09842cd82d8af3ae7b998a411e25c59e31d78224fe6f20e9b6b5f6"
+   },
+   "generated_at": "2026-10-16T19:04:04+0800",
+   "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
+  },
+  "kol-negotiation": {
+   "corpus_version": "0.9.204",
+   "source_doc": "docs/marketing/skills/kol-intelligence.md",
+   "source_doc_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+   "source_doc_lines": 6894,
+   "source_bundle": ".agents/skills/kol-negotiation",
+   "source_bundle_sha256": "11e9e301dc7d7e75152839760c8d285300d6696394ce35351802dc4ff7b69e6c",
+   "bundle_sha256": "11e9e301dc7d7e75152839760c8d285300d6696394ce35351802dc4ff7b69e6c",
+   "bytes": 103482,
+   "files": 4,
+   "slices": 2,
+   "files_sha256": {
+    "SKILL.md": "f2979e8622461071937375766bd86eb187730816d6c23fff561eb6bb1316daf2",
+    "_CORPUS.json": "f5fb7bd8ff3f1eaa7fdf5f32cf6b09de2dcf6ac4d0bc3deb97e2a8a265ac4112",
+    "references/40-negotiation.md": "6fd4746223f133ac8349bb67dc231770dc8550c0b27ddb252b6ad2615343490e",
+    "references/41-four-tables.md": "2624a8f35c2d560d81278e3818859f796a23a40d2a34a14592c2252a64bf28ff"
+   },
+   "generated_at": "2026-10-16T19:04:04+0800",
+   "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
+  },
+  "kol-contract": {
+   "corpus_version": "0.9.204",
+   "source_doc": "docs/marketing/skills/kol-intelligence.md",
+   "source_doc_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+   "source_doc_lines": 6894,
+   "source_bundle": ".agents/skills/kol-contract",
+   "source_bundle_sha256": "76262a58ee79aca8ecd538deb0e7ed3210118fba6b3de89153166eb4d643f658",
+   "bundle_sha256": "76262a58ee79aca8ecd538deb0e7ed3210118fba6b3de89153166eb4d643f658",
+   "bytes": 86815,
+   "files": 3,
+   "slices": 1,
+   "files_sha256": {
+    "SKILL.md": "dc373073f2cc56c782c381b626ae382969934c8c2c08935c27d7d9ee7280db70",
+    "_CORPUS.json": "c46335016e983ee0b129ccbfaa9ecd80fb903a7301effba47fef798ea811b8e0",
+    "references/50-contract.md": "30690aaab0cd5ede430940e910c4aaa7c98733757878f9c1820d967aa9b79952"
+   },
+   "generated_at": "2026-10-16T19:04:04+0800",
+   "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
+  },
+  "kol-daniel-api": {
+   "corpus_version": "0.9.204",
+   "source_doc": "docs/marketing/skills/kol-intelligence.md",
+   "source_doc_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+   "source_doc_lines": 6894,
+   "source_bundle": ".agents/skills/kol-daniel-api",
+   "source_bundle_sha256": "d5849cc83896f89abf21c95bf9605c0c3e81ca0e67d70426189e7bf40d460482",
+   "bundle_sha256": "d5849cc83896f89abf21c95bf9605c0c3e81ca0e67d70426189e7bf40d460482",
+   "bytes": 169360,
+   "files": 5,
+   "slices": 3,
+   "files_sha256": {
+    "SKILL.md": "446de618b8b2d0262909e91cfc57b71b17d2bbbb8435722372014770466892c3",
+    "_CORPUS.json": "8aa74b97b90b3f25c7a3321ccab9fbedd22910e665d7752239f577e348c4381b",
+    "references/60-data-layer.md": "0902565fc40b566944ece4e6530436bba98086b2aa5321819300b9b097ddd4a0",
+    "references/61-creator-tracker.md": "f948fcc6782c2390f4f9e05cddcda3312f4b9a73dff272990fbdc956bc24aced",
+    "references/62-full-chain-search.md": "81cb036e8314627bbb8531cefd72b4ec2845d2174b887057fc410e99ecc8e286"
+   },
+   "generated_at": "2026-10-16T19:04:04+0800",
+   "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
+  },
+  "kol-execution-sov": {
+   "corpus_version": "0.9.204",
+   "source_doc": "docs/marketing/skills/kol-intelligence.md",
+   "source_doc_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+   "source_doc_lines": 6894,
+   "source_bundle": ".agents/skills/kol-execution-sov",
+   "source_bundle_sha256": "b327a43b925ab5fd8dbac930ba2a8d0b9dd1a41761234a1fee5263268dc1e9da",
+   "bundle_sha256": "b327a43b925ab5fd8dbac930ba2a8d0b9dd1a41761234a1fee5263268dc1e9da",
+   "bytes": 36569,
+   "files": 5,
+   "slices": 3,
+   "files_sha256": {
+    "SKILL.md": "5d5abdc3901e65ddd87593878656fcee27cb006256bf290c55cbe745cbf037b0",
+    "_CORPUS.json": "8c94e91e958d8e2efbb653e79ededa1c3946d598ad4d02c01d262b91aa5ab40c",
+    "references/70-execution.md": "a7298c26817642477e7dccf30e0c99bb21dd78f174dbcfc2b5dc97c9937287af",
+    "references/71-sov.md": "399773ff845e251799339e75a332fa8d5066f51f29aaf4e6bb7874d682b6b349",
+    "references/72-trend-watch.md": "fabdda2feaac89841cac34e83dff35a404c86e29301baf27f752e8c87651dfd1"
+   },
+   "generated_at": "2026-10-16T19:04:04+0800",
+   "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
+  }
+ },
+ "bundleCount": 8,
+ "total_bytes": 1279955,
+ "total_files": 40,
+ "total_slices": 24,
+ "digest_rule": "整束 sha256 ＝ 对「相对路径\\0文件sha256\\n」按路径排序后串联求 sha256",
+ "gateStages": {
+  "段一": "包内 == 源束（逐字）。判据条件：`已脱敏 == false`。用于证明**复制无损**。",
+  "段二": "包内 == 源束经 `脱敏工具` 脱敏后的结果（同一份工具现场重算）。判据条件：`已脱敏 == true` 且 `脱敏工具` 已填写。TICKET-164 落地后**段二替换段一**。",
+  "为什么两段": "脱敏之后源束与分发版**必然不相等**；把门禁写成只有「必须相等」一种形态，164 一落地就会假红。",
+  "顺序": "导出 → 脱敏 → 算分发版哈希 → 漂移校验（**不可颠倒**：先脱敏后算哈希，清单里记的才是分发版的指纹）。"
+ },
+ "resync": "源文件更新后：① 重切源束（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）② python3 data/daniel-cli/mcp/check_corpus_sync.py --sync ③ 【脱敏步骤位：TICKET-164 在此把包内语料脱敏，然后重跑 --write-manifest 把分发版哈希写回清单】④ python3 data/daniel-cli/mcp/check_corpus_sync.py（须绿）",
+ "order": [
+  "kol-intelligence",
+  "kol-discovery",
+  "kol-screening",
+  "kol-outreach",
+  "kol-negotiation",
+  "kol-contract",
+  "kol-daniel-api",
+  "kol-execution-sov"
+ ],
+ "domainLabels": {
+  "kol-intelligence": "总纲与路由",
+  "kol-discovery": "阶段 1 · 发现",
+  "kol-screening": "阶段 2 · 背调",
+  "kol-outreach": "阶段 3 · 外联",
+  "kol-negotiation": "阶段 4 · 谈判",
+  "kol-contract": "合同出具与返工",
+  "kol-daniel-api": "Daniel 数据层",
+  "kol-execution-sov": "阶段 5–7 · 执行／SOV／热点"
+ }
+}

@@ -1,0 +1,27 @@
+{
+ "skill": "kol-execution-sov",
+ "corpus_version": "0.9.204",
+ "source": "docs/marketing/skills/kol-intelligence.md",
+ "source_sha256": "27eef3e95b990710b53e5afa068d175cd2b363f9c9bca64ac008ddcd1a924fcd",
+ "source_lines": 6894,
+ "slices": [
+  {
+   "file": "references/70-execution.md",
+   "start": 3780,
+   "end": 3946,
+   "title": "§6 阶段 5 · 执行：审稿与回收清单（含 §6.1 脚本审稿标注）"
+  },
+  {
+   "file": "references/71-sov.md",
+   "start": 3947,
+   "end": 3963,
+   "title": "§7 阶段 6 · SOV 口径与执行"
+  },
+  {
+   "file": "references/72-trend-watch.md",
+   "start": 3964,
+   "end": 3981,
+   "title": "§8 阶段 7 · 热点/趋势追踪流程"
+  }
+ ]
+}
