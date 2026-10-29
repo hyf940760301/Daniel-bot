@@ -1513,6 +1513,24 @@
                     }
                   }
                 }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
               }
             }
           },
@@ -1529,7 +1547,7 @@
           }
         }
       },
-      "sha256": "f75e863b61493e2efbe782cc0adfc5faf60ac114abba5092b9351129ba2f382a"
+      "sha256": "ff5d28ca8c5a4dbf4cd36cbdac6aba42e9c61625d4acabc4d34808a2730e7c2b"
     },
     "clarify_explicit": {
       "tool": "daniel_clarify",
@@ -1593,6 +1611,24 @@
                 "item": {
                   "t": "none"
                 }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
               }
             }
           },
@@ -1609,7 +1645,7 @@
           }
         }
       },
-      "sha256": "b21bb4f0851943423adf144ef9d9195951dabfbbe1bb5efe2954e53af0ff7402"
+      "sha256": "9392ba457f623cec56645c354c07abc08ebd6eb2661f8f9f4950bf07280a421c"
     },
     "clarify_list_ops": {
       "tool": "daniel_clarify",
@@ -1690,6 +1726,24 @@
                     }
                   }
                 }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
               }
             }
           },
@@ -1706,7 +1760,7 @@
           }
         }
       },
-      "sha256": "ba8590f6fa009817ca4a121b9849757dba2ed412c68fdbb8f69e78a9cb8bb450"
+      "sha256": "54196f77221b0584c634faf7655a7d0003e51220a28320433160b6570af84e62"
     },
     "clarify_empty_need": {
       "tool": "daniel_clarify",
@@ -1843,6 +1897,18 @@
         "skills_list",
         "run_skills_list",
         "batch_skills_list"
+      ]
+    },
+    {
+      "at": "2026-10-29T09:38:22.387Z",
+      "tools": [
+        "daniel_clarify"
+      ],
+      "reason": "语义登记表：首次调用增加「选择面」（无签名变更）",
+      "changedCases": [
+        "clarify_ambiguous",
+        "clarify_explicit",
+        "clarify_list_ops"
       ]
     }
   ]
