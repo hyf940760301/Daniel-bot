@@ -1,7 +1,7 @@
 {
  "manifestVersion": "2.0",
  "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）",
- "generated_at": "2026-10-29T17:20:05+0800",
+ "generated_at": "2026-10-30T09:46:44+0800",
  "已脱敏": false,
  "脱敏说明": "当前口径（用户 2026-10-15 裁决）：内部推广阶段默认全部语料通过、不做脱敏；范围清单见 **飞书《测试与结论》第四节 TC-09 模块**",
  "脱敏工具": null,
@@ -41,7 +41,7 @@
     "references/11-appendix-a.md": "07c4b92173ffd77e4a84282f5e4aaff07b16eabaf989cac8b3221c3526218f4c",
     "references/12-ontology-registry.md": "e531d4dfe32e7838431781519c76a1a4e4999dc5bb2fed0b9ac8c07ecaf0da93"
    },
-   "generated_at": "2026-10-29T17:20:05+0800",
+   "generated_at": "2026-10-30T09:46:44+0800",
    "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
   },
   "kol-discovery": {
@@ -60,7 +60,7 @@
     "_CORPUS.json": "9fc4159d0b05d2bc1b95a3108cd3aca70a02128ec9a643b2f5df5a68276941b9",
     "references/10-discovery-steps.md": "b746ffed93e006bace656afc765c0526b1b881b79c8be21ebae0cf326d77c67b"
    },
-   "generated_at": "2026-10-29T17:20:05+0800",
+   "generated_at": "2026-10-30T09:46:44+0800",
    "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
   },
   "kol-screening": {
@@ -79,7 +79,7 @@
     "_CORPUS.json": "120b8974e5b7724d7abc1803e2da1346f71d8223e54da5d8962d98bbba0f73e2",
     "references/20-due-diligence.md": "c6fb08f48a70ae91386018a99708fb24f4f61440e68696eb8134cea751962199"
    },
-   "generated_at": "2026-10-29T17:20:05+0800",
+   "generated_at": "2026-10-30T09:46:44+0800",
    "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
   },
   "kol-outreach": {
@@ -98,7 +98,7 @@
     "_CORPUS.json": "e1a3c131385129abc920dc5cfb4b8b11b3291c5f55cd2b2cee11fc674903f3c3",
     "references/30-outreach.md": "eec83679be09842cd82d8af3ae7b998a411e25c59e31d78224fe6f20e9b6b5f6"
    },
-   "generated_at": "2026-10-29T17:20:05+0800",
+   "generated_at": "2026-10-30T09:46:44+0800",
    "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
   },
   "kol-negotiation": {
@@ -118,7 +118,7 @@
     "references/40-negotiation.md": "6fd4746223f133ac8349bb67dc231770dc8550c0b27ddb252b6ad2615343490e",
     "references/41-four-tables.md": "2624a8f35c2d560d81278e3818859f796a23a40d2a34a14592c2252a64bf28ff"
    },
-   "generated_at": "2026-10-29T17:20:05+0800",
+   "generated_at": "2026-10-30T09:46:44+0800",
    "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
   },
   "kol-contract": {
@@ -137,7 +137,7 @@
     "_CORPUS.json": "c18f7b2042ffe2b5143c8325abc08aeecce4cb0c692489751d97baad87508d5b",
     "references/50-contract.md": "30690aaab0cd5ede430940e910c4aaa7c98733757878f9c1820d967aa9b79952"
    },
-   "generated_at": "2026-10-29T17:20:05+0800",
+   "generated_at": "2026-10-30T09:46:44+0800",
    "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
   },
   "kol-daniel-api": {
@@ -158,7 +158,7 @@
     "references/61-creator-tracker.md": "f948fcc6782c2390f4f9e05cddcda3312f4b9a73dff272990fbdc956bc24aced",
     "references/62-full-chain-search.md": "81cb036e8314627bbb8531cefd72b4ec2845d2174b887057fc410e99ecc8e286"
    },
-   "generated_at": "2026-10-29T17:20:05+0800",
+   "generated_at": "2026-10-30T09:46:44+0800",
    "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
   },
   "kol-execution-sov": {
@@ -179,7 +179,7 @@
     "references/71-sov.md": "399773ff845e251799339e75a332fa8d5066f51f29aaf4e6bb7874d682b6b349",
     "references/72-trend-watch.md": "fabdda2feaac89841cac34e83dff35a404c86e29301baf27f752e8c87651dfd1"
    },
-   "generated_at": "2026-10-29T17:20:05+0800",
+   "generated_at": "2026-10-30T09:46:44+0800",
    "generated_by": "TICKET-148 语料束切分器（docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py）＋ TICKET-159 随包分发（mcp/check_corpus_sync.py）"
   }
  },
