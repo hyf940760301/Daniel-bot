@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "registeredCount": 14,
+  "registeredCount": 15,
   "toolMeta": {
     "daniel_status": {
       "params": []
@@ -175,6 +175,28 @@
         {
           "n": "topic",
           "t": "string",
+          "req": false,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_screen_ask": {
+      "params": [
+        {
+          "n": "need",
+          "t": "string",
+          "req": true,
+          "items": ""
+        },
+        {
+          "n": "reply",
+          "t": "string",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "round",
+          "t": "number",
           "req": false,
           "items": ""
         }
@@ -1800,6 +1822,456 @@
         }
       },
       "sha256": "ba001ce73cdbf8be8b926fe1068e7714c25171459abf73aee5a5214ffe09bb39"
+    },
+    "screen_ask_guide": {
+      "tool": "daniel_screen_ask",
+      "args": {
+        "need": "帮我找 20 个做智能眼镜测评的红人"
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "场景": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "模式": {
+                "t": "string"
+              },
+              "说明": {
+                "t": "string"
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "c20e3ddb609faae879a53b4e97e321ed85c5cc4bc86b32064c664ed00c642a4f"
+    },
+    "screen_ask_confirm": {
+      "tool": "daniel_screen_ask",
+      "args": {
+        "need": "帮我找 20 个做智能眼镜测评的红人",
+        "reply": "美国、长视频均播 30 万、排除已合作",
+        "round": 1
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "场景": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 4,
+                "item": {
+                  "t": "string"
+                }
+              },
+              "未确认项": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "按默认": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "模式": {
+                "t": "string"
+              },
+              "结论": {
+                "t": "string"
+              },
+              "缺口": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "追问": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "52bbba6dd46ba44423c9f279a48b23cefa29144ce2e5841559c33ead959b5e64"
+    },
+    "screen_ask_followup": {
+      "tool": "daniel_screen_ask",
+      "args": {
+        "need": "帮我找 20 个做智能眼镜测评的红人",
+        "reply": "找点做测评的",
+        "round": 1
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "其余按默认": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "按默认": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "场景": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "string"
+                }
+              },
+              "模式": {
+                "t": "string"
+              },
+              "缺口": {
+                "t": "array",
+                "len": 4,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "权重": {
+                      "t": "string"
+                    },
+                    "示例": {
+                      "t": "string"
+                    },
+                    "组": {
+                      "t": "string"
+                    },
+                    "默认": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "轮次": {
+                "t": "number"
+              },
+              "追问": {
+                "t": "array",
+                "len": 3,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    },
+                    "问": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "4a8f5ac49130e3ce1531c18a2e0550f1d45cd90b66d8b559e5a23ad392864bda"
+    },
+    "screen_ask_round_limit": {
+      "tool": "daniel_screen_ask",
+      "args": {
+        "need": "帮我找 20 个做智能眼镜测评的红人",
+        "reply": "美国",
+        "round": 2
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "场景": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "string"
+                }
+              },
+              "未确认项": {
+                "t": "array",
+                "len": 4,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "按默认": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "模式": {
+                "t": "string"
+              },
+              "结论": {
+                "t": "string"
+              },
+              "缺口": {
+                "t": "array",
+                "len": 4,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "权重": {
+                      "t": "string"
+                    },
+                    "示例": {
+                      "t": "string"
+                    },
+                    "组": {
+                      "t": "string"
+                    },
+                    "默认": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "追问": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "c290a0da3b4f0008d91f0db411393159e6d8124d24003c6fd362ede6fc9dfc1f"
+    },
+    "screen_ask_empty_need": {
+      "tool": "daniel_screen_ask",
+      "args": {
+        "need": "  "
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "usage"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "5e239a91101ae4682ae771e7ac28067f65f29fc323b632fe954b64e1fce08849"
     }
   },
   "skipped": {
@@ -1825,9 +2297,9 @@
     }
   },
   "coverage": {
-    "called": 21,
+    "called": 26,
     "skipped": 5,
-    "tools": 14
+    "tools": 15
   },
   "baselineUpdates": [
     {
@@ -1910,6 +2382,29 @@
         "clarify_explicit",
         "clarify_list_ops"
       ]
+    },
+    {
+      "at": "2026-10-30T01:31:45.105Z",
+      "tools": [
+        "daniel_screen_ask"
+      ],
+      "reason": "语义登记表 0.10.0：新增找红人专用工具（一次给全＋动态追问），与 daniel_clarify 职责分离",
+      "changedCases": [
+        "screen_ask_guide",
+        "screen_ask_confirm",
+        "screen_ask_followup",
+        "screen_ask_round_limit",
+        "screen_ask_empty_need"
+      ],
+      "signature": {
+        "registeredCount": [
+          14,
+          15
+        ],
+        "acceptedNewTools": [
+          "daniel_screen_ask"
+        ]
+      }
     }
   ]
 }

@@ -67,6 +67,12 @@ export const CASES = [
   { id: 'clarify_list_ops', tool: 'daniel_clarify', args: { need: '把两份名单合并一下', topic: 'list_ops' }, offline: true },
   // 用法闸：need 是空白 → ok:false / kind=usage（不硬编一份空洞清单）
   { id: 'clarify_empty_need', tool: 'daniel_clarify', args: { need: '   ' }, offline: true },
+  /* 找红人：一次给全 ＋ 动态追问（语义登记表 · 0.10.0） */
+  { id: 'screen_ask_guide', tool: 'daniel_screen_ask', args: { need: '帮我找 20 个做智能眼镜测评的红人' }, offline: true },
+  { id: 'screen_ask_confirm', tool: 'daniel_screen_ask', args: { need: '帮我找 20 个做智能眼镜测评的红人', reply: '美国、长视频均播 30 万、排除已合作', round: 1 }, offline: true },
+  { id: 'screen_ask_followup', tool: 'daniel_screen_ask', args: { need: '帮我找 20 个做智能眼镜测评的红人', reply: '找点做测评的', round: 1 }, offline: true },
+  { id: 'screen_ask_round_limit', tool: 'daniel_screen_ask', args: { need: '帮我找 20 个做智能眼镜测评的红人', reply: '美国', round: 2 }, offline: true },
+  { id: 'screen_ask_empty_need', tool: 'daniel_screen_ask', args: { need: '  ' }, offline: true },
 
   // ── 写链路：只跑「不会写入」的前置分支（干跑用法闸、假 planId）──
   { id: 'write_plan_empty', tool: 'daniel_write_plan', args: { argv: [] }, offline: true },

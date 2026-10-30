@@ -41,6 +41,7 @@ const reg = []
 apply({ tools: { register: (t) => reg.push(t) }, logger: { info() {}, warn() {}, debug() {} }, effect() {}, inject: ['tools'] },
   { python: 'python3', timeoutMs: 30000, trace: 'summary' })
 const byName = Object.fromEntries(reg.map((t) => [t.name, t]))
+const screenAsk = reg.find((t) => t.name === 'daniel_screen_ask')
 const clarify = byName.daniel_clarify
 
 /* ── 固定入参（静态，不含业务数据）──────────────────────────── */
@@ -61,7 +62,7 @@ const outExplicit = await call({ need: EXPLICIT })
 const dExplicit = (outExplicit && outExplicit.data) || {}
 
 /* ═══════════════ ① 注册与参数契约 ═══════════════ */
-check('①注册：工具总数 14，daniel_clarify 在列', reg.length === 14 && Boolean(clarify), `注册=${reg.length}`)
+check('①注册：工具总数 15（含 daniel_screen_ask），daniel_clarify 在列', reg.length === 15 && Boolean(clarify) && Boolean(screenAsk), `注册=${reg.length}`)
 const params = clarify.parameters || {}
 const props = params.properties || {}
 const required = Array.isArray(params.required) ? params.required : []
