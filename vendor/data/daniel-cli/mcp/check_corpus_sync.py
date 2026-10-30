@@ -469,6 +469,34 @@ def write_manifest(pkg_root, src_root, strict=True):
     return path, doc
 
 
+
+def _rebuild_ontology(pkg_root):
+    """段三：从语料里的登记切片重建 `_ONTOLOGY.json`（语义登记表的只读索引）。
+
+    索引是**生成物**：手改无效，必须由这里重建。登记切片不存在时静默跳过
+    （老包／未启用登记表的树照常工作）。
+    """
+    try:
+        from daniel_cli import ontology
+    except Exception:
+        return
+    import glob
+    slices = []
+    for p in sorted(glob.glob(os.path.join(pkg_root, "kol-intelligence", "references", "*.md"))):
+        with open(p, encoding="utf-8", errors="replace") as f:
+            slices.append((os.path.basename(p), f.read()))
+    if not any(n.startswith(ontology.REGISTRY_SLICE_PREFIX) for n, _ in slices):
+        return
+    man_path = os.path.join(pkg_root, corpus.MANIFEST_NAME)
+    ver = ""
+    if os.path.isfile(man_path):
+        with open(man_path, encoding="utf-8") as f:
+            ver = (json.load(f) or {}).get("corpus_version") or ""
+    doc = ontology.build(slices, corpus_version=ver)
+    ontology.write(doc, pkg_root)
+    print("· 已重建语义登记索引：%d 条（版本 %s）" % (doc["entry_count"], ver))
+
+
 def run_splitter(pkg_root):
     """**复用** TICKET-148 的语料束切分器把源文件重新切进包内目录（不另写导出器）。"""
     splitter = os.path.join(ROOT, SPLITTER_REL)
@@ -711,6 +739,7 @@ def main(argv=None):
         print("=== 重导出：源文件 → 包内语料（顺序：导出 → 脱敏 → 算哈希）===")
         run_splitter(pkg_root)                 # ① 导出（复用 TICKET-148 切分器）
         redact_step(pkg_root)                  # ② 脱敏（TICKET-164 的步骤位；本期不接线）
+        _rebuild_ontology(pkg_root)             # ③-2 语义登记索引（段三）
         path, doc = write_manifest(pkg_root, src_root, strict=False)   # ③ 算分发版哈希
         print("· 已重写清单：%s（语料版本 %s ｜ %d 束 ｜ %d 文件 ｜ %d 切片 ｜ %s=%s）"
               % (path, doc["corpus_version"], doc["bundleCount"], doc["total_files"],

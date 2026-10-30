@@ -1,4 +1,4 @@
-<!-- 本文件是 `docs/marketing/skills/kol-intelligence.md` L5901–L6376 的**逐字切片**（语料版本 0.9.204）；请勿在此改写判据，改动须回流源文件后重跑切分器 -->
+<!-- 本文件是 `docs/marketing/skills/kol-intelligence.md` L5901–L6376 的**逐字切片**（语料版本 0.9.205）；请勿在此改写判据，改动须回流源文件后重跑切分器 -->
 <!-- 源节：§17 KOL 全链路检索 -->
 
 ## 17. KOL 全链路检索

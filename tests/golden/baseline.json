@@ -412,7 +412,7 @@
           }
         }
       },
-      "sha256": "e94c158e61a66db6b19bcc94f4b498accbe92887ae3405e187d178c88651735b"
+      "sha256": "ed1e79acdd9818e4c798b13a8ac2b00338480dbd7a95c8ee1841d271dade899d"
     },
     "skills_read_index": {
       "tool": "daniel_skills_read",
@@ -810,7 +810,7 @@
           }
         }
       },
-      "sha256": "ca02989f12964d21c6aba9a34c96aca2cb0a5c3b9c7a304dec966b4421bee2e7"
+      "sha256": "d64c6a3bb3c88ae16c2c0b4f2f46b3dbc06135d3e2fa654c4b6c9ab3cd1bb3cf"
     },
     "batch_empty": {
       "tool": "daniel_batch",
@@ -1105,7 +1105,7 @@
           }
         }
       },
-      "sha256": "628efb9aefd9bdfb82720bd1d53f6c547d1327a72bca7f4ac845d9bfc49bdd97"
+      "sha256": "9caeca544f3579015bc96e334e6795d7cc30b63ab8230d1d729403003a051691"
     },
     "write_plan_empty": {
       "tool": "daniel_write_plan",
@@ -2405,6 +2405,20 @@
           "daniel_screen_ask"
         ]
       }
+    },
+    {
+      "at": "2026-10-30T02:33:43.047Z",
+      "tools": [
+        "daniel_skills_list",
+        "daniel_run",
+        "daniel_batch"
+      ],
+      "reason": "语料升版 0.9.204→0.9.205（附录 B），skills 清单返回的版本号随之变化",
+      "changedCases": [
+        "skills_list",
+        "run_skills_list",
+        "batch_skills_list"
+      ]
     }
   ]
 }

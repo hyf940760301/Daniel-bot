@@ -1,6 +1,6 @@
 {
   "name": "daniel-dsh-plugin",
-  "version": "0.9.11",
+  "version": "0.10.0",
   "description": "Daniel Bot for DeepSeek Harness（自包含）：装一个插件包即获得 Daniel 的营销能力与数据面（读＋写＋出件），与 CLI／MCP 两种形态互不影响",
   "type": "module",
   "main": "lib/index.js",

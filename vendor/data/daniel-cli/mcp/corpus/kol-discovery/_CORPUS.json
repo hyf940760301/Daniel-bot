@@ -1,8 +1,8 @@
 {
  "skill": "kol-discovery",
- "corpus_version": "0.9.204",
+ "corpus_version": "0.9.205",
  "source": "docs/marketing/skills/kol-intelligence.md",
- "source_sha256": "b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986",
+ "source_sha256": "54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d",
  "source_lines": 6972,
  "slices": [
   {

@@ -1,4 +1,4 @@
-<!-- 本文件是 `docs/marketing/skills/kol-intelligence.md` L5008–L5721 的**逐字切片**（语料版本 0.9.204）；请勿在此改写判据，改动须回流源文件后重跑切分器 -->
+<!-- 本文件是 `docs/marketing/skills/kol-intelligence.md` L5008–L5721 的**逐字切片**（语料版本 0.9.205）；请勿在此改写判据，改动须回流源文件后重跑切分器 -->
 <!-- 源节：§15 Daniel 系统数据层直连（含 §15.5.8 实测运维事实） -->
 
 ## 15. Daniel 系统数据层直连（Saved Lists 等读／写）

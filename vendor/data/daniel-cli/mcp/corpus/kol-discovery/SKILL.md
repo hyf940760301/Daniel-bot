@@ -1,19 +1,19 @@
 ---
 name: kol-discovery
-version: 0.9.204
+version: 0.9.205
 description: "KOL 发现阶段的**全部判据与工序**：KOL 搜索投放矩阵方法论（Tag 关键词 ＋ 自然语言提示词）、排除规则 v2 门禁、产品需求侧反推法、检索式缺陷防治（锚点法则／迁移可达性／反向抽检）、检索词矩阵的呈现与词量标准、KOL 名单产线 v1（检索→富化→清洗→去重→交付）、产品说明与 Key Feature 提炼。Use when 要做 KOL 候选发现、写检索词矩阵、定排除规则、跑名单产线、写产品说明块；关键词：发现、longlist、检索词、搜索矩阵、排除规则、去重、富化、产品说明、Key Feature。"
 whenToUse: "阶段 1（发现）与名单产线开工前加载；排除规则是该阶段的硬门禁，须逐条过。"
 metadata:
-  corpus_version: "0.9.204"
+  corpus_version: "0.9.205"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986"
+  corpus_sha256: "54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d"
   corpus_slices: "L83-L1454"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
 
 # KOL 发现（阶段 1）：检索词矩阵 · 排除规则 · 名单产线 · 产品说明
 
-> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.204）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
+> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.205）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
 
 ## 一、本束覆盖的源节
 
@@ -93,11 +93,11 @@ metadata:
 
 | 项 | 值 |
 |---|---|
-| 语料版本 | `0.9.204` |
+| 语料版本 | `0.9.205` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `b82b58cfe969f133dd808146982d96bacaf7af67a2f6a3f22e1feae9de89b986` |
+| 源文件 sha256 | `54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d` |
 | 本束源行区间 | `L83-L1454` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |
 
-> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.204」。
+> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.205」。
