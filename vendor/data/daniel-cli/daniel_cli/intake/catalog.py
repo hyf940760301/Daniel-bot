@@ -181,6 +181,7 @@ def _norm_process(raw, domain, where, problems):
         "对应契约": str(raw.get("对应契约") or "").strip(),
         "依据": str(raw.get("依据") or "").strip(),
         "需要能力": need,
+        "判据引用": [str(x) for x in (raw.get("判据引用") or [])],
     }
 
 
