@@ -1,19 +1,19 @@
 ---
 name: kol-contract
-version: 0.9.205
+version: 0.9.206
 description: "KOL 合作合同的**出具与返工**：母版保真判据、母版与实测版面值、四步出件工序、PDF＝签署件／md＝可复制版的交付形态、未取得字段的留法、条款适配的唯一依据、rev2／rev3 返工版纪律、改版标黄、rev 版工程化与飞书「就地改章」、文档类交付件印刷级 PDF、系统功能指南写法、按 KOL 适配出件、合同上飞书（DocxXML 插入＋改动标黄）、飞书写入的破坏性操作纪律（CLS-86／CLS-87）、门禁长期口径（判定面／边界面／`--strict`／版本区与建票纪律 · §14.17）。Use when 要出具／返工 KOL 合作合同、做条款替换、出签署版 PDF、把合同推到飞书；关键词：合同、contract、母版、保真、条款、PDF、rev、DocxXML、标黄。"
 whenToUse: "出合同前加载；交付前必过保真检查，不过不得交付。"
 metadata:
-  corpus_version: "0.9.205"
+  corpus_version: "0.9.206"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d"
+  corpus_sha256: "227d13946b022199903c184c3442b64167d8731aa5d9659a5e54a45e94e5b1ef"
   corpus_slices: "L4342-L5007"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
 
 # KOL 合同出具（母版保真）
 
-> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.205）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
+> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.206）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
 
 ## 一、本束覆盖的源节
 
@@ -90,11 +90,11 @@ python3 .kol-tools/check_contract_fidelity.py --template <母版> --new <新件>
 
 | 项 | 值 |
 |---|---|
-| 语料版本 | `0.9.205` |
+| 语料版本 | `0.9.206` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d` |
+| 源文件 sha256 | `227d13946b022199903c184c3442b64167d8731aa5d9659a5e54a45e94e5b1ef` |
 | 本束源行区间 | `L4342-L5007` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |
 
-> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.205」。
+> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.206」。

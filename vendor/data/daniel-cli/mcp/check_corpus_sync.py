@@ -487,11 +487,22 @@ def _rebuild_ontology(pkg_root):
             slices.append((os.path.basename(p), f.read()))
     if not any(n.startswith(ontology.REGISTRY_SLICE_PREFIX) for n, _ in slices):
         return
-    man_path = os.path.join(pkg_root, corpus.MANIFEST_NAME)
+    # 版本优先取自**源束**（`_CORPUS.json` 的 corpus_version）：本函数在
+    # write_manifest() 之前跑，此时清单里还是上一版版本号，读清单会拿到旧值，
+    # 导致"第一次 sync 索引滞后、再跑一次才绿"的顺序依赖缺陷。
     ver = ""
-    if os.path.isfile(man_path):
-        with open(man_path, encoding="utf-8") as f:
-            ver = (json.load(f) or {}).get("corpus_version") or ""
+    for bundle_dir in ("kol-intelligence", "kol-screening", "kol-discovery"):
+        cpath = os.path.join(pkg_root, bundle_dir, "_CORPUS.json")
+        if os.path.isfile(cpath):
+            with open(cpath, encoding="utf-8") as f:
+                ver = (json.load(f) or {}).get("corpus_version") or ""
+            if ver:
+                break
+    if not ver:
+        man_path = os.path.join(pkg_root, corpus.MANIFEST_NAME)
+        if os.path.isfile(man_path):
+            with open(man_path, encoding="utf-8") as f:
+                ver = (json.load(f) or {}).get("corpus_version") or ""
     doc = ontology.build(slices, corpus_version=ver)
     ontology.write(doc, pkg_root)
     print("· 已重建语义登记索引：%d 条（版本 %s）" % (doc["entry_count"], ver))

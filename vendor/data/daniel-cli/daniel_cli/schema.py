@@ -1471,6 +1471,36 @@ _MODULES = [
       ],
       flag_commands={"--mcp": "mcp", "--dsh-tools": "dsh-tools", "--check": "check"},
       usage_note="不带子命令名时默认执行 `show`，所以 `daniel schema --json` 直接打印清单。"),
+
+    m("clarify", "澄清",
+      "**参数级追问**：把一份模糊需求里**可枚举**的参数缺口一次列全（缺市场／粉丝区间／内容形式／"
+      "交付形态／时间窗／排重／数量／交付时点），每项都带「不答按什么默认走」；口径级判断只列名字"
+      "与影响，不给判据。**离线、不取数**：只读随包登记表与触发词，返回体里没有任何品牌名／红人数／金额。",
+      [
+          c("plan", "列参数缺口清单，并给出找红人的五类方向（选择面）",
+            options=[o("--need", "str", "用户原话或需求摘要（必填）", required=True),
+                     o("--topic", "choice", "场景；不给则按原话判断（kol_search 找红人／list_ops 名单处理／"
+                                            "brand_setup 品牌建档）",
+                       choices=["kol_search", "list_ops", "brand_setup"])],
+            examples=['daniel clarify plan --need "帮我找一批测评红人"',
+                      'daniel clarify plan --need "把两份名单合并一下" --topic list_ops --json'],
+            returns="`场景`／`场景依据`／`已识别项`／`缺项`（每项带「为什么问」与「不答的默认值」）／"
+                    "`优先补`／`口径类`／`下一步`／`选择面`；有溢出时多一个 `其余按默认口径执行`，"
+                    "参数全齐时多一个 `结论`。**不含任何取数结果**。",
+            exit_codes=[EXIT_OK, EXIT_USAGE, EXIT_INTERNAL]),
+          c("ask", "找红人专用：先出五类选择面，再按回答动态追问（最多 2 轮）",
+            options=[o("--need", "str", "用户原话（必填）", required=True),
+                     o("--reply", "str", "用户对「选择面」的回答；不给＝首次调用（只出选择面）"),
+                     o("--round", "int", "第几轮问答（从 1 起）；到 2 轮不再追问，按默认跑并标「未确认」")],
+            examples=['daniel clarify ask --need "帮我找 20 个做智能眼镜测评的红人"',
+                      'daniel clarify ask --need "…" --reply "美国、长视频均播 30 万、排除已合作" --round 1 --json'],
+            returns="四模式之一：`选择面`／`确认`／`动态追问`／`到上限按默认`；字段含 `选择面`／`模式`／"
+                    "`已识别项`／`缺口`／`追问`／`未确认项`／`下一步` 等。**不取数**。",
+            exit_codes=[EXIT_OK, EXIT_USAGE, EXIT_INTERNAL]),
+      ],
+      usage_note="本模块**不取数**、不联网、不读账号：只读随包登记表（28 条参数文案）与触发词文件。"
+                 "需求已经说得够清楚时不必调用；调用也会回「参数已齐」。"),
+
 ]
 
 SCHEMA = {

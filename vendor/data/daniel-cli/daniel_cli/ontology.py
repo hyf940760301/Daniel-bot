@@ -62,6 +62,95 @@ def _yaml_blocks(md):
     return out
 
 
+def _unquote(v):
+    v = (v or "").strip()
+    if len(v) >= 2 and v[0] == '"' and v[-1] == '"':
+        try:
+            import json as _json
+            return _json.loads(v)
+        except Exception:
+            return v[1:-1]
+    return v
+
+
+def _parse_scenarios(block):
+    """解析 `scenarios → dims → calibers` 三级结构（零依赖、只认本仓的固定缩进）。
+
+    为什么在索引层解析：解析错误在构建期就红（C19-f），不拖到运行期。
+    """
+    lines = block.split("\n")
+    start = None
+    for idx, line in enumerate(lines):
+        if line.strip() == "scenarios:":
+            start = idx
+            break
+    if start is None:
+        return []
+    out = []
+    cur_sc = cur_dim = cur_cal = None
+    container = None
+    for raw in lines[start + 1:]:
+        if not raw.strip():
+            continue
+        indent = len(raw) - len(raw.lstrip(" "))
+        if indent == 0:
+            break
+        s = raw.strip()
+        if indent == 2 and s.startswith("- key: "):
+            cur_sc = {"key": _unquote(s[7:]), "label": "", "dims": [], "calibers": []}
+            out.append(cur_sc)
+            cur_dim = cur_cal = None
+            container = None
+        elif indent == 4 and cur_sc is not None and s.startswith("label: "):
+            cur_sc["label"] = _unquote(s[7:])
+        elif indent == 4 and s == "dims:":
+            container = "dims"
+        elif indent == 4 and s == "calibers:":
+            container = "calibers"
+        elif indent == 6 and container == "dims" and s.startswith("- key: "):
+            cur_dim = {"key": _unquote(s[7:]), "ask": "", "why": "", "default": "", "impact": ""}
+            cur_sc["dims"].append(cur_dim)
+        elif indent == 6 and container == "calibers" and s.startswith("- ask: "):
+            cur_cal = {"ask": _unquote(s[7:]), "impact": ""}
+            cur_sc["calibers"].append(cur_cal)
+        elif indent == 8 and container == "dims" and cur_dim is not None and ":" in s:
+            k, v = s.split(":", 1)
+            if k.strip() in ("ask", "why", "default", "impact"):
+                cur_dim[k.strip()] = _unquote(v)
+        elif indent == 8 and container == "calibers" and cur_cal is not None and s.startswith("impact: "):
+            cur_cal["impact"] = _unquote(s[8:])
+    return out
+
+
+def _parse_groups(block):
+    """解析 `groups → key/label/example/default/weight`（找红人的五类方向）。"""
+    lines = block.split("\n")
+    start = None
+    for idx, line in enumerate(lines):
+        if line.strip() == "groups:":
+            start = idx
+            break
+    if start is None:
+        return []
+    out = []
+    cur = None
+    for raw in lines[start + 1:]:
+        if not raw.strip():
+            continue
+        indent = len(raw) - len(raw.lstrip(" "))
+        if indent == 0:
+            break
+        s = raw.strip()
+        if indent == 2 and s.startswith("- key: "):
+            cur = {"key": _unquote(s[7:]), "label": "", "example": "", "default": "", "weight": ""}
+            out.append(cur)
+        elif indent == 4 and cur is not None and ":" in s:
+            k, v = s.split(":", 1)
+            if k.strip() in ("label", "example", "default", "weight"):
+                cur[k.strip()] = _unquote(v)
+    return out
+
+
 def parse_entries(md):
     """从登记切片正文解析登记项（只抽可索引字段，原文整块保留）。"""
     entries = []
@@ -75,7 +164,7 @@ def parse_entries(md):
         stage = _STAGE_RX.search(block)
         typ = _TYPE_RX.search(block)
         avail = sorted(set(_AVAIL_RX.findall(block)))
-        entries.append({
+        entry = {
             "id": mid.group(1),
             "type": typ.group(1) if typ else "",
             "label": label.group(1).strip() if label else "",
@@ -84,7 +173,14 @@ def parse_entries(md):
             "stage": stage.group(1).strip() if stage else "",
             "availability": avail,
             "raw": block,
-        })
+        }
+        scenarios = _parse_scenarios(block)
+        if scenarios:
+            entry["scenarios"] = scenarios
+        groups = _parse_groups(block)
+        if groups:
+            entry["groups"] = groups
+        entries.append(entry)
     return entries
 
 

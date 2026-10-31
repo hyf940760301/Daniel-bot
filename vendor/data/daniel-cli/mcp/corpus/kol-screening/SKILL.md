@@ -1,19 +1,19 @@
 ---
 name: kol-screening
-version: 0.9.205
+version: 0.9.206
 description: "KOL 深度背调阶段的**评分卡与执行步骤**：与 `docs/roles/marketing-pr.md` §4.3 对齐的评分卡口径、背调执行步骤与造假／水军检测要求。Use when 要把 longlist 收敛成 shortlist、出背调卡、判断账号真实性与造假风险；关键词：背调、due diligence、shortlist、评分卡、造假、水军、真实性。"
 whenToUse: "阶段 2（背调）开工前加载；评分卡是 shortlist 的唯一准绳。"
 metadata:
-  corpus_version: "0.9.205"
+  corpus_version: "0.9.206"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d"
+  corpus_sha256: "227d13946b022199903c184c3442b64167d8731aa5d9659a5e54a45e94e5b1ef"
   corpus_slices: "L1455-L1493"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
 
 # KOL 深度背调（阶段 2）：评分卡与造假检测
 
-> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.205）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
+> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.206）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
 
 ## 一、本束覆盖的源节
 
@@ -72,11 +72,11 @@ metadata:
 
 | 项 | 值 |
 |---|---|
-| 语料版本 | `0.9.205` |
+| 语料版本 | `0.9.206` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d` |
+| 源文件 sha256 | `227d13946b022199903c184c3442b64167d8731aa5d9659a5e54a45e94e5b1ef` |
 | 本束源行区间 | `L1455-L1493` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |
 
-> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.205」。
+> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.206」。

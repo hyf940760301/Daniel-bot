@@ -92,6 +92,51 @@ def run():
         "登记项 %d 条，无 owner 或 draft %d 条%s" % (len(entries), len(badc),
                                              ("：" + "、".join(badc[:5])) if badc else ""))
 
+    # C19-f 澄清闸登记项结构（4 场景 / 28 条 / 5 组）
+    probs = []
+    clar = by_id.get("criterion.clarify.param_gate")
+    want = [("kol_search", 9), ("list_ops", 7), ("brand_setup", 6), ("generic", 6)]
+    if not clar:
+        probs.append("缺登记项 criterion.clarify.param_gate")
+    else:
+        scs = clar.get("scenarios") or []
+        if [s.get("key") for s in scs] != [k for k, _n in want]:
+            probs.append("场景序列≠%s" % "/".join(k for k, _n in want))
+        seen_total = 0
+        for s in scs:
+            dims = s.get("dims") or []
+            seen_total += len(dims)
+            exp = dict(want).get(s.get("key"))
+            if exp is not None and len(dims) != exp:
+                probs.append("%s dims=%d≠%d" % (s.get("key"), len(dims), exp))
+            keys = set()
+            for d in dims:
+                k = str(d.get("key") or "")
+                if not re.match(r"^[a-z][a-z0-9_]*$", k):
+                    probs.append("坏 key：%r" % k)
+                if k in keys:
+                    probs.append("同场景重复 key：%s" % k)
+                keys.add(k)
+                for f in ("ask", "why", "default", "impact"):
+                    if not str(d.get(f) or "").strip():
+                        probs.append("%s.%s 缺 %s" % (s.get("key"), k, f))
+        if seen_total != 28:
+            probs.append("dims 合计=%d≠28" % seen_total)
+    scr = by_id.get("criterion.creator.screen") or {}
+    groups = scr.get("groups") or []
+    gwant = [("content_vertical", "内容与垂类", "高"), ("audience_geo", "受众与地域", "中"),
+             ("performance_scale", "表现与规模", "高"), ("commercial", "商业与合作", "中"),
+             ("exclusions", "排除项", "中")]
+    if [g.get("key") for g in groups] != [k for k, _l, _w in gwant]:
+        probs.append("screen 组序列≠%s" % "/".join(k for k, _l, _w in gwant))
+    for g, (k, label, weight) in zip(groups, gwant):
+        if g.get("label") != label:
+            probs.append("组 %s label=%r≠%r" % (k, g.get("label"), label))
+        if g.get("weight") != weight:
+            probs.append("组 %s weight=%r≠%r" % (k, g.get("weight"), weight))
+    add("C19-f", not probs,
+        "4 场景 / 28 条 / 5 组结构合规" if not probs else "；".join(probs[:5]))
+
     # C19-e 对外唯一口径
     bade = []
     for e in entries:

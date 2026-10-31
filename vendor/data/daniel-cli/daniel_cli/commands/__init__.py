@@ -5,10 +5,10 @@
 `schema.py` 逐条比对：两边一旦漂移（声明了没实现 / 实现了没声明）必须被报出来。
 如果按 schema 自动生成，这个检查就永远为真、失去意义。
 """
-from . import (mod_account, mod_authenticity, mod_auth, mod_brands, mod_connect, mod_ct,
-               mod_install, mod_intake, mod_intel, mod_keywords, mod_lists, mod_mentions,
-               mod_pack, mod_parity, mod_playbook, mod_route, mod_sched, mod_schema,
-               mod_search, mod_skills, mod_sov, mod_takeover)
+from . import (mod_account, mod_authenticity, mod_auth, mod_brands, mod_clarify, mod_connect,
+               mod_ct, mod_install, mod_intake, mod_intel, mod_keywords, mod_lists,
+               mod_mentions, mod_pack, mod_parity, mod_playbook, mod_route, mod_sched,
+               mod_schema, mod_search, mod_skills, mod_sov, mod_takeover)
 
 #: 模块键 → 模块实现文件
 MODULE_IMPLS = {
@@ -27,6 +27,7 @@ MODULE_IMPLS = {
     "auth": mod_auth,
     "keywords": mod_keywords,
     "skills": mod_skills,
+    "clarify": mod_clarify,
     "intake": mod_intake,
     "playbook": mod_playbook,
     "sched": mod_sched,

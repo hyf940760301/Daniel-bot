@@ -133,6 +133,35 @@ export function toolMeta(reg) {
   return out
 }
 
+/**
+ * 路径归一化：把**绝对路径**替换成 `<PATH>`，让基线**机器无关**。
+ *
+ * 为什么放在采集层而不是产品输出：
+ *   · 产品该给用户看的绝对路径（如语料根）不该为了测试被抹掉；
+ *   · 但基线一旦写进某台机器的 `/Users/...`，换机器/换目录/换分支就必红（M3 实测：
+ *     `run_skills_list` 在 M3 之前就是红的，`batch_skills_list` 因 DANIEL_BIN 换目录而红）。
+ * 归一化只作用于**快照**（shape 与 sha），不改任何工具返回值。
+ */
+const WORKSPACE = resolve(HERE, '..', '..', '..', '..')
+const ABS_PATH = /\/(?:Users|home|opt|private|var|tmp|Volumes)\/[^\s"'`，。；、)\]}]+/g
+
+export function normalizePaths(v) {
+  if (typeof v === 'string') {
+    // ① 语料根（绝对或相对、任何包名）整体归一：`…/mcp/corpus` → `<PATH>`
+    let out = v.replace(/[^\s"'`：]*\/mcp\/corpus/g, '<PATH>')
+    // ② 其余绝对路径（含工作区根）→ `<PATH>`
+    out = out.split(WORKSPACE).join('<PATH>').replace(ABS_PATH, '<PATH>')
+    return out
+  }
+  if (Array.isArray(v)) return v.map(normalizePaths)
+  if (v && typeof v === 'object') {
+    const out = {}
+    for (const [k, x] of Object.entries(v)) out[k] = normalizePaths(x)
+    return out
+  }
+  return v
+}
+
 function argOf(name, fallback) {
   const i = process.argv.indexOf(name)
   return i >= 0 ? process.argv[i + 1] : fallback
@@ -157,12 +186,14 @@ export async function capture(traceMode = 'off') {
     const out = await t.execute(c.args, {})
     const nullPath = firstNullPath(out)
     if (nullPath) throw new Error(`用例 ${c.id}: 返回体含 null/undefined（${nullPath}），宿主会报 not lossless JSON`)
+    // 快照层做路径归一化：绝对路径 → `<PATH>`（产品返回值不变，基线机器无关）
+    const normalized = normalizePaths(out)
     snapshot.cases[c.id] = {
       tool: c.tool,
       args: c.args,
       offline: Boolean(c.offline),
-      shape: shapeOf(out, '$'),
-      sha256: createHash('sha256').update(JSON.stringify(out)).digest('hex'),
+      shape: shapeOf(normalized, '$'),
+      sha256: createHash('sha256').update(JSON.stringify(normalized)).digest('hex'),
     }
   }
 

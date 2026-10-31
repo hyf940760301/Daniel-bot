@@ -1,7 +1,7 @@
 {
  "kind": "daniel.ontology.v1",
- "corpus_version": "0.9.205",
- "entry_count": 3,
+ "corpus_version": "0.9.206",
+ "entry_count": 4,
  "entries": [
   {
    "id": "metric.creator.avg_views_long",
@@ -20,10 +20,45 @@
    "owner": "业务-红人组",
    "status": "active",
    "stage": "screening",
-   "availability": [
-    "auto"
-   ],
-   "raw": "id: criterion.creator.screen\ntype: criterion\nlabel: 找红人 · 筛选维度\nstage: screening\nowner: 业务-红人组\nresolution: ask_once_per_task\ngroups:\n  - key: performance\n    label: 表现与规模\n    dims:\n      - key: avg_views_long\n        ask: 长视频均播下限？\n        default: 500000\n        availability: auto\n      - key: engagement_rate\n        ask: 互动率下限？\n        default: 0.05\n        availability: auto\n  - key: audience\n    label: 受众与地域\n    dims:\n      - key: market_country\n        ask: 主要市场国家或地区？\n        availability: auto"
+   "availability": [],
+   "raw": "id: criterion.creator.screen\ntype: criterion\nlabel: 找红人 · 筛选维度\nstage: screening\nowner: 业务-红人组\nresolution: ask_once_per_task\ngroups:\n  - key: content_vertical\n    label: 内容与垂类\n    example: 真机上手测评／资讯／对比；英文\n    default: 上手测评、英文\n    weight: 高\n  - key: audience_geo\n    label: 受众与地域\n    example: 美国为主；18–44 岁\n    default: 美国为主\n    weight: 中\n  - key: performance_scale\n    label: 表现与规模\n    example: 长视频均播 ≥ 50 万；互动表现达标\n    default: 长视频均播 50 万、互动表现达标\n    weight: 高\n  - key: commercial\n    label: 商业与合作\n    example: 有同类产品经验；排除正在合作竞品\n    default: 同类经验优先\n    weight: 中\n  - key: exclusions\n    label: 排除项\n    example: 排除已合作过、纯搬运号\n    default: 都排除\n    weight: 中",
+   "groups": [
+    {
+     "key": "content_vertical",
+     "label": "内容与垂类",
+     "example": "真机上手测评／资讯／对比；英文",
+     "default": "上手测评、英文",
+     "weight": "高"
+    },
+    {
+     "key": "audience_geo",
+     "label": "受众与地域",
+     "example": "美国为主；18–44 岁",
+     "default": "美国为主",
+     "weight": "中"
+    },
+    {
+     "key": "performance_scale",
+     "label": "表现与规模",
+     "example": "长视频均播 ≥ 50 万；互动表现达标",
+     "default": "长视频均播 50 万、互动表现达标",
+     "weight": "高"
+    },
+    {
+     "key": "commercial",
+     "label": "商业与合作",
+     "example": "有同类产品经验；排除正在合作竞品",
+     "default": "同类经验优先",
+     "weight": "中"
+    },
+    {
+     "key": "exclusions",
+     "label": "排除项",
+     "example": "排除已合作过、纯搬运号",
+     "default": "都排除",
+     "weight": "中"
+    }
+   ]
   },
   {
    "id": "expr.kol_list",
@@ -34,6 +69,278 @@
    "stage": "",
    "availability": [],
    "raw": "id: expr.kol_list\ntype: expression\nlabel: 红人名单交付\nowner: 业务-红人组\nsections: [概览, 名单, 每条依据, 覆盖率与缺口, 下一步]\nrequired: [数字必须带口径与时间点, 不确定写待确认]\nbanned: [非常好, 绝对, 肯定没问题, 大概]"
+  },
+  {
+   "id": "criterion.clarify.param_gate",
+   "type": "criterion",
+   "label": "澄清闸 · 参数级追问（4 场景 / 28 项）",
+   "owner": "业务-红人组",
+   "status": "active",
+   "stage": "",
+   "availability": [],
+   "raw": "id: criterion.clarify.param_gate\ntype: criterion\nlabel: 澄清闸 · 参数级追问（4 场景 / 28 项）\nowner: 业务-红人组\nversion: 1.0.0\nresolution: ask_once_per_task\nscenarios:\n  - key: kol_search\n    label: 找红人／建名单\n    dims:\n      - key: market\n        ask: 目标市场\n        why: 决定从哪个国家／地区找人，也决定受众核验按哪一国看；不说就有可能整份名单地域不对\n        default: 按 US 执行\n        impact: 影响全部候选的地域与受众核验口径，不补最容易整份名单跑偏\n      - key: fans\n        ask: 粉丝量级区间\n        why: 决定要头部还是中腰部；不同量级的报价、内容质量、可谈性差很多，混着找没法比较\n        default: 按 1 万到 60 万订阅执行（以中腰部为主）\n        impact: 直接决定名单的量级结构，越晚改返工越大\n      - key: audience\n        ask: 是否必须有官方受众数据\n        why: 有的红人平台没有受众数据；不说明只能「有则用、无则标注缺失」，受众这项核验会打折\n        default: 有则用、无则标注缺失，不因缺受众数据直接淘汰\n        impact: 影响受众核验的严格程度，进而影响最终入选人数\n      - key: format\n        ask: 内容形式（长视频／短视频）\n        why: 长视频和短视频的均播、报价、受众都不同；混着给会出一份没法横向比的名单\n        default: 长短都看，名单里标出每位的主形式\n        impact: 影响候选池，也决定均播要按哪种形式对比\n      - key: qty\n        ask: 数量上限（本次要几位）\n        why: 决定给你多少候选、要不要继续翻页取；不说明我按一页给\n        default: 默认给 10 位候选\n        impact: 影响取数轮次与名单长度，也决定要不要分页\n      - key: dedupe\n        ask: 是否排重（合作过的人要不要剔除）\n        why: 重复或已合作的人会占掉名额，也决定要不要额外比一份既有名单\n        default: 名单内按唯一标识排重；已合作过的人默认保留，只在备注里标出合作过\n        impact: 影响最终可用名额，也决定要不要多跑一次名单比对\n      - key: deliver\n        ask: 交付形态（表格／文档）\n        why: 表格和文档的字段组织完全不同；你要能直接拿去用，不说我按表格给\n        default: 按表格交付（红人、频道链接、量级、国家、均播、联系方式）\n        impact: 影响出件格式，早定能省一次返工\n      - key: deadline\n        ask: 交付时点（什么时候要）\n        why: 决定我先给一版能用的粗名单，还是一次做到位；也决定要不要加班跑\n        default: 按今天内先给一版可用名单执行\n        impact: 影响交付节奏，以及在「快」和「全」之间怎么取舍\n      - key: window\n        ask: 数据时间窗\n        why: 看近一个月和近三个月可能选出完全不同的人，尤其刚出过爆款的\n        default: 按近 28 天表现判断\n        impact: 影响均播与互动的读数，从而影响谁算「表现好」\n    calibers:\n      - ask: 什么算「高自然表现」\n        impact: 决定最终谁能进名单\n      - ask: 什么算「内容相关」到可以算同类红人\n        impact: 决定排除边界往外放多宽\n      - ask: 什么算「互动好」\n        impact: 决定要不要因为互动低而淘汰人\n  - key: list_ops\n    label: 名单处理（合并／去重／比对）\n    dims:\n      - key: qty\n        ask: 数量上限（这份名单最后要留多少人）\n        why: 决定是「全留」还是「按条件砍到多少位」，也决定要不要排序取前 N\n        default: 默认全留（不砍名额），只做合并与去重\n        impact: 决定最终名单规模，是最容易返工的一项\n      - key: dedupe\n        ask: 是否排重\n        why: 名单合并的核心就是去重；不说清就只能按既有名单里一模一样的写法判重\n        default: 按频道链接与账号名排重，写法不同的同名项保留两条并标注疑似重复\n        impact: 直接决定名单条数，也决定「重复」的判定松紧\n      - key: columns\n        ask: 输出要哪些列\n        why: 这份名单要交给谁、用来干什么，决定留哪些列；列定不下来容易白跑一遍\n        default: 按「红人、频道链接、量级、国家、联系方式」这几列交付\n        impact: 决定最终表格字段，返工成本最高的一环\n      - key: baseline\n        ask: 以哪份名单为准\n        why: 合并比对必须先有基准，否则谁算新的、谁算重复的说不清\n        default: 以你给的既有名单为基准，平台数据只做补充\n        impact: 决定谁算「新增」谁算「重复」，直接影响结果口径\n      - key: deliver\n        ask: 交付形态（表格／文档）\n        why: 同一份名单做成在线表还是文档，字段组织完全不同\n        default: 按表格交付（可直接双击打开的表格文件）\n        impact: 影响出件格式，早定能省一次返工\n      - key: deadline\n        ask: 交付时点（什么时候要）\n        why: 决定我先给一版粗合并，还是一次做到位\n        default: 按今天内先给一版可用名单执行\n        impact: 影响交付节奏与深度取舍\n      - key: window\n        ask: 数据时间窗（名单取哪个时点的数据）\n        why: 两份名单取数时点不同，量级和均播会对不上\n        default: 按最近一次取到的平台数据为准，并标出取数时点\n        impact: 影响两份名单能不能直接对比\n    calibers:\n      - ask: 什么算「同一个人」（不同频道、不同语言号要不要合并）\n        impact: 决定名单条数，也决定谁算重复\n      - ask: 什么算「值得保留」\n        impact: 决定全留还是只留信息完整的那批\n  - key: brand_setup\n    label: 品牌建档／品牌清单\n    dims:\n      - key: market\n        ask: 目标市场\n        why: 品牌在哪些国家卖，决定要建哪些站点、关注哪些市场的声量\n        default: 按 US 执行\n        impact: 影响所有后续声量与竞品数据的取数范围\n      - key: scope\n        ask: 品牌主体范围（子品牌／产品线要不要单列）\n        why: 同一集团常有多个子品牌，不说明就会把它们的声量混在一起算\n        default: 只建主体品牌，子品牌不单列，声量归到主体名下\n        impact: 影响品牌归属判断，串了就得整份重算\n      - key: competitors\n        ask: 竞品范围（要不要一起建档）\n        why: 竞品要不要一起建、建几个，决定清单规模，也决定后面能不能直接做对比\n        default: 不单独建竞品，只在主体品牌下挂竞品名做关联\n        impact: 影响清单规模，以及后续对比分析能不能直接跑\n      - key: category\n        ask: 品类与关键词范围\n        why: 品类关键词决定哪些内容算「提到这个品牌」，范围宽窄直接影响声量大小\n        default: 按品牌主营品类自动归集，只收与主营品类相关的内容\n        impact: 影响声量口径的高低，也影响竞品对比的公平性\n      - key: deliver\n        ask: 交付形态（表格／文档）\n        why: 品牌档案与品牌清单的字段组织不同；不说我按表格给\n        default: 按表格交付（品牌、站点、主营品类、竞品关联、数据时点）\n        impact: 影响出件格式，早定能省一次返工\n      - key: deadline\n        ask: 交付时点（什么时候要）\n        why: 决定我先给一版粗档案还是一次做到位\n        default: 按今天内先给一版可用清单执行\n        impact: 影响交付节奏与深度取舍\n    calibers:\n      - ask: 什么算「竞品」\n        impact: 决定对比对象是谁，也决定对比结论可不可信\n      - ask: 什么算「主线产品」\n        impact: 决定哪些内容算品牌相关\n  - key: generic\n    label: 通用（未指定场景）\n    dims:\n      - key: market\n        ask: 目标市场\n        why: 决定按哪个国家／地区取数与核验；不说可能整体偏地域\n        default: 按 US 执行\n        impact: 影响全部取数的地域与核验口径\n      - key: qty\n        ask: 数量上限（本次要几条）\n        why: 决定给你多少条、要不要继续翻页取\n        default: 默认给 10 条\n        impact: 影响取数轮次与结果规模\n      - key: deliver\n        ask: 交付形态（表格／文档）\n        why: 表格和文档的字段组织完全不同，不说我按表格给\n        default: 按表格交付\n        impact: 影响出件格式，早定能省一次返工\n      - key: deadline\n        ask: 交付时点（什么时候要）\n        why: 决定先给一版能用的，还是一次做到位\n        default: 按今天内先给一版可用结果执行\n        impact: 影响交付节奏与深度取舍\n      - key: dedupe\n        ask: 是否排重\n        why: 同名同人的重复项会占名额，也影响结果条数\n        default: 按唯一标识排重\n        impact: 影响结果条数与名单口径\n      - key: window\n        ask: 数据时间窗\n        why: 看近一个月和近三个月可能选出完全不同的结果\n        default: 按近 28 天数据判断\n        impact: 影响读数的可比性，从而影响结论\n    calibers:\n      - ask: 什么算「结果合格」\n        impact: 决定这批结果算不算交付完成",
+   "scenarios": [
+    {
+     "key": "kol_search",
+     "label": "找红人／建名单",
+     "dims": [
+      {
+       "key": "market",
+       "ask": "目标市场",
+       "why": "决定从哪个国家／地区找人，也决定受众核验按哪一国看；不说就有可能整份名单地域不对",
+       "default": "按 US 执行",
+       "impact": "影响全部候选的地域与受众核验口径，不补最容易整份名单跑偏"
+      },
+      {
+       "key": "fans",
+       "ask": "粉丝量级区间",
+       "why": "决定要头部还是中腰部；不同量级的报价、内容质量、可谈性差很多，混着找没法比较",
+       "default": "按 1 万到 60 万订阅执行（以中腰部为主）",
+       "impact": "直接决定名单的量级结构，越晚改返工越大"
+      },
+      {
+       "key": "audience",
+       "ask": "是否必须有官方受众数据",
+       "why": "有的红人平台没有受众数据；不说明只能「有则用、无则标注缺失」，受众这项核验会打折",
+       "default": "有则用、无则标注缺失，不因缺受众数据直接淘汰",
+       "impact": "影响受众核验的严格程度，进而影响最终入选人数"
+      },
+      {
+       "key": "format",
+       "ask": "内容形式（长视频／短视频）",
+       "why": "长视频和短视频的均播、报价、受众都不同；混着给会出一份没法横向比的名单",
+       "default": "长短都看，名单里标出每位的主形式",
+       "impact": "影响候选池，也决定均播要按哪种形式对比"
+      },
+      {
+       "key": "qty",
+       "ask": "数量上限（本次要几位）",
+       "why": "决定给你多少候选、要不要继续翻页取；不说明我按一页给",
+       "default": "默认给 10 位候选",
+       "impact": "影响取数轮次与名单长度，也决定要不要分页"
+      },
+      {
+       "key": "dedupe",
+       "ask": "是否排重（合作过的人要不要剔除）",
+       "why": "重复或已合作的人会占掉名额，也决定要不要额外比一份既有名单",
+       "default": "名单内按唯一标识排重；已合作过的人默认保留，只在备注里标出合作过",
+       "impact": "影响最终可用名额，也决定要不要多跑一次名单比对"
+      },
+      {
+       "key": "deliver",
+       "ask": "交付形态（表格／文档）",
+       "why": "表格和文档的字段组织完全不同；你要能直接拿去用，不说我按表格给",
+       "default": "按表格交付（红人、频道链接、量级、国家、均播、联系方式）",
+       "impact": "影响出件格式，早定能省一次返工"
+      },
+      {
+       "key": "deadline",
+       "ask": "交付时点（什么时候要）",
+       "why": "决定我先给一版能用的粗名单，还是一次做到位；也决定要不要加班跑",
+       "default": "按今天内先给一版可用名单执行",
+       "impact": "影响交付节奏，以及在「快」和「全」之间怎么取舍"
+      },
+      {
+       "key": "window",
+       "ask": "数据时间窗",
+       "why": "看近一个月和近三个月可能选出完全不同的人，尤其刚出过爆款的",
+       "default": "按近 28 天表现判断",
+       "impact": "影响均播与互动的读数，从而影响谁算「表现好」"
+      }
+     ],
+     "calibers": [
+      {
+       "ask": "什么算「高自然表现」",
+       "impact": "决定最终谁能进名单"
+      },
+      {
+       "ask": "什么算「内容相关」到可以算同类红人",
+       "impact": "决定排除边界往外放多宽"
+      },
+      {
+       "ask": "什么算「互动好」",
+       "impact": "决定要不要因为互动低而淘汰人"
+      }
+     ]
+    },
+    {
+     "key": "list_ops",
+     "label": "名单处理（合并／去重／比对）",
+     "dims": [
+      {
+       "key": "qty",
+       "ask": "数量上限（这份名单最后要留多少人）",
+       "why": "决定是「全留」还是「按条件砍到多少位」，也决定要不要排序取前 N",
+       "default": "默认全留（不砍名额），只做合并与去重",
+       "impact": "决定最终名单规模，是最容易返工的一项"
+      },
+      {
+       "key": "dedupe",
+       "ask": "是否排重",
+       "why": "名单合并的核心就是去重；不说清就只能按既有名单里一模一样的写法判重",
+       "default": "按频道链接与账号名排重，写法不同的同名项保留两条并标注疑似重复",
+       "impact": "直接决定名单条数，也决定「重复」的判定松紧"
+      },
+      {
+       "key": "columns",
+       "ask": "输出要哪些列",
+       "why": "这份名单要交给谁、用来干什么，决定留哪些列；列定不下来容易白跑一遍",
+       "default": "按「红人、频道链接、量级、国家、联系方式」这几列交付",
+       "impact": "决定最终表格字段，返工成本最高的一环"
+      },
+      {
+       "key": "baseline",
+       "ask": "以哪份名单为准",
+       "why": "合并比对必须先有基准，否则谁算新的、谁算重复的说不清",
+       "default": "以你给的既有名单为基准，平台数据只做补充",
+       "impact": "决定谁算「新增」谁算「重复」，直接影响结果口径"
+      },
+      {
+       "key": "deliver",
+       "ask": "交付形态（表格／文档）",
+       "why": "同一份名单做成在线表还是文档，字段组织完全不同",
+       "default": "按表格交付（可直接双击打开的表格文件）",
+       "impact": "影响出件格式，早定能省一次返工"
+      },
+      {
+       "key": "deadline",
+       "ask": "交付时点（什么时候要）",
+       "why": "决定我先给一版粗合并，还是一次做到位",
+       "default": "按今天内先给一版可用名单执行",
+       "impact": "影响交付节奏与深度取舍"
+      },
+      {
+       "key": "window",
+       "ask": "数据时间窗（名单取哪个时点的数据）",
+       "why": "两份名单取数时点不同，量级和均播会对不上",
+       "default": "按最近一次取到的平台数据为准，并标出取数时点",
+       "impact": "影响两份名单能不能直接对比"
+      }
+     ],
+     "calibers": [
+      {
+       "ask": "什么算「同一个人」（不同频道、不同语言号要不要合并）",
+       "impact": "决定名单条数，也决定谁算重复"
+      },
+      {
+       "ask": "什么算「值得保留」",
+       "impact": "决定全留还是只留信息完整的那批"
+      }
+     ]
+    },
+    {
+     "key": "brand_setup",
+     "label": "品牌建档／品牌清单",
+     "dims": [
+      {
+       "key": "market",
+       "ask": "目标市场",
+       "why": "品牌在哪些国家卖，决定要建哪些站点、关注哪些市场的声量",
+       "default": "按 US 执行",
+       "impact": "影响所有后续声量与竞品数据的取数范围"
+      },
+      {
+       "key": "scope",
+       "ask": "品牌主体范围（子品牌／产品线要不要单列）",
+       "why": "同一集团常有多个子品牌，不说明就会把它们的声量混在一起算",
+       "default": "只建主体品牌，子品牌不单列，声量归到主体名下",
+       "impact": "影响品牌归属判断，串了就得整份重算"
+      },
+      {
+       "key": "competitors",
+       "ask": "竞品范围（要不要一起建档）",
+       "why": "竞品要不要一起建、建几个，决定清单规模，也决定后面能不能直接做对比",
+       "default": "不单独建竞品，只在主体品牌下挂竞品名做关联",
+       "impact": "影响清单规模，以及后续对比分析能不能直接跑"
+      },
+      {
+       "key": "category",
+       "ask": "品类与关键词范围",
+       "why": "品类关键词决定哪些内容算「提到这个品牌」，范围宽窄直接影响声量大小",
+       "default": "按品牌主营品类自动归集，只收与主营品类相关的内容",
+       "impact": "影响声量口径的高低，也影响竞品对比的公平性"
+      },
+      {
+       "key": "deliver",
+       "ask": "交付形态（表格／文档）",
+       "why": "品牌档案与品牌清单的字段组织不同；不说我按表格给",
+       "default": "按表格交付（品牌、站点、主营品类、竞品关联、数据时点）",
+       "impact": "影响出件格式，早定能省一次返工"
+      },
+      {
+       "key": "deadline",
+       "ask": "交付时点（什么时候要）",
+       "why": "决定我先给一版粗档案还是一次做到位",
+       "default": "按今天内先给一版可用清单执行",
+       "impact": "影响交付节奏与深度取舍"
+      }
+     ],
+     "calibers": [
+      {
+       "ask": "什么算「竞品」",
+       "impact": "决定对比对象是谁，也决定对比结论可不可信"
+      },
+      {
+       "ask": "什么算「主线产品」",
+       "impact": "决定哪些内容算品牌相关"
+      }
+     ]
+    },
+    {
+     "key": "generic",
+     "label": "通用（未指定场景）",
+     "dims": [
+      {
+       "key": "market",
+       "ask": "目标市场",
+       "why": "决定按哪个国家／地区取数与核验；不说可能整体偏地域",
+       "default": "按 US 执行",
+       "impact": "影响全部取数的地域与核验口径"
+      },
+      {
+       "key": "qty",
+       "ask": "数量上限（本次要几条）",
+       "why": "决定给你多少条、要不要继续翻页取",
+       "default": "默认给 10 条",
+       "impact": "影响取数轮次与结果规模"
+      },
+      {
+       "key": "deliver",
+       "ask": "交付形态（表格／文档）",
+       "why": "表格和文档的字段组织完全不同，不说我按表格给",
+       "default": "按表格交付",
+       "impact": "影响出件格式，早定能省一次返工"
+      },
+      {
+       "key": "deadline",
+       "ask": "交付时点（什么时候要）",
+       "why": "决定先给一版能用的，还是一次做到位",
+       "default": "按今天内先给一版可用结果执行",
+       "impact": "影响交付节奏与深度取舍"
+      },
+      {
+       "key": "dedupe",
+       "ask": "是否排重",
+       "why": "同名同人的重复项会占名额，也影响结果条数",
+       "default": "按唯一标识排重",
+       "impact": "影响结果条数与名单口径"
+      },
+      {
+       "key": "window",
+       "ask": "数据时间窗",
+       "why": "看近一个月和近三个月可能选出完全不同的结果",
+       "default": "按近 28 天数据判断",
+       "impact": "影响读数的可比性，从而影响结论"
+      }
+     ],
+     "calibers": [
+      {
+       "ask": "什么算「结果合格」",
+       "impact": "决定这批结果算不算交付完成"
+      }
+     ]
+    }
+   ]
   }
  ]
 }

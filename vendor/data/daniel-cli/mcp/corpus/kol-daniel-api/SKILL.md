@@ -1,19 +1,19 @@
 ---
 name: kol-daniel-api
-version: 0.9.205
+version: 0.9.206
 description: "Daniel 平台能力的**接口与工序**：Saved Lists 等读／写（用途、只读探测先行、接口清单、写操作纪律、硬限与坑、Compare Lists、仪器与验收判据、范例路径）、其它区块全链路（Brands／Brand Mentions／Intelligence 核心／SOV 全家桶）、接管验收、工作区隔离协议、凭据与会话落点纪律、品牌提及原生表现评级与广告投放候选清单口径、品牌名单归属判据、名单类交付件字段完整性与排序、原生筛选维度、写链＝权限驱动四轴＋写操作四道闸、§15.5.8 品牌提及／Deep Review 的实测运维事实（13 条：错误语义／分页取全／Rated Score 算式／两标签反推规则／Deep Review 停住）；Creator Tracker 建链（参数表先行、路由清单）；KOL 全链路检索。Use when 要调用或新增 Daniel 数据层能力、跑 Saved Lists／Brands／Brand Mentions／SOV／Creator Tracker、做接管验收或工作区隔离；关键词：Daniel、Saved Lists、Brands、Brand Mentions、SOV、Creator Tracker、接管、工作区、凭据落点、写链权限、运维事实、分页重复、Rated Score。"
 whenToUse: "任何要走 Daniel 接口的任务开工前加载；写操作前先过 §15.5.7 写操作四道闸与 §15.4 写纪律。"
 metadata:
-  corpus_version: "0.9.205"
+  corpus_version: "0.9.206"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d"
+  corpus_sha256: "227d13946b022199903c184c3442b64167d8731aa5d9659a5e54a45e94e5b1ef"
   corpus_slices: "L5008-L5721,L5722-L5900,L5901-L6376"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
 
 # Daniel 系统数据层直连 · Creator Tracker · KOL 全链路检索
 
-> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.205）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
+> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.206）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
 
 ## 一、本束覆盖的源节
 
@@ -215,11 +215,11 @@ ct.campaigns.create({ brandId, title, brandName, brandHandle, brandYoutubeChanne
 
 | 项 | 值 |
 |---|---|
-| 语料版本 | `0.9.205` |
+| 语料版本 | `0.9.206` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d` |
+| 源文件 sha256 | `227d13946b022199903c184c3442b64167d8731aa5d9659a5e54a45e94e5b1ef` |
 | 本束源行区间 | `L5008-L5721,L5722-L5900,L5901-L6376` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |
 
-> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.205」。
+> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.206」。

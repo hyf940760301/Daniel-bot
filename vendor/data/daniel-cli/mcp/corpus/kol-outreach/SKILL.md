@@ -1,19 +1,19 @@
 ---
 name: kol-outreach
-version: 0.9.205
+version: 0.9.206
 description: "KOL Pitch 外联阶段的**全部写法与模板**：邮件产品段写法标准、冷邮件 8 步要素结构、EN 模板库 T1–T5、条款块变量表、跟进节奏与轮次规则、发前变量校对清单、报价回传衔接、项目打标机制、MRP 首封模板与最佳实践，以及 §4.13–§4.24 全套对外邮件信型定版骨架（语气禁令／送审四件套／发货征询／Reply EDM／更正类／进度同步＋拍摄 brief／核实类／致谢类／首封定版／条款＋合同往返／Follow Up 两轮／问价＋IM 话术）。Use when 要写或改任何一封给 KOL／合作方的外发邮件（首封、跟进、回执、更正、进度、问价、条款往返）；关键词：pitch、外联、邮件、EDM、模板、follow up、MRP、话术。"
 whenToUse: "阶段 3（外联）开工前加载；任何外发邮件定稿前对照 §4.13 语气禁令与 §4.5 发前校对清单。"
 metadata:
-  corpus_version: "0.9.205"
+  corpus_version: "0.9.206"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d"
+  corpus_sha256: "227d13946b022199903c184c3442b64167d8731aa5d9659a5e54a45e94e5b1ef"
   corpus_slices: "L1494-L3209"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
 
 # KOL Pitch 外联（阶段 3）：要素结构 · EN 模板库 · 全信型骨架
 
-> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.205）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
+> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.206）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
 
 ## 一、本束覆盖的源节
 
@@ -93,11 +93,11 @@ If any of these brands also feel relevant to your channel, feel free to mention 
 
 | 项 | 值 |
 |---|---|
-| 语料版本 | `0.9.205` |
+| 语料版本 | `0.9.206` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d` |
+| 源文件 sha256 | `227d13946b022199903c184c3442b64167d8731aa5d9659a5e54a45e94e5b1ef` |
 | 本束源行区间 | `L1494-L3209` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |
 
-> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.205」。
+> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.206」。

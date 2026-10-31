@@ -412,7 +412,7 @@
           }
         }
       },
-      "sha256": "ed1e79acdd9818e4c798b13a8ac2b00338480dbd7a95c8ee1841d271dade899d"
+      "sha256": "5f184b1012e0cef4c8d17de7ca64afe09646fdde33f287f30f0de6b771cdb2cf"
     },
     "skills_read_index": {
       "tool": "daniel_skills_read",
@@ -810,7 +810,7 @@
           }
         }
       },
-      "sha256": "d64c6a3bb3c88ae16c2c0b4f2f46b3dbc06135d3e2fa654c4b6c9ab3cd1bb3cf"
+      "sha256": "bf1ffe2d6aa1fe3104e830a2f344f63c3c35085d4b9d29c30287097d68c22730"
     },
     "batch_empty": {
       "tool": "daniel_batch",
@@ -1105,7 +1105,7 @@
           }
         }
       },
-      "sha256": "9caeca544f3579015bc96e334e6795d7cc30b63ab8230d1d729403003a051691"
+      "sha256": "c6543bb9050250da1574e96879d01f2ebfa15d5a803a47ad8560ea013fd942e4"
     },
     "write_plan_empty": {
       "tool": "daniel_write_plan",
@@ -1268,7 +1268,7 @@
           }
         }
       },
-      "sha256": "add108f565a82aea461cb3cedb7e61c8a05d463fddd8de282aaabb33110d7796"
+      "sha256": "dd4d4b0ee7a503ba254675b7343b05c5b9db787322f14b6c848bfdb2a45548c2"
     },
     "batch_auth_status": {
       "tool": "daniel_batch",
@@ -1380,7 +1380,7 @@
           }
         }
       },
-      "sha256": "eec93b8bf35b3b258d4d15b3743de2d03ad6404bf72610cf0a1378aad8637ceb"
+      "sha256": "e4ca10b6859551e574704926936cbb687f7e1343d5757d517d729aabfe38fecd"
     },
     "batch_local_fail": {
       "tool": "daniel_batch",
@@ -2414,6 +2414,56 @@
         "daniel_batch"
       ],
       "reason": "语料升版 0.9.204→0.9.205（附录 B），skills 清单返回的版本号随之变化",
+      "changedCases": [
+        "skills_list",
+        "run_skills_list",
+        "batch_skills_list"
+      ]
+    },
+    {
+      "at": "2026-10-31T10:46:47.997Z",
+      "tools": [
+        "daniel_run",
+        "daniel_batch"
+      ],
+      "reason": "路径归一化：绝对路径替换为 <PATH>，使基线机器无关",
+      "changedCases": [
+        "run_skills_list",
+        "batch_skills_list",
+        "run_auth_status",
+        "batch_auth_status"
+      ]
+    },
+    {
+      "at": "2026-10-31T10:47:42.272Z",
+      "tools": [
+        "daniel_run",
+        "daniel_batch"
+      ],
+      "reason": "路径归一化补充：相对包路径（<pkg>/mcp/corpus）也替换为 <PATH>",
+      "changedCases": [
+        "run_skills_list"
+      ]
+    },
+    {
+      "at": "2026-10-31T10:48:28.073Z",
+      "tools": [
+        "daniel_run",
+        "daniel_batch"
+      ],
+      "reason": "路径归一化：语料根整体替换（绝对/相对、任意包名）",
+      "changedCases": [
+        "run_skills_list"
+      ]
+    },
+    {
+      "at": "2026-10-31T10:51:51.016Z",
+      "tools": [
+        "daniel_skills_list",
+        "daniel_run",
+        "daniel_batch"
+      ],
+      "reason": "语料升版 0.9.205→0.9.206（附录 B.5 澄清闸 + 五组改写），skills 清单版本号随之变化",
       "changedCases": [
         "skills_list",
         "run_skills_list",

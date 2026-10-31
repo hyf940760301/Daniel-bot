@@ -1,4 +1,4 @@
-<!-- 本文件是 `docs/marketing/skills/kol-intelligence.md` L5722–L5900 的**逐字切片**（语料版本 0.9.205）；请勿在此改写判据，改动须回流源文件后重跑切分器 -->
+<!-- 本文件是 `docs/marketing/skills/kol-intelligence.md` L5722–L5900 的**逐字切片**（语料版本 0.9.206）；请勿在此改写判据，改动须回流源文件后重跑切分器 -->
 <!-- 源节：§16 Creator Tracker（红人追踪）建链 -->
 
 ## 16. Creator Tracker（红人追踪）建链
