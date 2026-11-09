@@ -1,0 +1,12 @@
+{
+  "name": "daniel-bot",
+  "productName": "Daniel Bot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Daniel Bot 桌面应用壳（S5 M1 骨架：闪屏 / 登录 / 启动 DSH / 错误页 / 窗口记忆）",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "seed": "bash scripts/seed-profile.sh"
+  }
+}

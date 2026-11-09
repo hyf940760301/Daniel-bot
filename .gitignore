@@ -1,0 +1,7 @@
+# 大件与可再生产物（不入库）
+build/
+releases/
+node_modules/
+*.dmg
+*.tgz
+.DS_Store

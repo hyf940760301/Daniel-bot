@@ -1,0 +1,1515 @@
+diff --git a/apps/desktop/renderer/daniel-login.css b/apps/desktop/renderer/daniel-login.css
+new file mode 100644
+index 00000000..94f30e99
+--- /dev/null
++++ b/apps/desktop/renderer/daniel-login.css
+@@ -0,0 +1,243 @@
++/*
++ * Daniel Bot sign-in window.
++ *
++ * Same material and type scale as the native welcome surface (translucent tint over
++ * the platform's own window material, Montserrat brand face, 12 px inputs, 10 px
++ * buttons). Values are local copies of the shell's design tokens so this document
++ * renders correctly even before the Host exists.
++ */
++
++:root {
++  color-scheme: light dark;
++  --dl-label: #0f1115;
++  --dl-label-secondary: #61666b;
++  --dl-label-caption: #adb2b8;
++  --dl-border: #00000029;
++  --dl-border-strong: #0f1115;
++  --dl-button: #0f1115;
++  --dl-button-hover: #43454a;
++  --dl-button-label: #ffffff;
++  --dl-error: rgb(236, 19, 19);
++  --dl-error-tint: rgb(236 19 19 / 8%);
++  --dl-tint: color-mix(in srgb, rgb(255, 255, 255) 40%, transparent);
++  --dl-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
++  --dl-font-brand: 'Montserrat', var(--dl-font);
++  --dl-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
++}
++
++body[data-ds-dark-theme] {
++  --dl-label: #f9fafb;
++  --dl-label-secondary: #cfd3d6;
++  --dl-label-caption: #81858c;
++  --dl-border: #ffffff33;
++  --dl-border-strong: #f9fafb;
++  --dl-button: #f9fafb;
++  --dl-button-hover: #ebeef2;
++  --dl-button-label: #353638;
++  --dl-error: rgb(242, 90, 90);
++  --dl-error-tint: rgb(242 90 90 / 12%);
++  --dl-tint: color-mix(in srgb, rgb(24, 25, 28) 50%, transparent);
++}
++
++* {
++  box-sizing: border-box;
++}
++
++[hidden] {
++  display: none !important;
++}
++
++html,
++body {
++  width: 100%;
++  height: 100%;
++  margin: 0;
++  overflow: hidden;
++  background: transparent;
++}
++
++body {
++  display: flex;
++  flex-direction: column;
++  background: var(--dl-tint);
++  color: var(--dl-label);
++  font-family: var(--dl-font-brand);
++  font-weight: 400;
++  user-select: none;
++  -webkit-font-smoothing: antialiased;
++}
++
++.titlebar {
++  flex: 0 0 36px;
++  app-region: drag;
++}
++
++.signin {
++  display: flex;
++  flex: 1;
++  min-height: 0;
++  flex-direction: column;
++  padding: 2px 40px 24px;
++  overflow: auto;
++}
++
++.wordmark {
++  margin: 0;
++  color: var(--dl-label);
++  font-family: var(--dl-font-brand);
++  font-size: 26px;
++  font-weight: 500;
++  line-height: 34px;
++  letter-spacing: 0.01em;
++}
++
++h1 {
++  margin: 18px 0 6px;
++  font-family: var(--dl-font-brand);
++  font-size: 20px;
++  font-weight: 400;
++  line-height: 30px;
++}
++
++.subtitle {
++  margin: 0;
++  color: var(--dl-label-secondary);
++  font-size: 14px;
++  font-weight: 300;
++  line-height: 22px;
++}
++
++#form {
++  display: flex;
++  flex-direction: column;
++  gap: 14px;
++  margin-top: 24px;
++}
++
++.field {
++  display: flex;
++  flex-direction: column;
++  gap: 8px;
++}
++
++.label {
++  color: var(--dl-label-secondary);
++  font-family: var(--dl-font);
++  font-size: 13px;
++  line-height: 18px;
++}
++
++.field input {
++  display: block;
++  width: 100%;
++  height: 48px;
++  padding: 7px 14px;
++  border: 1px solid var(--dl-border);
++  border-radius: 12px;
++  outline: none;
++  background: transparent;
++  color: var(--dl-label);
++  font-family: var(--dl-font);
++  font-size: 14px;
++  line-height: 24px;
++  user-select: text;
++  transition: border-color var(--dl-transition);
++}
++
++.field input:focus {
++  border-color: var(--dl-border-strong);
++}
++
++.field input::placeholder {
++  color: var(--dl-label-caption);
++  opacity: 1;
++}
++
++.field input[disabled] {
++  opacity: 0.5;
++}
++
++.error {
++  margin: 0;
++  padding: 10px 12px;
++  border-radius: 10px;
++  background: var(--dl-error-tint);
++  color: var(--dl-error);
++  font-family: var(--dl-font);
++  font-size: 13px;
++  line-height: 20px;
++  user-select: text;
++}
++
++button {
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  height: 44px;
++  padding: 8px 16px;
++  border: 1px solid transparent;
++  border-radius: 10px;
++  cursor: pointer;
++  font-family: var(--dl-font);
++  font-size: 14px;
++  font-weight: 500;
++  line-height: 22px;
++  app-region: no-drag;
++  transition:
++    background-color var(--dl-transition),
++    border-color var(--dl-transition),
++    opacity var(--dl-transition);
++}
++
++button:disabled {
++  cursor: not-allowed;
++  opacity: 0.45;
++}
++
++button:focus-visible {
++  outline: 2px solid var(--dl-label);
++  outline-offset: 3px;
++}
++
++.primary {
++  background: var(--dl-button);
++  color: var(--dl-button-label);
++}
++
++.primary:hover:not(:disabled) {
++  background: var(--dl-button-hover);
++}
++
++.secondary {
++  height: 40px;
++  border-color: var(--dl-border);
++  background: transparent;
++  color: var(--dl-label-secondary);
++  font-weight: 400;
++}
++
++.secondary:hover:not(:disabled) {
++  border-color: var(--dl-label-caption);
++  color: var(--dl-label);
++}
++
++.footnote {
++  margin: 24px 0 0;
++  padding-top: 14px;
++  border-top: 1px solid var(--dl-border);
++  color: var(--dl-label-caption);
++  font-family: var(--dl-font);
++  font-size: 11.5px;
++  line-height: 18px;
++}
++
++/* The note sits at the bottom; the form owns the vertical rhythm above it. */
++.footnote {
++  margin-top: auto;
++}
++
++@media (prefers-reduced-motion: reduce) {
++  * {
++    transition: none;
++  }
++}
+diff --git a/apps/desktop/renderer/daniel-login.html b/apps/desktop/renderer/daniel-login.html
+new file mode 100644
+index 00000000..25bbedaa
+--- /dev/null
++++ b/apps/desktop/renderer/daniel-login.html
+@@ -0,0 +1,37 @@
++<!doctype html>
++<html lang="en">
++  <head>
++    <meta charset="UTF-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1.0">
++    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
++    <title>Daniel Bot</title>
++    <link rel="stylesheet" href="../lib/welcome/brand-font.css">
++    <link rel="stylesheet" href="daniel-login.css">
++  </head>
++  <body>
++    <script src="shell-theme.js"></script>
++    <div class="titlebar"></div>
++    <main class="signin">
++      <p class="wordmark">Daniel</p>
++      <h1 data-copy="title">Sign in to Daniel</h1>
++      <p class="subtitle" data-copy="subtitle"></p>
++      <form id="form" novalidate>
++        <label class="field">
++          <span class="label" data-copy="email"></span>
++          <input id="email" type="email" autocomplete="username" spellcheck="false"
++                 data-placeholder="emailPlaceholder" autofocus>
++        </label>
++        <label class="field">
++          <span class="label" data-copy="password"></span>
++          <input id="password" type="password" autocomplete="current-password"
++                 data-placeholder="passwordPlaceholder">
++        </label>
++        <p id="error" class="error" role="alert" hidden></p>
++        <button id="submit" class="primary" type="submit" data-copy="signIn">Sign in</button>
++        <button id="retry" class="secondary" type="button" data-copy="retryStored" hidden></button>
++      </form>
++      <p class="footnote" data-copy="footnote"></p>
++    </main>
++    <script src="daniel-login.js"></script>
++  </body>
++</html>
+diff --git a/apps/desktop/renderer/daniel-login.js b/apps/desktop/renderer/daniel-login.js
+new file mode 100644
+index 00000000..1228047e
+--- /dev/null
++++ b/apps/desktop/renderer/daniel-login.js
+@@ -0,0 +1,145 @@
++'use strict'
++
++/**
++ * Daniel sign-in page.
++ *
++ * Copy, validation text, and every operation come from the preload bridge, so this
++ * document holds no account logic and never keeps the password after a submit.
++ * The password field is cleared as soon as an attempt settles, whichever way it
++ * went, and again on page hide.
++ */
++
++/** @type {import('./daniel-login-api').DanielLoginApi | undefined} */
++const api = window.danielLogin
++
++const form = document.getElementById('form')
++const emailEl = document.getElementById('email')
++const passwordEl = document.getElementById('password')
++const submitEl = document.getElementById('submit')
++const retryEl = document.getElementById('retry')
++const errorEl = document.getElementById('error')
++
++let busy = false
++
++/** @param {string} key @returns {string} */
++function text(key) {
++  const copy = api && api.copy
++  return copy && typeof copy[key] === 'string' ? copy[key] : ''
++}
++
++function applyCopy() {
++  if (!api) return
++  document.documentElement.lang = api.copy.lang
++  for (const node of document.querySelectorAll('[data-copy]')) {
++    const value = text(node.dataset.copy)
++    if (value !== '') node.textContent = value
++  }
++  for (const node of document.querySelectorAll('[data-placeholder]')) {
++    const value = text(node.dataset.placeholder)
++    if (value !== '') node.setAttribute('placeholder', value)
++  }
++  if (api.unverified) {
++    showError(api.copy.unverified)
++    retryEl.hidden = false
++  }
++}
++
++/** @param {string} message */
++function showError(message) {
++  errorEl.textContent = message
++  errorEl.hidden = false
++}
++
++function clearError() {
++  errorEl.textContent = ''
++  errorEl.hidden = true
++}
++
++/** @param {boolean} next */
++function setBusy(next) {
++  busy = next
++  submitEl.disabled = next
++  emailEl.disabled = next
++  passwordEl.disabled = next
++  retryEl.disabled = next
++  submitEl.textContent = text(next ? 'signingIn' : 'signIn')
++  if (next) clearError()
++}
++
++/**
++ * Turn one attempt's result into on-screen state.
++ * A transport fault always shows the network copy, never the credential copy.
++ * @param {import('./daniel-login-api').DanielLoginSubmitResult} result
++ * @returns {boolean} whether the window will close on its own
++ */
++function handle(result) {
++  if (result && result.ok === true) {
++    clearError()
++    submitEl.textContent = text('entering')
++    // The main process closes this window once the session file is stored.
++    return true
++  }
++  const failure = result && result.failure
++  const serverMessage = result && typeof result.message === 'string' ? result.message : ''
++  if (failure === 'network') showError(text('networkError'))
++  else if (failure === 'invalid') {
++    // The stored session is gone, so the retry entry has nothing left to verify.
++    showError(serverMessage || text('expired'))
++    retryEl.hidden = true
++  } else showError(serverMessage || text('serverError'))
++  setBusy(false)
++  return false
++}
++
++form.addEventListener('submit', async (event) => {
++  event.preventDefault()
++  if (busy) return
++  if (!api) {
++    showError('Page is not connected to the application process.')
++    return
++  }
++  const email = emailEl.value.trim()
++  const password = passwordEl.value
++  if (email === '' || password === '') {
++    showError(api.copy.emptyFields)
++    return
++  }
++
++  setBusy(true)
++  let result
++  try {
++    result = await api.submit(email, password)
++  } catch (error) {
++    result = { ok: false, failure: 'server', message: error && error.message ? String(error.message) : '' }
++  }
++  // The password is spent: drop it whether the attempt succeeded or not.
++  passwordEl.value = ''
++  handle(result)
++})
++
++retryEl.addEventListener('click', async () => {
++  if (busy || !api) return
++  setBusy(true)
++  let result
++  try {
++    result = await api.retryStored()
++  } catch (error) {
++    result = { ok: false, failure: 'server', message: error && error.message ? String(error.message) : '' }
++  }
++  handle(result)
++})
++
++if (api) {
++  api.onSucceeded(() => {
++    clearError()
++    setBusy(true)
++    submitEl.textContent = text('entering')
++  })
++}
++
++emailEl.addEventListener('input', clearError)
++passwordEl.addEventListener('input', clearError)
++window.addEventListener('pagehide', () => { passwordEl.value = '' })
++
++applyCopy()
++emailEl.focus()
+diff --git a/apps/desktop/scripts/electron-builder-config.mjs b/apps/desktop/scripts/electron-builder-config.mjs
+index 80ebcd97..cdc5e73c 100644
+--- a/apps/desktop/scripts/electron-builder-config.mjs
++++ b/apps/desktop/scripts/electron-builder-config.mjs
+@@ -162,6 +162,7 @@ export function createElectronBuilderConfig(
+       'lib/welcome/**/*',
+       'lib/preload-app.cjs',
+       'lib/preload-mandatory.cjs',
++      'lib/preload-daniel-login.cjs',
+       'lib/preload-platform-account.cjs',
+       'lib/preload-update-dialog.cjs',
+       'lib/preload-welcome.cjs',
+diff --git a/apps/desktop/src/daniel-login-api.ts b/apps/desktop/src/daniel-login-api.ts
+new file mode 100644
+index 00000000..87352dfd
+--- /dev/null
++++ b/apps/desktop/src/daniel-login-api.ts
+@@ -0,0 +1,116 @@
++/**
++ * Renderer contract of the native Daniel sign-in window: channel names, the copy
++ * dictionary, and the shape of every operation the page may call.
++ *
++ * The page itself is a plain local document, so this module is the one place that
++ * both the sandboxed preload and the main process agree on.
++ */
++
++/** Private native sign-in channels, installed only while its window exists. */
++export const DANIEL_LOGIN_IPC = {
++  submit: 'dsh-daniel-login:submit',
++  retryStored: 'dsh-daniel-login:retry-stored',
++  cancel: 'dsh-daniel-login:cancel',
++  /** Main -> page: the session file is written and the workspace is about to open. */
++  succeeded: 'dsh-daniel-login:succeeded',
++} as const
++
++/**
++ * Why a sign-in attempt failed. A transport fault is reported as `network` so a
++ * missing connection never reads as a wrong password.
++ */
++export type DanielLoginFailure = 'credential' | 'network' | 'server' | 'mismatch' | 'invalid'
++
++/** Result of one attempt; `message` is already user-facing copy. */
++export type DanielLoginSubmitResult =
++  | { readonly ok: true }
++  | { readonly ok: false; readonly failure: DanielLoginFailure; readonly message: string }
++
++/** Localized copy the page renders through `data-copy` attributes. */
++export interface DanielLoginCopy {
++  readonly lang: string
++  readonly title: string
++  readonly subtitle: string
++  readonly email: string
++  readonly password: string
++  readonly emailPlaceholder: string
++  readonly passwordPlaceholder: string
++  readonly signIn: string
++  readonly signingIn: string
++  readonly footnote: string
++  readonly emptyFields: string
++  readonly bridgeMissing: string
++  /** Transport fault: never presented as a rejected password. */
++  readonly networkError: string
++  /** A server fault with no message of its own. */
++  readonly serverError: string
++  /** The saved sign-in is no longer accepted. */
++  readonly expired: string
++  /** A stored session exists, but the server could not be reached to verify it. */
++  readonly unverified: string
++  readonly retryStored: string
++  readonly entering: string
++}
++
++const zh: DanielLoginCopy = {
++  lang: 'zh-CN',
++  title: '登录 Daniel',
++  subtitle: '使用你的 Daniel 账号。登录成功后才会进入工作区。',
++  email: '邮箱',
++  password: '密码',
++  emailPlaceholder: 'you@example.com',
++  passwordPlaceholder: '••••••••',
++  signIn: '登录',
++  signingIn: '正在登录…',
++  footnote: '密码只用于本次换取会话：不写入磁盘、不进日志、不传给任何子进程。本机只保存 Daniel 会话凭据（文件权限 0600）。',
++  emptyFields: '请输入邮箱和密码。',
++  bridgeMissing: '页面没有连上应用主进程，请重启 Daniel Bot。',
++  networkError: '连不上 Daniel（网络不可达或连接超时），请检查网络后重试。',
++  serverError: '登录失败：服务端返回了错误，请稍后重试。',
++  expired: '本机保存的登录已失效，请用账户密码重新登录。',
++  unverified: '连不上 Daniel（网络不可达），本机已保存的登录状态暂无法校验。请重试，或输入密码重新登录。',
++  retryStored: '重新校验已保存的登录',
++  entering: '登录成功，正在进入工作区…',
++}
++
++const en: DanielLoginCopy = {
++  lang: 'en',
++  title: 'Sign in to Daniel',
++  subtitle: 'Use your Daniel account. The workspace opens only after a successful sign-in.',
++  email: 'Email',
++  password: 'Password',
++  emailPlaceholder: 'you@example.com',
++  passwordPlaceholder: '••••••••',
++  signIn: 'Sign in',
++  signingIn: 'Signing in…',
++  footnote: 'The password is used once, to exchange for a session: it is never written to disk, logged, or passed to a child process. Only the Daniel session credential is stored locally (file mode 0600).',
++  emptyFields: 'Enter your email and password.',
++  bridgeMissing: 'This page is not connected to the application process. Restart Daniel Bot.',
++  networkError: 'Daniel is unreachable (no network or the connection timed out). Check your connection and try again.',
++  serverError: 'Sign-in failed: the server returned an error. Try again later.',
++  expired: 'The saved sign-in is no longer accepted. Sign in with your password.',
++  unverified: 'Daniel is unreachable (network unavailable), so the saved sign-in could not be verified. Retry, or sign in with your password.',
++  retryStored: 'Verify the saved sign-in',
++  entering: 'Signed in. Opening the workspace…',
++}
++
++/**
++ * @param localeId - Shell locale id, such as `zh-CN` or `en`.
++ * @returns copy for the closest supported language.
++ */
++export function danielLoginCopy(localeId: string): DanielLoginCopy {
++  return localeId.toLowerCase().startsWith('zh') ? zh : en
++}
++
++/** Operations the sign-in page may call; the password never leaves `submit`. */
++export interface DanielLoginApi {
++  readonly copy: DanielLoginCopy
++  /** True when a session file exists but its verification could not reach the server. */
++  readonly unverified: boolean
++  submit(email: string, password: string): Promise<DanielLoginSubmitResult>
++  /** Verify the session file again instead of asking for a password. */
++  retryStored(): Promise<DanielLoginSubmitResult>
++  cancel(): Promise<void>
++  /** @param listener - called once the session is stored. @returns subscription disposer. */
++  onSucceeded(listener: () => void): () => void
++}
+diff --git a/apps/desktop/src/daniel-login.ts b/apps/desktop/src/daniel-login.ts
+new file mode 100644
+index 00000000..55be483e
+--- /dev/null
++++ b/apps/desktop/src/daniel-login.ts
+@@ -0,0 +1,526 @@
++/**
++ * Daniel account sign-in for the native shell, and the session file it guards.
++ *
++ * This runs before the Harness Host exists: the sign-in window is a plain local
++ * document from `renderer/`, and the account protocol is the one the Daniel CLI
++ * already uses (`daniel-bot/app/src/lib/auth.js`):
++ *
++ *   POST /api/trpc/auth.login   {"json":{"email","password"}}
++ *   GET  /api/trpc/auth.me      {"json":null}
++ *
++ * 🔴 The server answers HTTP 500 for a wrong password, so the reason must be read
++ *    from the tRPC error envelope; a status code alone reports "wrong password" as
++ *    "server failure". A transport fault is reported as a network problem instead.
++ *
++ * Secrets: the password lives only in this module's call stack for the duration of
++ * one request. The session cookie is written to `$DANIEL_HOME/session/session.json`
++ * with mode 0600 inside a 0700 directory (the layout the Daniel CLI shares), and
++ * neither the password nor the cookie value is ever logged.
++ */
++
++import { chmodSync, mkdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
++import { dirname, join } from 'node:path'
++import { fileURLToPath } from 'node:url'
++import { app, BrowserWindow, ipcMain, net, type BrowserWindowConstructorOptions, type IpcMainInvokeEvent } from 'electron'
++import { DANIEL_LOGIN_IPC, type DanielLoginFailure, type DanielLoginSubmitResult } from './daniel-login-api.ts'
++import { resolveDanielHome } from './daniel-home.ts'
++
++/** Account service; a local Daniel deployment overrides it through `DANIEL_BASE_URL`. */
++const BASE = (process.env.DANIEL_BASE_URL?.trim() || 'https://daniel-agent.com').replace(/\/+$/, '')
++
++/** Bounds of one credential exchange and of a silent session check on launch. */
++const LOGIN_TIMEOUT_MS = 30_000
++const VERIFY_TIMEOUT_MS = 8_000
++
++/** Session file layout shared with the Daniel CLI: owner-only file inside an owner-only directory. */
++const SESSION_COOKIE_PREFIX = 'app_session_id='
++const SESSION_DIRECTORY_MODE = 0o700
++const SESSION_FILE_MODE = 0o600
++
++/** Test/automation escape hatch; unset in every shipped launch. */
++const SKIP_LOGIN_ENV = 'DANIEL_BOT_SKIP_LOGIN'
++
++/** One stored session; `ts` is epoch seconds, matching the CLI's own file. */
++export interface DanielSession {
++  readonly cookie: string
++  readonly ts: number
++}
++
++/** Startup gate result; `email` is present when the server reported the account. */
++export interface DanielSessionGate {
++  readonly email?: string
++}
++
++/** Options for the sign-in window. */
++export interface DanielLoginOptions {
++  /** Shell locale id (`zh-CN`, `en`, …) selecting the window copy. */
++  readonly localeId?: string
++}
++
++/** Why a credential exchange failed; carried to the page so a network fault reads as one. */
++export class DanielAuthError extends Error {
++  readonly failure: DanielLoginFailure
++  readonly status: number
++
++  constructor(message: string, failure: DanielLoginFailure, status = 0) {
++    super(message)
++    this.name = 'DanielAuthError'
++    this.failure = failure
++    this.status = status
++  }
++}
++
++interface HttpResponse {
++  readonly status: number
++  readonly headers: Record<string, string | string[] | undefined>
++  readonly body: string
++}
++
++interface RequestOptions {
++  readonly method: 'GET' | 'POST'
++  readonly url: string
++  readonly headers?: Record<string, string>
++  readonly body?: string
++  readonly timeoutMs: number
++}
++
++type SessionVerification = 'valid' | 'invalid' | 'unreachable'
++
++function record(value: unknown): Record<string, unknown> | undefined {
++  return typeof value === 'object' && value !== null && !Array.isArray(value) ? value as Record<string, unknown> : undefined
++}
++
++/** @returns the absolute session file path under `$DANIEL_HOME`. */
++export function danielSessionFile(): string {
++  return join(resolveDanielHome(), 'session', 'session.json')
++}
++
++/**
++ * Read the stored session without trusting its contents.
++ * @param file - Session path; defaults to {@link danielSessionFile}.
++ * @returns the session, or undefined when absent, unreadable, or not a Daniel cookie.
++ */
++export function readDanielSession(file: string = danielSessionFile()): DanielSession | undefined {
++  try {
++    const data = record(JSON.parse(readFileSync(file, 'utf8')))
++    const cookie = data?.['cookie']
++    if (typeof cookie !== 'string' || !cookie.startsWith(SESSION_COOKIE_PREFIX)) return undefined
++    const ts = data?.['ts']
++    return { cookie, ts: typeof ts === 'number' && Number.isFinite(ts) ? ts : 0 }
++  } catch {
++    return undefined
++  }
++}
++
++/**
++ * Store a session atomically and verify what landed on disk.
++ * The file is written through a temporary sibling in the same directory and then
++ * renamed, so an interrupted write cannot leave a truncated credential behind.
++ * @param cookie - `app_session_id=<value>` exactly as the server set it.
++ * @param file - Session path; defaults to {@link danielSessionFile}.
++ */
++export function writeDanielSession(cookie: string, file: string = danielSessionFile()): void {
++  const directory = dirname(file)
++  mkdirSync(directory, { recursive: true, mode: SESSION_DIRECTORY_MODE })
++  try { chmodSync(directory, SESSION_DIRECTORY_MODE) } catch { /* an existing directory may already be tightened */ }
++
++  const temporary = `${file}.tmp-${String(process.pid)}`
++  writeFileSync(temporary, `${JSON.stringify({ cookie, ts: Date.now() / 1000 }, null, 1)}\n`, { mode: SESSION_FILE_MODE })
++  chmodSync(temporary, SESSION_FILE_MODE)
++  renameSync(temporary, file)
++  chmodSync(file, SESSION_FILE_MODE)
++
++  // Read back: a write this process cannot read is not a stored session.
++  const stored = readDanielSession(file)
++  if (stored === undefined || stored.cookie !== cookie) throw new Error('daniel login: the session file did not read back')
++  // Windows keeps ACLs rather than POSIX mode bits, so the mode is only meaningful elsewhere.
++  if (process.platform !== 'win32') {
++    const mode = statSync(file).mode & 0o777
++    if (mode !== SESSION_FILE_MODE) {
++      throw new Error(`daniel login: the session file kept mode ${mode.toString(8)}, expected 600`)
++    }
++  }
++}
++
++/** Remove a session the server rejected so the next launch starts from a known state. */
++export function clearDanielSession(file: string = danielSessionFile()): void {
++  try {
++    unlinkSync(file)
++  } catch (error) {
++    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
++  }
++}
++
++/**
++ * One HTTP exchange over Electron's network stack (requests go through the same
++ * proxy and TLS configuration as the rest of the application).
++ * @param options - Method, absolute URL, optional headers and body, and a hard timeout.
++ * @returns the status, headers, and decoded body.
++ */
++function request(options: RequestOptions): Promise<HttpResponse> {
++  return new Promise<HttpResponse>((resolve, reject) => {
++    let settled = false
++    let req: ReturnType<typeof net.request> | undefined
++    let timer: ReturnType<typeof setTimeout> | undefined
++    const finish = (settle: () => void): void => {
++      if (settled) return
++      settled = true
++      clearTimeout(timer)
++      settle()
++    }
++    timer = setTimeout(() => {
++      try { req?.abort() } catch { /* the request may already be closed */ }
++      const error = new Error('request timed out') as Error & { code: string }
++      error.code = 'ETIMEDOUT'
++      finish(() => { reject(error) })
++    }, options.timeoutMs)
++
++    try {
++      req = net.request({ method: options.method, url: options.url, redirect: 'manual' })
++    } catch (error) {
++      finish(() => { reject(error as Error) })
++      return
++    }
++    for (const [name, value] of Object.entries(options.headers ?? {})) {
++      try { req.setHeader(name, value) } catch { /* Electron refuses a few header names; they are optional */ }
++    }
++    req.on('response', (response) => {
++      const chunks: Buffer[] = []
++      response.on('data', (chunk: Buffer) => { chunks.push(Buffer.from(chunk)) })
++      response.on('error', (error: Error) => { finish(() => { reject(error) }) })
++      response.on('end', () => {
++        finish(() => {
++          resolve({
++            status: response.statusCode,
++            headers: response.headers as Record<string, string | string[] | undefined>,
++            body: Buffer.concat(chunks).toString('utf8'),
++          })
++        })
++      })
++    })
++    req.on('error', (error: Error) => { finish(() => { reject(error) }) })
++    if (options.body !== undefined) req.write(options.body)
++    req.end()
++  })
++}
++
++/** @returns the `app_session_id` cookie from a login response, or an empty string. */
++function sessionCookie(headers: HttpResponse['headers']): string {
++  const raw = headers['set-cookie']
++  const lines = raw === undefined ? [] : Array.isArray(raw) ? raw : [raw]
++  for (const line of lines) {
++    for (const part of String(line).split(';')) {
++      const token = part.trim()
++      if (token.startsWith(SESSION_COOKIE_PREFIX) && token.length > SESSION_COOKIE_PREFIX.length) return token
++    }
++  }
++  return ''
++}
++
++/** @returns the server's own message from a tRPC error envelope (batch or single). */
++function trpcMessage(body: string): string {
++  try {
++    let data: unknown = JSON.parse(body)
++    if (Array.isArray(data)) data = data[0]
++    const error = record(record(data)?.['error'])
++    const detail = record(error?.['json']) ?? error
++    const message = detail?.['message']
++    return typeof message === 'string' ? message.trim() : ''
++  } catch {
++    return ''
++  }
++}
++
++/** @returns the tRPC error code name, such as `UNAUTHORIZED`, or an empty string. */
++function trpcErrorCode(body: string): string {
++  try {
++    let data: unknown = JSON.parse(body)
++    if (Array.isArray(data)) data = data[0]
++    const detail = record(record(record(data)?.['error'])?.['json'])
++    const code = record(detail?.['data'])?.['code']
++    if (typeof code === 'string') return code
++    const numeric = detail?.['code']
++    return typeof numeric === 'number' ? String(numeric) : ''
++  } catch {
++    return ''
++  }
++}
++
++/** @returns the payload of a successful tRPC result, unwrapping `data.json` when present. */
++function trpcResult(body: string): Record<string, unknown> | undefined {
++  try {
++    let data: unknown = JSON.parse(body)
++    if (Array.isArray(data)) data = data[0]
++    const payload = record(record(record(data)?.['result'])?.['data'])
++    return record(payload?.['json']) ?? payload
++  } catch {
++    return undefined
++  }
++}
++
++/** @returns true when a server message describes rejected credentials. */
++function isCredentialMessage(message: string): boolean {
++  return /invalid email or password|incorrect password|invalid credentials|wrong password|邮箱或密码|密码不正确/i.test(message)
++}
++
++/**
++ * Exchange an email and password for a Daniel session.
++ *
++ * The account is read back after the cookie is issued so a session that belongs to
++ * a different account can never be stored under this one.
++ * @param credentials - Email as typed and the password for this attempt only.
++ * @returns the issued cookie and the confirmed account email.
++ * @throws {DanielAuthError} classified as credential, network, server, or mismatch.
++ */
++async function loginDanielAccount(credentials: { readonly email: string; readonly password: string }): Promise<{ cookie: string; email: string }> {
++  const payload = JSON.stringify({ json: { email: credentials.email, password: credentials.password } })
++  let response: HttpResponse
++  try {
++    response = await request({
++      method: 'POST',
++      url: `${BASE}/api/trpc/auth.login`,
++      headers: { 'Content-Type': 'application/json', Origin: BASE, Referer: `${BASE}/auth` },
++      body: payload,
++      timeoutMs: LOGIN_TIMEOUT_MS,
++    })
++  } catch (error) {
++    const timedOut = (error as NodeJS.ErrnoException).code === 'ETIMEDOUT'
++    // The page replaces this with localized copy; the kind is what must be right.
++    throw new DanielAuthError(
++      timedOut ? '连接 Daniel 超时' : '连不上 Daniel（网络不可达）',
++      'network',
++    )
++  }
++
++  const accepted = response.status >= 200 && response.status < 300
++  const cookie = accepted ? sessionCookie(response.headers) : ''
++  if (!accepted || cookie === '') {
++    const message = trpcMessage(response.body)
++    if (message !== '') throw new DanielAuthError(message, isCredentialMessage(message) ? 'credential' : 'server', response.status)
++    if (accepted) throw new DanielAuthError('the server returned no session', 'server', response.status)
++    throw new DanielAuthError(`the server returned HTTP ${String(response.status)}`, 'server', response.status)
++  }
++
++  const input = encodeURIComponent(JSON.stringify({ 0: { json: null } }))
++  let account: Record<string, unknown> | undefined
++  try {
++    const check = await request({
++      method: 'GET',
++      url: `${BASE}/api/trpc/auth.me?batch=1&input=${input}`,
++      headers: { Cookie: cookie, Origin: BASE, Referer: `${BASE}/` },
++      timeoutMs: VERIFY_TIMEOUT_MS,
++    })
++    if (check.status < 200 || check.status >= 300) {
++      throw new DanielAuthError(`the account could not be read back (HTTP ${String(check.status)})`, 'server', check.status)
++    }
++    account = trpcResult(check.body)
++  } catch (error) {
++    if (error instanceof DanielAuthError) throw error
++    throw new DanielAuthError('the account could not be read back', 'network')
++  }
++
++  const email = account?.['email']
++  if (typeof email !== 'string' || email === '') throw new DanielAuthError('the server reported no account', 'mismatch')
++  if (email.trim().toLowerCase() !== credentials.email.trim().toLowerCase()) {
++    throw new DanielAuthError('the session belongs to a different account', 'mismatch')
++  }
++  return { cookie, email: email.trim() }
++}
++
++/**
++ * Ask the server whether a stored session is still good.
++ * @param cookie - Stored `app_session_id` cookie.
++ * @returns `valid`, `invalid` when the server rejected it, or `unreachable` when it could not answer.
++ */
++async function verifyDanielSession(cookie: string): Promise<SessionVerification> {
++  const input = encodeURIComponent(JSON.stringify({ 0: { json: null } }))
++  let response: HttpResponse
++  try {
++    response = await request({
++      method: 'GET',
++      url: `${BASE}/api/trpc/auth.me?batch=1&input=${input}`,
++      headers: { Cookie: cookie, Origin: BASE, Referer: `${BASE}/` },
++      timeoutMs: VERIFY_TIMEOUT_MS,
++    })
++  } catch {
++    return 'unreachable'
++  }
++  if (response.status === 401 || response.status === 403) return 'invalid'
++  if (trpcErrorCode(response.body) === 'UNAUTHORIZED') return 'invalid'
++  if (response.status < 200 || response.status >= 300) return 'unreachable'
++  const account = trpcResult(response.body)
++  const email = account?.['email']
++  return typeof email === 'string' && email !== '' ? 'valid' : 'invalid'
++}
++
++/**
++ * Native sign-in window options; the shell's own material and palette, no Host.
++ * @param localeId - Shell locale id selecting the copy.
++ * @param unverified - Whether a stored session exists that the server could not confirm.
++ * @returns sandboxed window options with a locale-only preload.
++ */
++export function danielLoginWindowOptions(localeId: string, unverified: boolean): BrowserWindowConstructorOptions {
++  return {
++    width: 440,
++    height: 560,
++    useContentSize: true,
++    center: true,
++    resizable: false,
++    maximizable: false,
++    fullscreenable: false,
++    show: false,
++    autoHideMenuBar: true,
++    title: 'Daniel Bot',
++    backgroundColor: process.platform === 'darwin' ? '#00000000' : '#FFFFFF',
++    ...(process.platform === 'darwin' ? {
++      titleBarStyle: 'hidden',
++      trafficLightPosition: { x: 18, y: 18 },
++      vibrancy: 'menu',
++      visualEffectState: 'active',
++    } as const : {}),
++    ...(process.platform === 'win32' ? {
++      titleBarStyle: 'hidden',
++      titleBarOverlay: { color: '#00000000', symbolColor: '#0F1115', height: 42 },
++      backgroundMaterial: 'acrylic',
++    } as const : {}),
++    webPreferences: {
++      preload: fileURLToPath(new URL('./preload-daniel-login.cjs', import.meta.url)),
++      additionalArguments: [
++        `--daniel-login-locale=${localeId}`,
++        `--daniel-login-unverified=${unverified ? '1' : '0'}`,
++      ],
++      nodeIntegration: false,
++      contextIsolation: true,
++      sandbox: true,
++      webSecurity: true,
++    },
++  }
++}
++
++let disposeActiveHandlers: (() => void) | undefined
++
++/**
++ * Open the process's sole sign-in window and wait for it to settle.
++ * @param options - Locale and whether a stored session is awaiting verification.
++ * @returns the gate result, or undefined when the window was closed without a session.
++ */
++export async function openDanielLoginWindow(options: DanielLoginOptions & { readonly unverified: boolean }): Promise<DanielSessionGate | undefined> {
++  const window = new BrowserWindow(danielLoginWindowOptions(options.localeId ?? app.getLocale(), options.unverified))
++  disposeActiveHandlers?.()
++  let active = true
++  let gate: DanielSessionGate | undefined
++
++  const disposeHandlers = (): void => {
++    if (!active) return
++    active = false
++    for (const channel of [DANIEL_LOGIN_IPC.submit, DANIEL_LOGIN_IPC.retryStored, DANIEL_LOGIN_IPC.cancel]) {
++      ipcMain.removeHandler(channel)
++    }
++    disposeActiveHandlers = undefined
++  }
++  disposeActiveHandlers = disposeHandlers
++
++  const assertSender = (event: IpcMainInvokeEvent): void => {
++    if (!active || window.isDestroyed() || event.sender !== window.webContents
++      || event.senderFrame !== window.webContents.mainFrame) {
++      throw new Error('daniel login: rejected action from an unowned frame')
++    }
++  }
++
++  /** Publish the stored session, let the page render its final status, then close. */
++  const succeed = (result: DanielSessionGate): DanielLoginSubmitResult => {
++    gate = result
++    if (!window.isDestroyed()) window.webContents.send(DANIEL_LOGIN_IPC.succeeded)
++    setTimeout(() => {
++      if (!window.isDestroyed()) window.close()
++    }, 400)
++    return { ok: true }
++  }
++
++  const closed = new Promise<void>((resolve) => { window.once('closed', () => { resolve() }) })
++
++  ipcMain.handle(DANIEL_LOGIN_IPC.submit, async (event, email: unknown, password: unknown): Promise<DanielLoginSubmitResult> => {
++    assertSender(event)
++    if (typeof email !== 'string' || typeof password !== 'string' || email.trim() === '' || password === '') {
++      return { ok: false, failure: 'credential', message: '' }
++    }
++    try {
++      const account = await loginDanielAccount({ email: email.trim(), password })
++      // The window may have been closed while the request was in flight.
++      if (!active) return { ok: false, failure: 'invalid', message: '' }
++      writeDanielSession(account.cookie)
++      return succeed({ email: account.email })
++    } catch (error) {
++      if (error instanceof DanielAuthError) return { ok: false, failure: error.failure, message: error.message }
++      console.error('daniel login: unexpected failure', error instanceof Error ? error.message : String(error))
++      return { ok: false, failure: 'server', message: '' }
++    }
++  })
++
++  ipcMain.handle(DANIEL_LOGIN_IPC.retryStored, async (event): Promise<DanielLoginSubmitResult> => {
++    assertSender(event)
++    const stored = readDanielSession()
++    if (stored === undefined) return { ok: false, failure: 'invalid', message: '' }
++    const verification = await verifyDanielSession(stored.cookie)
++    if (!active) return { ok: false, failure: 'invalid', message: '' }
++    if (verification === 'valid') return succeed({})
++    if (verification === 'invalid') clearDanielSession()
++    return { ok: false, failure: verification === 'invalid' ? 'invalid' : 'network', message: '' }
++  })
++
++  ipcMain.handle(DANIEL_LOGIN_IPC.cancel, async (event) => {
++    assertSender(event)
++    window.close()
++  })
++
++  window.once('closed', disposeHandlers)
++  window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }))
++  window.webContents.on('will-navigate', (event) => { event.preventDefault() })
++  try {
++    await window.loadFile(join(app.getAppPath(), 'renderer', 'daniel-login.html'))
++  } catch (error) {
++    disposeHandlers()
++    if (!window.isDestroyed()) window.destroy()
++    throw error
++  }
++  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- the window can be destroyed while loading.
++  if (active && !window.isDestroyed()) {
++    // A menu bar belongs to the window only on Windows and Linux; macOS keeps the app menu.
++    if (process.platform !== 'darwin') window.removeMenu()
++    window.show()
++  }
++  await closed
++  return gate
++}
++
++/**
++ * Startup gate: continue only with a session the server accepts.
++ *
++ * An absent session, or one the server rejects, opens the sign-in window. A stored
++ * session that cannot be verified because the server is unreachable is *not*
++ * treated as invalid: the window explains the network condition and offers to
++ * verify again without asking for a password.
++ * @param options - Locale for the window copy.
++ * @returns the gate result, or undefined when the operator closed the window.
++ */
++export async function requireDanielSession(options: DanielLoginOptions = {}): Promise<DanielSessionGate | undefined> {
++  if (process.env[SKIP_LOGIN_ENV]?.trim() === '1') {
++    console.info('daniel login: skipped by DANIEL_BOT_SKIP_LOGIN=1')
++    return {}
++  }
++
++  const stored = readDanielSession()
++  let unverified = false
++  if (stored !== undefined) {
++    const verification = await verifyDanielSession(stored.cookie)
++    if (verification === 'valid') return {}
++    if (verification === 'invalid') {
++      clearDanielSession()
++      console.info('daniel login: the stored session was rejected; asking for a password')
++    } else {
++      unverified = true
++      console.warn('daniel login: the stored session could not be verified (network unreachable)')
++    }
++  }
++  return await openDanielLoginWindow({ ...options, unverified })
++}
+diff --git a/apps/desktop/src/main.ts b/apps/desktop/src/main.ts
+index 84b9929e..d001be09 100644
+--- a/apps/desktop/src/main.ts
++++ b/apps/desktop/src/main.ts
+@@ -26,6 +26,7 @@ import {
+ import { resolveDesktopPaths } from './paths.ts'
+ import { DesktopProjectManager } from './project-manager.ts'
+ import { installDanielHomes, resolveDanielHome } from './daniel-home.ts'
++import { requireDanielSession } from './daniel-login.ts'
+ import { DesktopHostFatalError, DesktopHostProcess, DesktopHostUncleanExitError } from './host-process.ts'
+ import { DesktopPlatformView, PLATFORM_IPC, platformBounds } from './platform-view.ts'
+ import { installDesktopFileDrag } from './file-drag.ts'
+@@ -37,6 +38,7 @@ import { readDeviceInfo } from './device-info.ts'
+ import { desktopUpdateReadyConfirmation, formatDesktopMessage, resolveDesktopLocale, resolveDesktopStartupLocale } from './locale.ts'
+ import { claimDesktopSingleInstance } from './single-instance.ts'
+ import { desktopUpdateChannel } from './update-channel.ts'
++import { desktopUpdatesAllowed } from './update-gate.ts'
+ import { DesktopUpdateCoordinator } from './update-coordinator.ts'
+ import { prepareDesktopUpdateWindow } from './update-window.ts'
+ import { DesktopCommandManager } from './command-management.ts'
+@@ -382,6 +384,17 @@ function createWindow(preload: string, show = false, primary = false): BrowserWi
+ async function main(): Promise<void> {
+   // Own both data roots before anything resolves ~/.dsh or copies the environment to the Host.
+   const danielHomes = installDanielHomes()
++  // Release traffic is off for this distribution unless an operator opts in (see update-gate.ts).
++  const updatesAllowed = desktopUpdatesAllowed()
++  // Third group: the Daniel account gate runs before any workspace window or Host
++  // exists, so a declined sign-in cannot fall through into the application.
++  // (Named `account`, not `session`: `session` is Electron's default-session module.)
++  const account = await requireDanielSession({ localeId: windowsLanguage ?? app.getLocale() })
++  if (account === undefined) {
++    // Closing the sign-in window declines to run: no window, Host, or update state follows.
++    app.quit()
++    return
++  }
+   const desktopSettings = readDesktopSettings(app.getPath('userData'))
+   void pruneCrashReports(app.getPath('logs'))
+   const journalDirectory = process.env.DSH_DESKTOP_UPDATE_JOURNAL_DIR
+@@ -918,6 +931,10 @@ async function main(): Promise<void> {
+   let promptOperation: Promise<void> | undefined
+   let policyAuthenticationQueued = false
+   const openUpdatePrompt = (manual = false): Promise<void> => {
++    // Fourth group: the retained check/download/install flow never runs for this
++    // distribution, so the menu entry, the tray route, and the Web status action
++    // all become no-ops instead of reaching a feed.
++    if (!updatesAllowed) return Promise.resolve()
+     if (authenticationOperation !== undefined) {
+       policyAuth?.focus(); updateDialog.focus()
+     }
+@@ -1037,6 +1054,8 @@ async function main(): Promise<void> {
+   }
+ 
+   const automaticCheck = (): void => {
++    // Fourth group: no periodic, focus, or resume check while release traffic is off.
++    if (!updatesAllowed) return
+     if (!quitting) void mandatoryPolicy?.check('foreground-or-resume').catch((error: unknown) => { console.error(error) })
+     if (!quitting) void updateSchedule.check().catch((error: unknown) => { console.error(error) })
+   }
+@@ -1084,8 +1103,11 @@ async function main(): Promise<void> {
+       ? { label: currentDesktopLocale().messages.aboutMenu,
+         click: () => { void showAbout().catch((error: unknown) => { console.error(error) }) } }
+       : { label: currentDesktopLocale().messages.aboutMenu, role: 'about' },
+-    { type: 'separator' },
+-    { label: currentDesktopLocale().messages.checkUpdatesMenu, click: () => { void openUpdatePrompt(true) } },
++    // Fourth group: the entry and its separator are rebuilt away when release traffic is off.
++    ...updatesAllowed ? [
++      { type: 'separator' as const },
++      { label: currentDesktopLocale().messages.checkUpdatesMenu, click: () => { void openUpdatePrompt(true) } },
++    ] : [],
+     ...process.platform === 'darwin' || process.platform === 'win32'
+       ? [{ label: currentDesktopLocale().messages.cliCommandMenu, click: () => { void commandManager.show() } }] : [],
+     { type: 'separator' },
+@@ -1428,7 +1450,10 @@ async function main(): Promise<void> {
+     ? ('dshMandatoryUpdatePolicy' in manifest ? manifest.dshMandatoryUpdatePolicy : undefined)
+     : developmentPolicy === undefined ? undefined : JSON.parse(developmentPolicy) as unknown
+   const policyConfig = resolveDesktopPolicyConfig(policyInput, !app.isPackaged)
+-  if (policyConfig !== undefined) {
++  // Fourth group: the mandatory-update policy polls a remote endpoint, so it belongs
++  // to the same switch as the release feed. Disabled, there is no policy UI and no
++  // policy request; every consumer already treats the policy as absent.
++  if (policyConfig !== undefined && updatesAllowed) {
+     if (policyConfig.authentication === 'feishu-test') {
+       policyAuth = new DesktopPolicyTestAuth(policyConfig.origin, policyConfig.allowedAuthOrigins, locale,
+         () => mandatoryUI?.confirmationWindow ?? currentDialogWindow(),
+diff --git a/apps/desktop/src/preload-daniel-login.ts b/apps/desktop/src/preload-daniel-login.ts
+new file mode 100644
+index 00000000..5f20b010
+--- /dev/null
++++ b/apps/desktop/src/preload-daniel-login.ts
+@@ -0,0 +1,28 @@
++/**
++ * Isolated bridge for the Daniel sign-in window.
++ *
++ * The page never sees the password after the call returns: `submit` hands it to the
++ * main process, which is the only place that talks to the account service.
++ */
++
++import { contextBridge, ipcRenderer } from 'electron'
++import { DANIEL_LOGIN_IPC, danielLoginCopy, type DanielLoginApi, type DanielLoginSubmitResult } from './daniel-login-api.ts'
++
++function argument(prefix: string): string | undefined {
++  return process.argv.find(candidate => candidate.startsWith(prefix))?.slice(prefix.length)
++}
++
++const copy = danielLoginCopy(argument('--daniel-login-locale=') ?? 'en')
++const api: DanielLoginApi = {
++  copy,
++  unverified: argument('--daniel-login-unverified=') === '1',
++  submit: (email, password) => ipcRenderer.invoke(DANIEL_LOGIN_IPC.submit, email, password) as Promise<DanielLoginSubmitResult>,
++  retryStored: () => ipcRenderer.invoke(DANIEL_LOGIN_IPC.retryStored) as Promise<DanielLoginSubmitResult>,
++  cancel: () => ipcRenderer.invoke(DANIEL_LOGIN_IPC.cancel) as Promise<void>,
++  onSucceeded: (listener) => {
++    const receive = (): void => { listener() }
++    ipcRenderer.on(DANIEL_LOGIN_IPC.succeeded, receive)
++    return () => { ipcRenderer.removeListener(DANIEL_LOGIN_IPC.succeeded, receive) }
++  },
++}
++contextBridge.exposeInMainWorld('danielLogin', api)
+diff --git a/apps/desktop/src/update-coordinator.ts b/apps/desktop/src/update-coordinator.ts
+index 3b83cea0..c318ab0e 100644
+--- a/apps/desktop/src/update-coordinator.ts
++++ b/apps/desktop/src/update-coordinator.ts
+@@ -8,8 +8,12 @@ import { gt, valid } from 'semver'
+ import type { DesktopUpdateState } from './ipc.ts'
+ import { DesktopUpdateHttpExecutor } from './update-http-executor.ts'
+ import { DesktopUpdatePreparationError } from './update-error.ts'
++import { desktopUpdatesAllowed } from './update-gate.ts'
+ 
+-const { autoUpdater } = electronUpdater
++/** The official feed transport, resolved only when this build allows release traffic. */
++function releaseFeedUpdater(): AppUpdater | undefined {
++  return desktopUpdatesAllowed() ? electronUpdater.autoUpdater : undefined
++}
+ 
+ /** Owns one updater target until its download and installation settle. */
+ export class DesktopUpdateCoordinator {
+@@ -48,16 +52,30 @@ export class DesktopUpdateCoordinator {
+    * @param channel - Installed package channel; omitted test/local callers retain nightly.
+    * @param downloadResult - Once per completed download attempt, including platform preparation failures.
+    */
++  private readonly updater: AppUpdater | undefined
++  private readonly enabled: () => boolean
++  private readonly currentVersion: () => string
++  private readonly downloadResult: ((success: boolean, reason?: string) => void) | undefined
++  private readonly channel: 'nightly' | 'latest'
++
+   constructor(
+     private readonly publish: (state: DesktopUpdateState) => DesktopUpdateState,
+     private readonly beforeRestart: () => Promise<boolean>,
+-    private readonly updater: AppUpdater = autoUpdater,
+-    private readonly enabled: () => boolean = () => app.isPackaged && existsSync(join(process.resourcesPath, 'app-update.yml')),
+-    private readonly currentVersion: () => string = () => app.getVersion(),
+-    private readonly downloadResult?: (success: boolean, reason?: string) => void,
+-    private readonly channel: 'nightly' | 'latest' = 'nightly',
++    updater: AppUpdater | undefined = releaseFeedUpdater(),
++    enabled: () => boolean = () => app.isPackaged && existsSync(join(process.resourcesPath, 'app-update.yml')),
++    currentVersion: () => string = () => app.getVersion(),
++    downloadResult?: (success: boolean, reason?: string) => void,
++    channel: 'nightly' | 'latest' = 'nightly',
+   ) {
+-    if (updater === autoUpdater) {
++    this.updater = updater
++    this.enabled = enabled
++    this.currentVersion = currentVersion
++    this.downloadResult = downloadResult
++    this.channel = channel
++    // No updater means this distribution keeps release checks off: the feed is never
++    // resolved and no listener is attached to the library's process singleton.
++    if (updater === undefined) return
++    if (updater === electronUpdater.autoUpdater) {
+       // electron-updater omits this internal transport property from its public declarations.
+       // Real-Electron qualification exercises the pinned dependency integration.
+       const transportOwner = updater as AppUpdater & { httpExecutor: DesktopUpdateHttpExecutor }
+@@ -66,15 +84,15 @@ export class DesktopUpdateCoordinator {
+         (authInfo, callback) => { updater.emit('login', authInfo, callback) },
+       )
+     }
+-    this.updater.autoDownload = false
+-    this.updater.autoInstallOnAppQuit = false
+-    this.updater.channel = channel
+-    this.updater.allowPrerelease = channel === 'nightly'
++    updater.autoDownload = false
++    updater.autoInstallOnAppQuit = false
++    updater.channel = channel
++    updater.allowPrerelease = channel === 'nightly'
+     // Selecting a channel can enable downgrade in electron-updater.
+-    this.updater.allowDowngrade = false
+-    this.updater.on('download-progress', this.onProgress)
+-    this.updater.on('update-downloaded', this.onDownloaded)
+-    this.updater.on('error', this.onError)
++    updater.allowDowngrade = false
++    updater.on('download-progress', this.onProgress)
++    updater.on('update-downloaded', this.onDownloaded)
++    updater.on('error', this.onError)
+   }
+ 
+   /** Latest observable state; complete download identity remains main-process-owned. */
+@@ -87,6 +105,7 @@ export class DesktopUpdateCoordinator {
+    */
+   async check(manual = false): Promise<DesktopUpdateState> {
+     this.assertLive()
++    if (this.updater === undefined) return this.current
+     if (this.downloadOperation !== undefined || this.installOperation !== undefined || this.downloaded) return this.current
+     if (!manual && this.current.phase === 'error' && this.current.failedOperation === 'download') return this.current
+     this.checkOperation ??= Promise.resolve().then(() => this.doCheck())
+@@ -102,6 +121,8 @@ export class DesktopUpdateCoordinator {
+    */
+   async download(version: string): Promise<DesktopUpdateState> {
+     this.assertLive()
++    const updater = this.updater
++    if (updater === undefined) return this.current
+     if (this.downloaded || this.installOperation !== undefined) return this.current
+     this.downloadOperation ??= Promise.resolve().then(async () => {
+       await this.checkOperation
+@@ -110,7 +131,7 @@ export class DesktopUpdateCoordinator {
+       if (version !== this.candidate) throw new Error('desktop update: download confirmation is stale')
+       this.setState({ phase: 'downloading', version, percent: 0 })
+       try {
+-        await this.updater.downloadUpdate()
++        await updater.downloadUpdate()
+         if (!this.downloaded) throw new Error('desktop update: platform preparation did not report readiness')
+         this.downloadResult?.(true)
+         return this.setState({ phase: 'ready', version })
+@@ -130,13 +151,15 @@ export class DesktopUpdateCoordinator {
+    */
+   async install(version: string): Promise<DesktopUpdateState> {
+     this.assertLive()
++    const updater = this.updater
++    if (updater === undefined) return this.current
+     if (!this.downloaded || this.downloadOperation !== undefined || version !== this.candidate) throw new Error('desktop update: confirmed target is not ready')
+     this.installOperation ??= Promise.resolve().then(async () => {
+       this.setState({ phase: 'installing', version })
+       try {
+         if (!await this.beforeRestart()) return this.setState({ phase: 'ready', version })
+         this.assertLive()
+-        this.updater.quitAndInstall(true, true)
++        updater.quitAndInstall(true, true)
+         return this.current
+       } catch (error) {
+         if (this.current.phase === 'error' && this.current.failedOperation === 'install') return this.current
+@@ -149,11 +172,13 @@ export class DesktopUpdateCoordinator {
+   /** Remove owned listeners and prevent pending library operations from publishing into closed UI. */
+   dispose(): void {
+     this.disposed = true
+-    this.updater.off('download-progress', this.onProgress)
+-    this.updater.off('update-downloaded', this.onDownloaded)
++    const updater = this.updater
++    if (updater === undefined) return
++    updater.off('download-progress', this.onProgress)
++    updater.off('update-downloaded', this.onDownloaded)
+     // Pending updater promises can still emit EventEmitter errors during shutdown.
+     void Promise.allSettled([this.checkOperation, this.downloadOperation, this.installOperation])
+-      .then(() => { this.updater.off('error', this.onError) })
++      .then(() => { updater.off('error', this.onError) })
+   }
+ 
+   private assertLive(): void {
+@@ -184,8 +209,10 @@ export class DesktopUpdateCoordinator {
+   private async doCheck(): Promise<DesktopUpdateState> {
+     try {
+       this.assertLive()
++      const updater = this.updater
++      if (updater === undefined) throw new Error('desktop update: release checks are disabled in this build')
+       if (!this.enabled()) throw new Error('desktop update: this application has no packaged update source')
+-      const result = await this.updater.checkForUpdates()
++      const result = await updater.checkForUpdates()
+       if (result === null) throw new Error('desktop update: no check result was returned')
+       const version = result.updateInfo.version
+       if (valid(version) === null) throw new Error('desktop update: feed version is invalid')
+diff --git a/apps/desktop/src/update-gate.ts b/apps/desktop/src/update-gate.ts
+new file mode 100644
+index 00000000..ab339148
+--- /dev/null
++++ b/apps/desktop/src/update-gate.ts
+@@ -0,0 +1,21 @@
++/**
++ * The single switch that decides whether this build may contact a release feed.
++ *
++ * Daniel Bot is distributed without an official update feed of its own, so every
++ * path that could reach one — periodic checks, the menu entry, the mandatory
++ * policy query, downloads, and installation — stays compiled in but off unless an
++ * operator opts in. That keeps the upstream code intact (and testable) while
++ * guaranteeing a stock launch makes no release-feed request.
++ */
++
++/** Opt-in environment flag; every value except `1` keeps release traffic off. */
++export const DANIEL_ALLOW_UPDATE_ENV = 'DANIEL_BOT_ALLOW_UPDATE'
++
++/**
++ * Whether Desktop may query, download, or install a release.
++ * @param env - Desktop process environment; defaults to this process's.
++ * @returns true only for the explicit `DANIEL_BOT_ALLOW_UPDATE=1` opt-in.
++ */
++export function desktopUpdatesAllowed(env: NodeJS.ProcessEnv = process.env): boolean {
++  return env[DANIEL_ALLOW_UPDATE_ENV]?.trim() === '1'
++}
+diff --git a/apps/desktop/tests/daniel-login.spec.ts b/apps/desktop/tests/daniel-login.spec.ts
+new file mode 100644
+index 00000000..83012aeb
+--- /dev/null
++++ b/apps/desktop/tests/daniel-login.spec.ts
+@@ -0,0 +1,57 @@
++/** The session file is the only thing the sign-in flow writes; this pins its exact shape. */
++
++import { mkdtempSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
++import { tmpdir } from 'node:os'
++import { join } from 'node:path'
++import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest'
++
++// The window and HTTPS surfaces need a real Electron process; this suite touches only the file.
++vi.mock('electron', () => ({
++  app: { getAppPath: () => process.cwd(), getLocale: () => 'en' },
++  BrowserWindow: class {},
++  ipcMain: { handle: vi.fn(), removeHandler: vi.fn() },
++  net: { request: vi.fn() },
++}))
++
++const home = mkdtempSync(join(tmpdir(), 'daniel-login-home-'))
++process.env.DANIEL_HOME = home
++
++const { clearDanielSession, danielSessionFile, readDanielSession, writeDanielSession } = await import('../src/daniel-login.ts')
++
++afterAll(() => { delete process.env.DANIEL_HOME })
++
++describe('daniel session file', () => {
++  beforeEach(() => { clearDanielSession() })
++
++  it('writes under $DANIEL_HOME/session with owner-only modes', () => {
++    writeDanielSession('app_session_id=first')
++    const file = danielSessionFile()
++    expect(file).toBe(join(home, 'session', 'session.json'))
++    expect(statSync(file).mode & 0o777).toBe(0o600)
++    expect(statSync(join(home, 'session')).mode & 0o777).toBe(0o700)
++    expect(JSON.parse(readFileSync(file, 'utf8'))).toMatchObject({ cookie: 'app_session_id=first' })
++    expect(readDanielSession()).toEqual({ cookie: 'app_session_id=first', ts: expect.any(Number) })
++  })
++
++  it('replaces an existing session atomically and keeps the mode', () => {
++    writeDanielSession('app_session_id=first')
++    writeDanielSession('app_session_id=second')
++    expect(readDanielSession()?.cookie).toBe('app_session_id=second')
++    expect(statSync(danielSessionFile()).mode & 0o777).toBe(0o600)
++  })
++
++  it('rejects a file that is not a Daniel cookie', () => {
++    mkdirSync(join(home, 'session'), { recursive: true })
++    writeFileSync(danielSessionFile(), JSON.stringify({ cookie: 'other=1' }))
++    expect(readDanielSession()).toBeUndefined()
++    writeFileSync(danielSessionFile(), 'not json')
++    expect(readDanielSession()).toBeUndefined()
++  })
++
++  it('clears a session it was asked to drop, and tolerates an absent file', () => {
++    writeDanielSession('app_session_id=first')
++    clearDanielSession()
++    expect(readDanielSession()).toBeUndefined()
++    expect(() => { clearDanielSession() }).not.toThrow()
++  })
++})
+diff --git a/apps/desktop/tests/main-startup.spec.ts b/apps/desktop/tests/main-startup.spec.ts
+index 3b2aced8..372c4dc7 100644
+--- a/apps/desktop/tests/main-startup.spec.ts
++++ b/apps/desktop/tests/main-startup.spec.ts
+@@ -16,11 +16,16 @@ import { DesktopUpdatePreparationError } from '../src/update-error.ts'
+ import { writeCrashReport } from '../src/crash-report.ts'
+ import { runOperationReportJob } from '../src/operation-report-job.ts'
+ 
++// This suite qualifies the release paths the distribution ships switched off.
++process.env.DANIEL_BOT_ALLOW_UPDATE = '1'
++
+ type InvokeEvent = { sender?: unknown; senderFrame: { url: string } }
+ type InvokeHandler = (event: InvokeEvent, ...args: unknown[]) => unknown
+ 
+ const fileDrag = vi.hoisted(() => ({ dispose: vi.fn<() => Promise<void>>(), install: vi.fn() }))
+ vi.mock('../src/file-drag.ts', () => ({ installDesktopFileDrag: () => { fileDrag.install(); return fileDrag.dispose } }))
++// The Daniel account gate runs before the shell and has its own module; this suite starts behind it.
++vi.mock('../src/daniel-login.ts', () => ({ requireDanielSession: async () => ({}) }))
+ 
+ vi.mock('../src/web-document.ts', () => ({ authenticateWebHost: async () => 'test-cookie', serveWebDocument: vi.fn(), forwardWebRequest: vi.fn() }))
+ vi.mock('../src/operation-report-job.ts', () => ({ runOperationReportJob: vi.fn(async () => ({ appended: false, timedOut: false, cancelled: false })) }))
+diff --git a/apps/desktop/tests/welcome-startup.spec.ts b/apps/desktop/tests/welcome-startup.spec.ts
+index 4ae8743e..57fd6c3e 100644
+--- a/apps/desktop/tests/welcome-startup.spec.ts
++++ b/apps/desktop/tests/welcome-startup.spec.ts
+@@ -1,3 +1,7 @@
++// The Daniel account gate runs before the shell and has its own module; this suite starts behind it.
++vi.mock('../src/daniel-login.ts', () => ({ requireDanielSession: async () => ({}) }))
++process.env.DANIEL_BOT_ALLOW_UPDATE = '1'
++
+ vi.mock('../src/web-document.ts', () => ({ authenticateWebHost: async () => 'test-cookie', serveWebDocument: vi.fn(), forwardWebRequest: vi.fn() }))
+ /** Welcome startup uses the Host before transitioning to the workspace. */
+ 
+diff --git a/apps/desktop/tsdown.config.ts b/apps/desktop/tsdown.config.ts
+index 40ed1a03..b72f9a26 100644
+--- a/apps/desktop/tsdown.config.ts
++++ b/apps/desktop/tsdown.config.ts
+@@ -96,7 +96,8 @@ export default defineConfig([
+     clean: false,
+     deps: { neverBundle: ['electron'] },
+   },
+-  ...(['preload-app', 'preload-welcome', 'preload-platform-account', 'preload-mandatory', 'preload-update-dialog'] as const).map(name => ({
++  ...(['preload-app', 'preload-welcome', 'preload-platform-account', 'preload-mandatory', 'preload-update-dialog',
++    'preload-daniel-login'] as const).map(name => ({
+     // Sandboxed Electron preloads run as CommonJS even though the application package is ESM.
+     entry: { [name]: `lib/types/${name}.js` },
+     plugins: [packagedImportsPlugin(preloadImports)],

@@ -1,0 +1,9 @@
+# Daniel Bot · DSH 插件包的 bundle patch（标准插件安装时自动生效，用户不需要手改 YAML）
+# 安装方式（客户端「添加插件」三种输入都支持）：包名 / GitHub 仓库地址 / 本地目录路径
+- insert:
+    - id: daniel
+      name: daniel-dsh-plugin
+      config:
+        # 能力与入口都在包内 vendor/，这里只给可移植的默认值
+        python: "python3"
+        timeoutMs: 180000

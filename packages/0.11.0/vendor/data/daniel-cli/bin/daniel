@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""daniel —— Daniel Copilot 统一命令行入口（TICKET-145 · P0-2）。
+
+用法：
+  daniel --help
+  daniel brands list --json
+  daniel schema --json          # 单一真源：全部子命令与参数
+  daniel --self-test            # 本 CLI 自检
+
+host 无关：只用标准库，不 import 任何 DSH 模块；能力目录靠"从本文件向上找 .kol-tools"
+或环境变量 `DANIEL_CLI_TOOLS` 定位。
+"""
+import os
+import sys
+
+_BIN = os.path.dirname(os.path.realpath(__file__))   # realpath：装到 PATH 上通常是**软链**，
+                                                  # abspath 不解析软链 ⇒ 会把包根算成软链所在目录，
+                                                  # 报 ModuleNotFoundError: No module named 'daniel_cli'（TICKET-170）
+_PKG_ROOT = os.path.dirname(_BIN)
+if _PKG_ROOT not in sys.path:
+    sys.path.insert(0, _PKG_ROOT)
+
+from daniel_cli.cli import main                                    # noqa: E402
+
+if __name__ == "__main__":
+    sys.exit(main())

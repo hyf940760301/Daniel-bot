@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:">
+  <meta name="color-scheme" content="dark">
+  <title>出错了 · Daniel Bot</title>
+  <link rel="stylesheet" href="shell.css">
+</head>
+<body class="error">
+  <div class="dragbar"></div>
+  <main class="error-wrap">
+    <section class="error-card">
+      <div class="error-head">
+        <div id="badge" class="badge">!</div>
+        <div>
+          <h1 id="err-title">出错了</h1>
+          <p id="err-message" class="message"></p>
+        </div>
+      </div>
+
+      <pre id="err-detail" class="detail" hidden></pre>
+
+      <div class="actions">
+        <button id="retry" class="btn primary" type="button">重试</button>
+        <button id="logs" class="btn" type="button">打开日志</button>
+        <button id="diag" class="btn" type="button">复制诊断信息</button>
+      </div>
+
+      <p class="logpath">日志：<code id="err-log">—</code></p>
+      <p id="copy-hint" class="hint-ok" role="status"></p>
+    </section>
+  </main>
+  <script src="error.js"></script>
+</body>
+</html>

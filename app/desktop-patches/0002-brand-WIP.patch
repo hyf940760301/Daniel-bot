@@ -1,0 +1,3228 @@
+diff --git a/.gitignore b/.gitignore
+index 4d52487a..ea65a025 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -32,6 +32,8 @@ mise.toml
+ dist-exe/
+ /dist/
+ apps/desktop/.desktop-build/
++# Extracted by `pnpm -C apps/desktop sync:daniel-plugin`; the tarball stays the source of truth.
++apps/desktop/resources/vendor/
+ python/sdk-runtime/src/deepseek_harness_runtime/runtime/
+ python/**/__pycache__/
+ python/**/.pytest_cache/
+diff --git a/apps/desktop/cli/dsh b/apps/desktop/cli/dsh
+index ee657a3d..62c5660d 100644
+--- a/apps/desktop/cli/dsh
++++ b/apps/desktop/cli/dsh
+@@ -11,4 +11,4 @@ while [ -L "$launcher" ]; do
+   esac
+ done
+ resources=$(CDPATH= cd -- "$(dirname -- "$launcher")/../../.." && pwd -P)
+-ELECTRON_RUN_AS_NODE=1 exec "$resources/../MacOS/DeepSeek Harness" --expose-internals "$resources/app.asar/dsh/node_modules/@deepseek-ai/dsh-desktop-host/lib/cli.js" "$@"
++ELECTRON_RUN_AS_NODE=1 exec "$resources/../MacOS/Daniel Bot" --expose-internals "$resources/app.asar/dsh/node_modules/@deepseek-ai/dsh-desktop-host/lib/cli.js" "$@"
+diff --git a/apps/desktop/cli/dsh.cmd b/apps/desktop/cli/dsh.cmd
+index 73af3353..e165e179 100644
+--- a/apps/desktop/cli/dsh.cmd
++++ b/apps/desktop/cli/dsh.cmd
+@@ -1,5 +1,5 @@
+ @echo off
+ setlocal DisableDelayedExpansion
+ set "ELECTRON_RUN_AS_NODE=1"
+-"%~dp0..\..\..\..\DeepSeek Harness.exe" --expose-internals "%~dp0..\..\..\app.asar\dsh\node_modules\@deepseek-ai\dsh-desktop-host\lib\cli.js" %*
++"%~dp0..\..\..\..\Daniel Bot.exe" --expose-internals "%~dp0..\..\..\app.asar\dsh\node_modules\@deepseek-ai\dsh-desktop-host\lib\cli.js" %*
+ exit /b %errorlevel%
+diff --git a/apps/desktop/docs/diagnostics/README.md b/apps/desktop/docs/diagnostics/README.md
+index e0e72c3f..680427e5 100644
+--- a/apps/desktop/docs/diagnostics/README.md
++++ b/apps/desktop/docs/diagnostics/README.md
+@@ -33,7 +33,7 @@ Recovery waits for Host shutdown before changing plugin activation. The native r
+ 
+ Native dialog details include at most 1,200 UTF-16 code units and eight diagnostic lines, plus the crash report path or its pending/unavailable status. Retrieving a pending or unavailable report preserves any recovery-operation failure headline and details. Configuration paths and startup entries precede the composition inventory so plugin rows cannot displace them when output is truncated. Host error diagnostics retain only the last 64 Ki characters written to stderr. Earlier output is discarded so a long-running Host does not grow the shell’s diagnostic buffer indefinitely.
+ 
+-Before the first fatal dialog opens, Electron writes a crash report to the platform logs directory (`app.getPath('logs')`: `~/Library/Logs/DeepSeek Harness` on macOS, `logs` under the application’s `userData` directory on Windows and Linux), waiting at most one second for the write; a slow or failed write shows the dialog with an explicit pending or unavailable status. Get diagnostic report checks the same write and reveals a saved file in the system file manager without restarting or stopping the Host; a write that completes after the initial deadline remains available. The user attaches that file to a support ticket. The attachment contains the original failure; later recovery-operation errors remain in the dialog and require a separate screenshot. Retrieving a saved report shows its sharing or reveal-failure heading while retaining the recovery error details. If writing fails, the dialog hides Get diagnostic report and suggests providing a screenshot.
++Before the first fatal dialog opens, Electron writes a crash report to the platform logs directory (`app.getPath('logs')`: `~/Library/Logs/Daniel Bot` on macOS, `logs` under the application’s `userData` directory on Windows and Linux), waiting at most one second for the write; a slow or failed write shows the dialog with an explicit pending or unavailable status. Get diagnostic report checks the same write and reveals a saved file in the system file manager without restarting or stopping the Host; a write that completes after the initial deadline remains available. The user attaches that file to a support ticket. The attachment contains the original failure; later recovery-operation errors remain in the dialog and require a separate screenshot. Retrieving a saved report shows its sharing or reveal-failure heading while retaining the recovery error details. If writing fails, the dialog hides Get diagnostic report and suggests providing a screenshot.
+ 
+ The file `crash-<UTC time>-<source>.log` records the source (`host` for a Host exit, `web-boot` for a renderer boot failure, `renderer` for a renderer or document failure, `main` for a shell error), whether the backend had reached ready, application and runtime versions, the error with its enumerable properties and cause chain (cut at 256 KiB), the Host’s own error and explicitly selected startup metadata (at most 64 Ki characters, including a truncation notice; startup errors reserve space for metadata by limiting the original error and startup-entry details to 8 Ki characters each, with explicit truncation notices) when the Host reported a startup failure over IPC before exiting, and the primary window’s recent error-level console output (at most 64 KiB).
+ 
+diff --git a/apps/desktop/docs/diagnostics/README.zh.md b/apps/desktop/docs/diagnostics/README.zh.md
+index 8e25e972..29fdb2e5 100644
+--- a/apps/desktop/docs/diagnostics/README.zh.md
++++ b/apps/desktop/docs/diagnostics/README.zh.md
+@@ -33,7 +33,7 @@ Host 设置可用前，恢复对话框使用本地缓存中最后确认的 Deskt
+ 
+ 原生弹窗详情最多包含 1,200 个 UTF-16 代码单元和八行诊断，并附上崩溃报告路径或仍在保存、无法保存的状态。获取仍在保存或无法保存的报告时，保留恢复操作失败的标题和详情。配置路径和启动条目排在组合清单之前，避免输出截断时被插件记录挤掉。Host 错误诊断仅保留 stderr 输出的最后 64 Ki 个字符。更早的输出会被丢弃，避免长期运行的 Host 使壳的诊断缓冲区无限增长。
+ 
+-首个致命弹窗打开前，Electron 会向平台日志目录（`app.getPath('logs')`：macOS 为 `~/Library/Logs/DeepSeek Harness`，Windows 与 Linux 为应用 `userData` 目录下的 `logs`）写入一份崩溃报告，最多等待写入一秒；写入缓慢或失败时明确显示仍在保存或无法保存。“获取诊断报告”检查同一次写入，并在系统文件管理器中定位已保存的文件，不停止 Host 或重启；超过首次等待期限后写入完成的文件仍可获取。用户可将文件作为工单附件。附件只包含最初的故障；后续恢复操作错误保留在对话框中，需要另行截图。获取已保存报告会显示分享或打开失败的标题，同时保留恢复错误详情。写入失败时隐藏获取报告按钮，并提示提供窗口截图。
++首个致命弹窗打开前，Electron 会向平台日志目录（`app.getPath('logs')`：macOS 为 `~/Library/Logs/Daniel Bot`，Windows 与 Linux 为应用 `userData` 目录下的 `logs`）写入一份崩溃报告，最多等待写入一秒；写入缓慢或失败时明确显示仍在保存或无法保存。“获取诊断报告”检查同一次写入，并在系统文件管理器中定位已保存的文件，不停止 Host 或重启；超过首次等待期限后写入完成的文件仍可获取。用户可将文件作为工单附件。附件只包含最初的故障；后续恢复操作错误保留在对话框中，需要另行截图。获取已保存报告会显示分享或打开失败的标题，同时保留恢复错误详情。写入失败时隐藏获取报告按钮，并提示提供窗口截图。
+ 
+ 文件 `crash-<UTC 时间>-<source>.log` 记录来源（`host` 为 Host 退出、`web-boot` 为渲染进程启动失败、`renderer` 为渲染进程或文档失败、`main` 为壳自身错误）、后端是否已就绪、应用与运行时版本、包含可枚举属性与 cause 链的错误（截至 256 KiB）、Host 在退出前通过 IPC 报告启动失败时的错误及显式选择的启动元数据（最多 64 Ki 个字符，包含截断提示；启动错误的原始错误文本和启动条目详情分别限制为 8 Ki 个字符，并明确标注截断，为结构化元数据保留空间），以及主窗口最近的 error 级 console 输出（最多 64 KiB）。
+ 
+diff --git a/apps/desktop/installer/extract-report.h b/apps/desktop/installer/extract-report.h
+index cdfbbad2..51d8014b 100644
+--- a/apps/desktop/installer/extract-report.h
++++ b/apps/desktop/installer/extract-report.h
+@@ -114,7 +114,7 @@ inline std::wstring Headline(int code, const std::wstring& output, const std::ws
+ 
+ inline std::wstring Compose(int code, const std::wstring& archive, const std::wstring& destination, const std::wstring& output,
+                             const std::wstring& timestamp, const std::wstring& windowsVersion) {
+-    std::wstring report = L"DeepSeek Harness installer: extraction failed\r\n";
++    std::wstring report = L"Daniel Bot installer: extraction failed\r\n";
+     report += L"Time: " + timestamp + L"\r\n";
+     report += L"Result: " + DescribeResult(code) + L"\r\n";
+     report += L"Archive: " + archive + L"\r\n";
+diff --git a/apps/desktop/installer/locales/de_DE.json b/apps/desktop/installer/locales/de_DE.json
+index faf725b8..39afd688 100644
+--- a/apps/desktop/installer/locales/de_DE.json
++++ b/apps/desktop/installer/locales/de_DE.json
+@@ -11,16 +11,16 @@
+     "INSTALLER_CHOOSE_PATH": "Standort wählen",
+     "INSTALLER_BROWSE": "Durchsuchen",
+     "INSTALLER_LAUNCH": "Jetzt starten",
+-    "INSTALLER_LAUNCH_FAILED": "DeepSeek Harness konnte nicht gestartet werden. Versuchen Sie es noch einmal oder deaktivieren Sie „Jetzt starten“ und schließen Sie das Installationsprogramm.",
++    "INSTALLER_LAUNCH_FAILED": "Daniel Bot konnte nicht gestartet werden. Versuchen Sie es noch einmal oder deaktivieren Sie „Jetzt starten“ und schließen Sie das Installationsprogramm.",
+     "INSTALLER_UI_ERROR": "Das Installationsprogramm konnte sein Fenster nicht initialisieren. Schließen Sie es und versuchen Sie es erneut.",
+     "INSTALLER_THEME_ERROR": "Verwenden Sie /THEME=auto, /THEME=light oder /THEME=dark.",
+     "INSTALLER_FAILED": "Die Installation wurde nicht abgeschlossen. Schließen Sie dieses Installationsprogramm und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, laden Sie das Installationsprogramm erneut herunter.",
+-    "INSTALLER_RUNNING": "DeepSeek Harness läuft. Beenden Sie es über die Taskleiste und versuchen Sie es erneut.",
++    "INSTALLER_RUNNING": "Daniel Bot läuft. Beenden Sie es über die Taskleiste und versuchen Sie es erneut.",
+     "INSTALLER_DIRECTORY_FAILED": "Das Installationsverzeichnis konnte nicht ersetzt werden.",
+     "INSTALLER_DIRECTORY_HINT": "Überprüfen Sie den Zugriff auf das Installationsverzeichnis und schließen Sie Programme mithilfe seiner Dateien. Führen Sie dann das Installationsprogramm erneut aus. Kopieren Sie die Fehlerdetails, wenn das Problem weiterhin besteht.",
+     "INSTALLER_DIRECTORY_RESTORE_HINT": "Die vorherige Installation konnte nicht wiederhergestellt werden. Behalten Sie das in den Fehlerdetails angezeigte Sicherungsverzeichnis bei und wenden Sie sich vor der erneuten Installation an den Support.",
+     "INSTALLER_PATH_INVALID": "Wählen Sie einen vollständigen lokalen Ordnerpfad. Laufwerksstämme, Systemordner, Links und Sonderzeichen werden nicht unterstützt.",
+-    "INSTALLER_PATH_OWNERSHIP": "Wählen Sie einen leeren Ordner oder den registrierten DeepSeek Harness-Installationsordner.",
++    "INSTALLER_PATH_OWNERSHIP": "Wählen Sie einen leeren Ordner oder den registrierten Daniel Bot-Installationsordner.",
+     "INSTALLER_PATH_WRITABLE": "Dieser Ort ist nicht beschreibbar. Wählen Sie einen Ordner, der für den aktuellen Benutzer verfügbar ist.",
+     "INSTALLER_DISK_SPACE": "Es ist nicht genügend freier Speicherplatz vorhanden. Wählen Sie einen anderen Standort.",
+     "INSTALLER_PER_USER": "Dieses Installationsprogramm unterstützt nur den aktuellen Benutzer. Deinstallieren Sie zunächst die vorhandene All-User-Installation.",
+diff --git a/apps/desktop/installer/locales/en_US.json b/apps/desktop/installer/locales/en_US.json
+index f522ad9b..ab4861a8 100644
+--- a/apps/desktop/installer/locales/en_US.json
++++ b/apps/desktop/installer/locales/en_US.json
+@@ -11,16 +11,16 @@
+     "INSTALLER_CHOOSE_PATH": "Choose location",
+     "INSTALLER_BROWSE": "Browse",
+     "INSTALLER_LAUNCH": "Launch now",
+-    "INSTALLER_LAUNCH_FAILED": "DeepSeek Harness could not be launched. Retry, or clear Launch now and close the installer.",
++    "INSTALLER_LAUNCH_FAILED": "Daniel Bot could not be launched. Retry, or clear Launch now and close the installer.",
+     "INSTALLER_UI_ERROR": "The installer could not initialize its window. Close it and try again.",
+     "INSTALLER_THEME_ERROR": "Use /THEME=auto, /THEME=light or /THEME=dark.",
+     "INSTALLER_FAILED": "Installation did not finish. Close this installer and retry. If the problem persists, download the installer again.",
+-    "INSTALLER_RUNNING": "DeepSeek Harness is running. Quit it from the system tray and try again.",
++    "INSTALLER_RUNNING": "Daniel Bot is running. Quit it from the system tray and try again.",
+     "INSTALLER_DIRECTORY_FAILED": "The installation directory could not be replaced.",
+     "INSTALLER_DIRECTORY_HINT": "Check access to the installation directory and close programs using its files, then run the installer again. Copy the error details if the problem persists.",
+     "INSTALLER_DIRECTORY_RESTORE_HINT": "The previous installation could not be restored. Keep the backup directory shown in the error details and contact support before installing again.",
+     "INSTALLER_PATH_INVALID": "Choose a full local folder path. Drive roots, system folders, links and special characters are not supported.",
+-    "INSTALLER_PATH_OWNERSHIP": "Choose an empty folder or the registered DeepSeek Harness installation folder.",
++    "INSTALLER_PATH_OWNERSHIP": "Choose an empty folder or the registered Daniel Bot installation folder.",
+     "INSTALLER_PATH_WRITABLE": "This location is not writable. Choose a folder available to the current user.",
+     "INSTALLER_DISK_SPACE": "There is not enough free disk space. Choose another location.",
+     "INSTALLER_PER_USER": "This installer supports the current user only. Uninstall the existing all-users installation first.",
+diff --git a/apps/desktop/installer/locales/es_ES.json b/apps/desktop/installer/locales/es_ES.json
+index d4fbfd97..c0a18b94 100644
+--- a/apps/desktop/installer/locales/es_ES.json
++++ b/apps/desktop/installer/locales/es_ES.json
+@@ -11,16 +11,16 @@
+     "INSTALLER_CHOOSE_PATH": "Elige ubicación",
+     "INSTALLER_BROWSE": "Examinar",
+     "INSTALLER_LAUNCH": "Lanzar ahora",
+-    "INSTALLER_LAUNCH_FAILED": "No se pudo iniciar DeepSeek Harness. Vuelva a intentarlo o desmarque Iniciar ahora y cierre el instalador.",
++    "INSTALLER_LAUNCH_FAILED": "No se pudo iniciar Daniel Bot. Vuelva a intentarlo o desmarque Iniciar ahora y cierre el instalador.",
+     "INSTALLER_UI_ERROR": "El instalador no pudo inicializar su ventana. Ciérralo y vuelve a intentarlo.",
+     "INSTALLER_THEME_ERROR": "Utilice /THEME=auto, /THEME=light o /THEME=dark.",
+     "INSTALLER_FAILED": "La instalación no terminó. Cierre este instalador y vuelva a intentarlo. Si el problema persiste, descargue el instalador nuevamente.",
+-    "INSTALLER_RUNNING": "DeepSeek Harness se está ejecutando. Salga de la bandeja del sistema y vuelva a intentarlo.",
++    "INSTALLER_RUNNING": "Daniel Bot se está ejecutando. Salga de la bandeja del sistema y vuelva a intentarlo.",
+     "INSTALLER_DIRECTORY_FAILED": "No se pudo reemplazar el directorio de instalación.",
+     "INSTALLER_DIRECTORY_HINT": "Verifique el acceso al directorio de instalación y cierre los programas usando sus archivos, luego ejecute el instalador nuevamente. Copie los detalles del error si el problema persiste.",
+     "INSTALLER_DIRECTORY_RESTORE_HINT": "No se pudo restaurar la instalación anterior. Mantenga el directorio de respaldo que se muestra en los detalles del error y comuníquese con el soporte antes de volver a instalar.",
+     "INSTALLER_PATH_INVALID": "Elija una ruta de carpeta local completa. No se admiten raíces de unidades, carpetas del sistema, enlaces ni caracteres especiales.",
+-    "INSTALLER_PATH_OWNERSHIP": "Elija una carpeta vacía o la carpeta de instalación registrada de DeepSeek Harness.",
++    "INSTALLER_PATH_OWNERSHIP": "Elija una carpeta vacía o la carpeta de instalación registrada de Daniel Bot.",
+     "INSTALLER_PATH_WRITABLE": "Esta ubicación no se puede escribir. Elija una carpeta disponible para el usuario actual.",
+     "INSTALLER_DISK_SPACE": "No hay suficiente espacio libre en disco. Elija otra ubicación.",
+     "INSTALLER_PER_USER": "Este instalador solo admite el usuario actual. Primero desinstale la instalación existente para todos los usuarios.",
+diff --git a/apps/desktop/installer/locales/fr_FR.json b/apps/desktop/installer/locales/fr_FR.json
+index 326ead62..7e9e0df0 100644
+--- a/apps/desktop/installer/locales/fr_FR.json
++++ b/apps/desktop/installer/locales/fr_FR.json
+@@ -11,16 +11,16 @@
+     "INSTALLER_CHOOSE_PATH": "Choisissez un emplacement",
+     "INSTALLER_BROWSE": "Parcourir",
+     "INSTALLER_LAUNCH": "Lancez-vous maintenant",
+-    "INSTALLER_LAUNCH_FAILED": "DeepSeek Harness n'a pas pu être lancé. Réessayez ou désactivez Lancer maintenant et fermez le programme d'installation.",
++    "INSTALLER_LAUNCH_FAILED": "Daniel Bot n'a pas pu être lancé. Réessayez ou désactivez Lancer maintenant et fermez le programme d'installation.",
+     "INSTALLER_UI_ERROR": "Le programme d'installation n'a pas pu initialiser sa fenêtre. Fermez-le et réessayez.",
+     "INSTALLER_THEME_ERROR": "Utilisez /THEME=auto, /THEME=light ou /THEME=dark.",
+     "INSTALLER_FAILED": "L'installation n'est pas terminée. Fermez ce programme d'installation et réessayez. Si le problème persiste, téléchargez à nouveau le programme d'installation.",
+-    "INSTALLER_RUNNING": "DeepSeek Harness est en cours d'exécution. Quittez-le de la barre d'état système et réessayez.",
++    "INSTALLER_RUNNING": "Daniel Bot est en cours d'exécution. Quittez-le de la barre d'état système et réessayez.",
+     "INSTALLER_DIRECTORY_FAILED": "Le répertoire d'installation n'a pas pu être remplacé.",
+     "INSTALLER_DIRECTORY_HINT": "Vérifiez l'accès au répertoire d'installation et fermez les programmes à l'aide de ses fichiers, puis réexécutez le programme d'installation. Copiez les détails de l'erreur si le problème persiste.",
+     "INSTALLER_DIRECTORY_RESTORE_HINT": "L'installation précédente n'a pas pu être restaurée. Conservez le répertoire de sauvegarde indiqué dans les détails de l'erreur et contactez l'assistance avant de procéder à une nouvelle installation.",
+     "INSTALLER_PATH_INVALID": "Choisissez un chemin de dossier local complet. Les racines du lecteur, les dossiers système, les liens et les caractères spéciaux ne sont pas pris en charge.",
+-    "INSTALLER_PATH_OWNERSHIP": "Choisissez un dossier vide ou le dossier d'installation DeepSeek Harness enregistré.",
++    "INSTALLER_PATH_OWNERSHIP": "Choisissez un dossier vide ou le dossier d'installation Daniel Bot enregistré.",
+     "INSTALLER_PATH_WRITABLE": "Cet emplacement n'est pas accessible en écriture. Choisissez un dossier disponible pour l'utilisateur actuel.",
+     "INSTALLER_DISK_SPACE": "Il n'y a pas assez d'espace disque libre. Choisissez un autre emplacement.",
+     "INSTALLER_PER_USER": "Ce programme d'installation prend en charge uniquement l'utilisateur actuel. Désinstallez d’abord l’installation existante pour tous les utilisateurs.",
+diff --git a/apps/desktop/installer/locales/ja_JP.json b/apps/desktop/installer/locales/ja_JP.json
+index ee614789..ae834228 100644
+--- a/apps/desktop/installer/locales/ja_JP.json
++++ b/apps/desktop/installer/locales/ja_JP.json
+@@ -11,16 +11,16 @@
+     "INSTALLER_CHOOSE_PATH": "インストール先を選択",
+     "INSTALLER_BROWSE": "参照",
+     "INSTALLER_LAUNCH": "今すぐ起動",
+-    "INSTALLER_LAUNCH_FAILED": "DeepSeek Harness を起動できませんでした。再試行するか、「今すぐ起動」のチェックを外してインストーラーを閉じてください。",
++    "INSTALLER_LAUNCH_FAILED": "Daniel Bot を起動できませんでした。再試行するか、「今すぐ起動」のチェックを外してインストーラーを閉じてください。",
+     "INSTALLER_UI_ERROR": "インストーラーのウィンドウを初期化できませんでした。閉じてから再試行してください。",
+     "INSTALLER_THEME_ERROR": "/THEME=auto、/THEME=light、/THEME=dark のいずれかを指定してください。",
+     "INSTALLER_FAILED": "インストールが完了しませんでした。インストーラーを閉じて再試行してください。問題が解決しない場合は、インストーラーを再度ダウンロードしてください。",
+-    "INSTALLER_RUNNING": "DeepSeek Harness が実行中です。システムトレイから終了して再試行してください。",
++    "INSTALLER_RUNNING": "Daniel Bot が実行中です。システムトレイから終了して再試行してください。",
+     "INSTALLER_DIRECTORY_FAILED": "インストール先のディレクトリを置き換えられませんでした。",
+     "INSTALLER_DIRECTORY_HINT": "インストール先へのアクセス権限を確認し、そのファイルを使用しているプログラムを閉じてから、インストーラーを再実行してください。問題が続く場合はエラーの詳細をコピーしてください。",
+     "INSTALLER_DIRECTORY_RESTORE_HINT": "以前のインストールを復元できませんでした。エラーの詳細に表示されたバックアップディレクトリを保持し、再インストール前にサポートへお問い合わせください。",
+     "INSTALLER_PATH_INVALID": "ローカルフォルダーの完全なパスを選択してください。ドライブのルート、システムフォルダー、リンク、特殊文字を含むパスは使用できません。",
+-    "INSTALLER_PATH_OWNERSHIP": "空のフォルダー、または登録済みの DeepSeek Harness インストール先を選択してください。",
++    "INSTALLER_PATH_OWNERSHIP": "空のフォルダー、または登録済みの Daniel Bot インストール先を選択してください。",
+     "INSTALLER_PATH_WRITABLE": "この場所には書き込めません。現在のユーザーが書き込めるフォルダーを選択してください。インストーラーは管理者権限を要求しません。",
+     "INSTALLER_DISK_SPACE": "ディスクの空き容量が不足しています。別の場所を選択してください。",
+     "INSTALLER_PER_USER": "このインストーラーは現在のユーザーのみを対象としています。先にすべてのユーザー向けの既存のインストールを削除してください。",
+diff --git a/apps/desktop/installer/locales/pt_BR.json b/apps/desktop/installer/locales/pt_BR.json
+index dda249e4..ef983eef 100644
+--- a/apps/desktop/installer/locales/pt_BR.json
++++ b/apps/desktop/installer/locales/pt_BR.json
+@@ -11,16 +11,16 @@
+     "INSTALLER_CHOOSE_PATH": "Escolha o local",
+     "INSTALLER_BROWSE": "Procurar",
+     "INSTALLER_LAUNCH": "Lançar agora",
+-    "INSTALLER_LAUNCH_FAILED": "DeepSeek Harness não pôde ser iniciado. Tente novamente ou desmarque Iniciar agora e feche o instalador.",
++    "INSTALLER_LAUNCH_FAILED": "Daniel Bot não pôde ser iniciado. Tente novamente ou desmarque Iniciar agora e feche o instalador.",
+     "INSTALLER_UI_ERROR": "O instalador não conseguiu inicializar sua janela. Feche-o e tente novamente.",
+     "INSTALLER_THEME_ERROR": "Use /THEME=auto, /THEME=light ou /THEME=dark.",
+     "INSTALLER_FAILED": "A instalação não foi concluída. Feche este instalador e tente novamente. Se o problema persistir, baixe o instalador novamente.",
+-    "INSTALLER_RUNNING": "DeepSeek Harness está em execução. Saia da bandeja do sistema e tente novamente.",
++    "INSTALLER_RUNNING": "Daniel Bot está em execução. Saia da bandeja do sistema e tente novamente.",
+     "INSTALLER_DIRECTORY_FAILED": "O diretório de instalação não pôde ser substituído.",
+     "INSTALLER_DIRECTORY_HINT": "Verifique o acesso ao diretório de instalação e feche os programas usando seus arquivos e execute o instalador novamente. Copie os detalhes do erro se o problema persistir.",
+     "INSTALLER_DIRECTORY_RESTORE_HINT": "A instalação anterior não pôde ser restaurada. Mantenha o diretório de backup mostrado nos detalhes do erro e entre em contato com o suporte antes de instalar novamente.",
+     "INSTALLER_PATH_INVALID": "Escolha um caminho completo para a pasta local. Raízes de unidade, pastas de sistema, links e caracteres especiais não são suportados.",
+-    "INSTALLER_PATH_OWNERSHIP": "Escolha uma pasta vazia ou a pasta de instalação DeepSeek Harness registrada.",
++    "INSTALLER_PATH_OWNERSHIP": "Escolha uma pasta vazia ou a pasta de instalação Daniel Bot registrada.",
+     "INSTALLER_PATH_WRITABLE": "Este local não é gravável. Escolha uma pasta disponível para o usuário atual.",
+     "INSTALLER_DISK_SPACE": "Não há espaço livre suficiente em disco. Escolha outro local.",
+     "INSTALLER_PER_USER": "Este instalador oferece suporte apenas ao usuário atual. Desinstale primeiro a instalação existente para todos os usuários.",
+diff --git a/apps/desktop/installer/locales/ru_RU.json b/apps/desktop/installer/locales/ru_RU.json
+index e5fec3f8..1b08963a 100644
+--- a/apps/desktop/installer/locales/ru_RU.json
++++ b/apps/desktop/installer/locales/ru_RU.json
+@@ -11,16 +11,16 @@
+     "INSTALLER_CHOOSE_PATH": "Выберите местоположение",
+     "INSTALLER_BROWSE": "Обзор",
+     "INSTALLER_LAUNCH": "Запустить сейчас",
+-    "INSTALLER_LAUNCH_FAILED": "DeepSeek Harness не удалось запустить. Повторите попытку или снимите флажок «Запустить сейчас» и закройте программу установки.",
++    "INSTALLER_LAUNCH_FAILED": "Daniel Bot не удалось запустить. Повторите попытку или снимите флажок «Запустить сейчас» и закройте программу установки.",
+     "INSTALLER_UI_ERROR": "Установщику не удалось инициализировать свое окно. Закройте его и попробуйте еще раз.",
+     "INSTALLER_THEME_ERROR": "Используйте /THEME=auto, /THEME=light или /THEME=dark.",
+     "INSTALLER_FAILED": "Установка не завершена. Закройте этот установщик и повторите попытку. Если проблема не устранена, загрузите установщик еще раз.",
+-    "INSTALLER_RUNNING": "DeepSeek Harness работает. Закройте его из системного трея и повторите попытку.",
++    "INSTALLER_RUNNING": "Daniel Bot работает. Закройте его из системного трея и повторите попытку.",
+     "INSTALLER_DIRECTORY_FAILED": "Не удалось заменить каталог установки.",
+     "INSTALLER_DIRECTORY_HINT": "Проверьте доступ к каталогу установки и закройте программы, использующие его файлы, затем снова запустите установщик. Скопируйте сведения об ошибке, если проблема не устранена.",
+     "INSTALLER_DIRECTORY_RESTORE_HINT": "Предыдущую установку восстановить не удалось. Сохраните каталог резервной копии, указанный в сведениях об ошибке, и обратитесь в службу поддержки перед повторной установкой.",
+     "INSTALLER_PATH_INVALID": "Выберите полный путь к локальной папке. Корни дисков, системные папки, ссылки и специальные символы не поддерживаются.",
+-    "INSTALLER_PATH_OWNERSHIP": "Выберите пустую папку или зарегистрированную папку установки DeepSeek Harness.",
++    "INSTALLER_PATH_OWNERSHIP": "Выберите пустую папку или зарегистрированную папку установки Daniel Bot.",
+     "INSTALLER_PATH_WRITABLE": "Это местоположение недоступно для записи. Выберите папку, доступную текущему пользователю.",
+     "INSTALLER_DISK_SPACE": "Недостаточно свободного места на диске. Выберите другое место.",
+     "INSTALLER_PER_USER": "Этот установщик поддерживает только текущего пользователя. Сначала удалите существующую установку для всех пользователей.",
+diff --git a/apps/desktop/installer/locales/zh_CN.json b/apps/desktop/installer/locales/zh_CN.json
+index e3f40f13..9e79b573 100644
+--- a/apps/desktop/installer/locales/zh_CN.json
++++ b/apps/desktop/installer/locales/zh_CN.json
+@@ -11,16 +11,16 @@
+     "INSTALLER_CHOOSE_PATH": "选择安装位置",
+     "INSTALLER_BROWSE": "选择",
+     "INSTALLER_LAUNCH": "立即启动",
+-    "INSTALLER_LAUNCH_FAILED": "无法启动 DeepSeek Harness。请重试，或取消勾选立即启动后关闭安装程序。",
++    "INSTALLER_LAUNCH_FAILED": "无法启动 Daniel Bot。请重试，或取消勾选立即启动后关闭安装程序。",
+     "INSTALLER_UI_ERROR": "无法初始化安装窗口，请关闭后重试。",
+     "INSTALLER_THEME_ERROR": "主题参数须为 /THEME=auto、/THEME=light 或 /THEME=dark。",
+     "INSTALLER_FAILED": "安装未完成，请关闭安装程序后重试。如仍然失败，请重新下载安装包。",
+-    "INSTALLER_RUNNING": "DeepSeek Harness 正在运行，请先在系统托盘中退出应用后重试。",
++    "INSTALLER_RUNNING": "Daniel Bot 正在运行，请先在系统托盘中退出应用后重试。",
+     "INSTALLER_DIRECTORY_FAILED": "无法替换安装目录。",
+     "INSTALLER_DIRECTORY_HINT": "请检查安装目录的访问权限，关闭占用其中内容的程序后重新运行安装器。如仍失败，请复制错误详情。",
+     "INSTALLER_DIRECTORY_RESTORE_HINT": "未能恢复原安装目录。请保留错误详情中列出的备份目录，联系支持人员后再安装。",
+     "INSTALLER_PATH_INVALID": "请选择本地磁盘上的完整文件夹路径，不能使用磁盘根目录、系统目录、链接目录或包含特殊字符的路径。",
+-    "INSTALLER_PATH_OWNERSHIP": "请选择空文件夹，或 DeepSeek Harness 原来的安装目录。",
++    "INSTALLER_PATH_OWNERSHIP": "请选择空文件夹，或 Daniel Bot 原来的安装目录。",
+     "INSTALLER_PATH_WRITABLE": "无法写入此位置。请选择当前用户可写入的文件夹；安装程序不会申请管理员权限。",
+     "INSTALLER_DISK_SPACE": "此磁盘的可用空间不足，请选择其他位置。",
+     "INSTALLER_PER_USER": "此安装程序仅支持当前用户。请先卸载已有的所有用户安装版本。",
+diff --git a/apps/desktop/package.json b/apps/desktop/package.json
+index 40bdfefe..b3731e95 100644
+--- a/apps/desktop/package.json
++++ b/apps/desktop/package.json
+@@ -1,6 +1,7 @@
+ {
+   "name": "@deepseek-ai/dsh-desktop",
+-  "description": "Electron desktop shell for a bundled dsh runtime and external plugins",
++  "productName": "Daniel Bot",
++  "description": "Daniel Bot desktop application: Daniel's growth workspace in a native shell, built on DeepSeek Harness (MIT License) as an unofficial distribution",
+   "version": "0.2.2-alpha.2",
+   "private": true,
+   "license": "MIT",
+@@ -13,6 +14,7 @@
+     "test:installer": "node scripts/test-windows-installer.mjs",
+     "build": "tsc -b && pnpm run bundle",
+     "bundle": "tsdown --config-loader native",
++    "sync:daniel-plugin": "node scripts/sync-daniel-plugin.mjs",
+     "dev": "tsx scripts/dev.ts",
+     "start": "tsx scripts/dev.ts --skip-build",
+     "test:updates:local": "pnpm run build && node scripts/test-local-updater.mjs",
+diff --git a/apps/desktop/scripts/desktop-package-environment.mjs b/apps/desktop/scripts/desktop-package-environment.mjs
+index 27a7f92c..04f86e1b 100644
+--- a/apps/desktop/scripts/desktop-package-environment.mjs
++++ b/apps/desktop/scripts/desktop-package-environment.mjs
+@@ -4,7 +4,13 @@ import { accessSync, constants, readFileSync, statSync } from 'node:fs'
+ import { dirname, isAbsolute, join, resolve } from 'node:path'
+ import { fileURLToPath } from 'node:url'
+ import { parseEnv } from 'node:util'
+-import { resolveDesktopAppId, resolveMacOSNotarizationEnvironment, resolveMacOSSigningEnvironment, resolveNpmRegistry } from './desktop-release-environment.mjs'
++import {
++  DANIEL_BOT_APP_ID,
++  resolveDesktopAppId,
++  resolveMacOSNotarizationEnvironment,
++  resolveMacOSSigningEnvironment,
++  resolveNpmRegistry,
++} from './desktop-release-environment.mjs'
+ import { resolveDesktopAutoUpdateConfig } from './desktop-auto-update-environment.mjs'
+ import { createWindowsTokenSigner } from './windows-sign.mjs'
+ import { resolveDesktopPolicyEnvironment } from './desktop-policy-environment.mjs'
+@@ -29,7 +35,7 @@ const FILE_SETTINGS = ['DSH_DESKTOP_WINDOWS_CER_FILE', 'DSH_DESKTOP_WINDOWS_SIGN
+ export function localMacOSPackageEnvironment(environment = process.env) {
+   return {
+     ...Object.fromEntries(Object.entries(environment).filter(([name]) => !AMBIENT_RELEASE_SETTING.test(name))),
+-    DSH_DESKTOP_APP_ID: 'com.deepseek.harness',
++    DSH_DESKTOP_APP_ID: DANIEL_BOT_APP_ID,
+     DSH_DESKTOP_UNSIGNED: '1',
+   }
+ }
+diff --git a/apps/desktop/scripts/desktop-release-environment.mjs b/apps/desktop/scripts/desktop-release-environment.mjs
+index 635a57a3..f2abe9d4 100644
+--- a/apps/desktop/scripts/desktop-release-environment.mjs
++++ b/apps/desktop/scripts/desktop-release-environment.mjs
+@@ -3,6 +3,15 @@
+ /** Environment variable that supplies the Electron application identifier. */
+ export const DESKTOP_APP_ID_ENV = 'DSH_DESKTOP_APP_ID'
+ 
++/**
++ * Product identity of this distribution (D-062).
++ * One source of truth for the bundle identifier, the bundle/executable name, and derived artifact names.
++ */
++export const DANIEL_BOT_PRODUCT_NAME = 'Daniel Bot'
++
++/** Default reverse-DNS application identifier used when the packaging environment supplies none. */
++export const DANIEL_BOT_APP_ID = 'com.danielbot.app'
++
+ /** Environment variable that supplies electron-builder's macOS certificate qualifier. */
+ export const MACOS_SIGNING_IDENTITY_ENV = 'DSH_DESKTOP_MACOS_SIGNING_IDENTITY'
+ 
+diff --git a/apps/desktop/scripts/development-app.ts b/apps/desktop/scripts/development-app.ts
+index ff09b8b7..31936236 100644
+--- a/apps/desktop/scripts/development-app.ts
++++ b/apps/desktop/scripts/development-app.ts
+@@ -36,11 +36,11 @@ export function prepareDevelopmentApp(options: DevelopmentAppOptions): string {
+     execFileSync('/usr/bin/ditto', [source, bundle])
+     const plist = join(bundle, 'Contents', 'Info.plist')
+     const values = {
+-      CFBundleIdentifier: `com.deepseek.harness.dev.${createHash('sha256').update(options.appRoot).digest('hex').slice(0, 12)}`,
++      CFBundleIdentifier: `com.danielbot.app.dev.${createHash('sha256').update(options.appRoot).digest('hex').slice(0, 12)}`,
+       CFBundleName: 'Harness Dev',
+       CFBundleDisplayName: 'Harness Dev',
+       CFBundleExecutable: 'HarnessDev',
+-      CFBundleURLTypes: [{ CFBundleURLName: 'DeepSeek Harness', CFBundleURLSchemes: ['dsh'], CFBundleTypeRole: 'Viewer' }],
++      CFBundleURLTypes: [{ CFBundleURLName: 'Daniel Bot', CFBundleURLSchemes: ['dsh'], CFBundleTypeRole: 'Viewer' }],
+     }
+     for (const [key, value] of Object.entries(values)) {
+       execFileSync('/usr/bin/plutil', ['-replace', key, '-json', JSON.stringify(value), plist])
+diff --git a/apps/desktop/scripts/electron-builder-config.mjs b/apps/desktop/scripts/electron-builder-config.mjs
+index cf0c19e8..80ebcd97 100644
+--- a/apps/desktop/scripts/electron-builder-config.mjs
++++ b/apps/desktop/scripts/electron-builder-config.mjs
+@@ -1,13 +1,16 @@
+ import { readInstallerLocales, renderInstallerStrings } from './installer-locales.mjs'
+ import { officePackageDirectories } from '../../../scripts/libreoffice-packages.mjs'
+ import { X509Certificate } from 'node:crypto'
+-import { readFileSync } from 'node:fs'
++import { existsSync, readFileSync } from 'node:fs'
+ import { readFile, writeFile } from 'node:fs/promises'
+ import { join, relative, sep } from 'node:path'
+ import { fileURLToPath } from 'node:url'
+ import { execFile } from 'node:child_process'
+ import { promisify } from 'node:util'
+ import {
++  DANIEL_BOT_APP_ID,
++  DANIEL_BOT_PRODUCT_NAME,
++  DESKTOP_APP_ID_ENV,
+   resolveDesktopAppId,
+   resolveMacOSNotarizationEnvironment,
+   resolveMacOSSigningEnvironment,
+@@ -35,6 +38,16 @@ import {
+   writeMacOSAppUpdateConfig,
+ } from './macos-app-update-config.mjs'
+ 
++/**
++ * Brand icon drop point. The Daniel Bot .icns is supplied separately, so packaging must never depend
++ * on it: a missing file falls back to the icon the upstream shell already ships.
++ */
++const BRAND_MAC_ICON = fileURLToPath(new URL('../build/icon.icns', import.meta.url))
++const FALLBACK_MAC_ICON = fileURLToPath(new URL('../resources/icon-macos.png', import.meta.url))
++
++/** Application icon for a macOS build: the Daniel Bot icon when present, else the shipped fallback. */
++const macOSIcon = existsSync(BRAND_MAC_ICON) ? BRAND_MAC_ICON : FALLBACK_MAC_ICON
++
+ /**
+  * Create electron-builder configuration from one release environment.
+  * @param {NodeJS.ProcessEnv} env - Packaging environment.
+@@ -51,7 +64,12 @@ export function createElectronBuilderConfig(
+   preparedRuntime = undefined,
+   preparedRuntimeVersion = undefined,
+ ) {
+-  const appId = resolveDesktopAppId(env)
++  // Qualification builds still supply their own identifier; every product build uses the Daniel Bot one.
++  const configuredAppId = env[DESKTOP_APP_ID_ENV]?.trim()
++  const appId = resolveDesktopAppId({
++    ...env,
++    [DESKTOP_APP_ID_ENV]: configuredAppId === undefined || configuredAppId === '' ? DANIEL_BOT_APP_ID : configuredAppId,
++  })
+   const targetPlatform = env.DSH_DESKTOP_TARGET_PLATFORM
+   const resolvedPlatform = targetPlatform ?? hostPlatform
+   const resolvedArch = env.DSH_DESKTOP_TARGET_ARCH ?? hostArch
+@@ -104,9 +122,11 @@ export function createElectronBuilderConfig(
+   const buildVersion = resolveDesktopBuildVersion(env, productVersion)
+   if (update?.channel === 'latest' && buildVersion.includes('-')) throw new Error('desktop package: latest requires a stable version')
+   const packaged = resolveDesktopBuildCommit(env)
++  // Written to Info.plist as NSHumanReadableCopyright and shown by the Windows installer.
++  const copyright = `Copyright © ${new Date().getFullYear()} ${DANIEL_BOT_PRODUCT_NAME}`
+   return {
+     appId,
+-    protocols: [{ name: 'DeepSeek Harness', schemes: ['dsh'] }],
++    protocols: [{ name: DANIEL_BOT_PRODUCT_NAME, schemes: ['dsh'] }],
+     extraMetadata: {
+       dshDesktopAppId: appId,
+       dshDesktopUpdateChannel: update?.channel ?? 'nightly',
+@@ -114,11 +134,10 @@ export function createElectronBuilderConfig(
+       ...buildVersion === productVersion ? {} : { version: buildVersion },
+       ...packaged === undefined ? {} : { dshBuildCommit: packaged.commit, dshBuildDirty: packaged.dirty },
+     },
+-    productName: 'DeepSeek Harness',
+-    // The default copyright uses author.name; this line names the product instead.
+-    copyright: `Copyright © ${new Date().getFullYear()} \${productName}`,
++    productName: DANIEL_BOT_PRODUCT_NAME,
++    copyright,
+     // Unsigned builds carry their own suffix so a shared file can never pass for a release artifact.
+-    artifactName: `deepseek-harness-\${version}-\${os}-\${arch}${output.suffix}.\${ext}`,
++    artifactName: `${DANIEL_BOT_PRODUCT_NAME.toLowerCase().replaceAll(' ', '-')}-\${version}-\${os}-\${arch}${output.suffix}.\${ext}`,
+     directories: { output: output.directory },
+     asar: true,
+     electronDist: buildPaths.electron,
+@@ -157,17 +176,24 @@ export function createElectronBuilderConfig(
+     asarUnpack: unpack,
+     extraResources: [
+       { from: buildPaths.runtime, to: 'runtime' },
++      // The embedded Daniel plugin ships as a real directory (never inside the asar),
++      // so the shell can copy it into the profile and no package manager runs.
++      { from: fileURLToPath(new URL('../resources/vendor/daniel-dsh-plugin', import.meta.url)), to: 'vendor/daniel-dsh-plugin' },
+       { from: fileURLToPath(new URL('../resources/icon-windows.png', import.meta.url)), to: 'icon.png' },
+       // Windows tray bitmaps; macOS keeps the Dock and ships no menu bar icon.
+       ...(packagesWindows ? [{ from: fileURLToPath(new URL('../resources/tray-windows.ico', import.meta.url)), to: 'tray.ico' }] : []),
+     ],
+     mac: {
+-      icon: fileURLToPath(new URL('../resources/icon-macos.png', import.meta.url)),
++      // Daniel Bot icon (build/icon.icns when supplied, otherwise the shipped fallback); see BRAND_MAC_ICON.
++      icon: macOSIcon,
+       category: 'public.app-category.developer-tools',
+       // macOS matches the application locale against this bundle, not Electron Framework resources.
+       extendInfo: {
+         CFBundleLocalizations: ['en', 'zh_CN', 'ja', 'es', 'fr', 'de', 'ru', 'pt'],
+-        NSMicrophoneUsageDescription: 'DeepSeek Harness uses your microphone to transcribe speech into message drafts.',
++        CFBundleName: DANIEL_BOT_PRODUCT_NAME,
++        CFBundleDisplayName: DANIEL_BOT_PRODUCT_NAME,
++        NSHumanReadableCopyright: copyright,
++        NSMicrophoneUsageDescription: `${DANIEL_BOT_PRODUCT_NAME} uses your microphone to transcribe speech into message drafts.`,
+       },
+       // Ad-hoc signing keeps the modified Electron executable runnable without a Developer ID.
+       identity: unsigned ? '-' : macOSSigning?.signingIdentity,
+@@ -182,6 +208,8 @@ export function createElectronBuilderConfig(
+     },
+     dmg: {
+       format: 'ULMO',
++      // Volume name mounted in Finder; keeps the brand visible outside the .app bundle.
++      title: DANIEL_BOT_PRODUCT_NAME,
+       sign: !unsigned,
+       writeUpdateInfo: false,
+     },
+diff --git a/apps/desktop/scripts/package-macos.ts b/apps/desktop/scripts/package-macos.ts
+index 4ba0fd12..3b855650 100644
+--- a/apps/desktop/scripts/package-macos.ts
++++ b/apps/desktop/scripts/package-macos.ts
+@@ -7,6 +7,7 @@ import { promisify } from 'node:util'
+ import { notarizeMacOS } from './notarize-macos.mjs'
+ import { packagingStep } from './packaging-step.mjs'
+ import {
++  DANIEL_BOT_PRODUCT_NAME,
+   resolveMacOSNotarizationEnvironment,
+   resolveMacOSSigningEnvironment,
+ } from './desktop-release-environment.mjs'
+@@ -78,7 +79,7 @@ export async function packageMacOSArtifacts(
+   const expected = resolveMacOSSigningEnvironment(environment)
+   const credentials = resolveMacOSNotarizationEnvironment(environment)
+   const update = resolveDesktopAutoUpdateConfig(environment, 'darwin', arch)
+-  const appPath = join(artifactsRoot, arch === 'arm64' ? 'mac-arm64' : 'mac', 'DeepSeek Harness.app')
++  const appPath = join(artifactsRoot, arch === 'arm64' ? 'mac-arm64' : 'mac', `${DANIEL_BOT_PRODUCT_NAME}.app`)
+   const root = await mkdtemp(join(dirname(artifactsRoot), 'notarization-'))
+   const zipApp = join(root, 'zip', basename(appPath))
+   const dmgApp = join(root, 'dmg', basename(appPath))
+diff --git a/apps/desktop/scripts/package-target.ts b/apps/desktop/scripts/package-target.ts
+index b6bc6efb..38b889e5 100644
+--- a/apps/desktop/scripts/package-target.ts
++++ b/apps/desktop/scripts/package-target.ts
+@@ -19,7 +19,7 @@ import { macOSDownloadEnvironment, resolveMacOSPackageSettings } from './macos-p
+ import { resolveWindowsPackageSettings } from './windows-package-settings.mjs'
+ import { packagingErrorDetails, packagingStep } from './packaging-step.mjs'
+ import { notarizeMacOS } from './notarize-macos.mjs'
+-import { resolveMacOSNotarizationEnvironment } from './desktop-release-environment.mjs'
++import { DANIEL_BOT_PRODUCT_NAME, resolveMacOSNotarizationEnvironment } from './desktop-release-environment.mjs'
+ import { DESKTOP_BUILD_VERSION_ENV, resolveDesktopBuildVersion, validateDesktopBuildVersion } from './desktop-build-version.mjs'
+ import { suggestDesktopBuildVersion } from './desktop-build-version-discovery.ts'
+ import { desktopBuildCommitEnvironment, readDesktopBuildCommit, resolveDesktopBuildCommit } from './desktop-build-commit.mjs'
+@@ -545,13 +545,13 @@ export async function packageTarget(
+   } else if (target.platform === 'darwin' && !invocation.unsigned && !invocation.skipNotarization) {
+     await execute([...desktopElectronBuilderArguments(target, true), '--config.mac.notarize=false'], electronBuilderEnv)
+     await execute(['exec', 'tsx', 'scripts/smoke-packaged-runtime.ts'], targetEnv)
+-    const appPath = join(buildPaths.artifacts, target.arch === 'arm64' ? 'mac-arm64' : 'mac', 'DeepSeek Harness.app')
++    const appPath = join(buildPaths.artifacts, target.arch === 'arm64' ? 'mac-arm64' : 'mac', `${DANIEL_BOT_PRODUCT_NAME}.app`)
+     await withMacOSNotarizationProxy(mac?.notarizationProxy,
+       () => notarizeMacOS({ appPath, ...resolveMacOSNotarizationEnvironment(environment) }), undefined, undefined, proxyEvent)
+   } else {
+     if (target.platform === 'darwin' && invocation.skipNotarization && !invocation.directory) {
+       await execute(desktopElectronBuilderArguments(target, true), electronBuilderEnv)
+-      const appPath = join(artifactsRoot, target.arch === 'arm64' ? 'mac-arm64' : 'mac', 'DeepSeek Harness.app')
++      const appPath = join(artifactsRoot, target.arch === 'arm64' ? 'mac-arm64' : 'mac', `${DANIEL_BOT_PRODUCT_NAME}.app`)
+       for (const format of ['dmg', 'zip'] as const) {
+         await buildMacArtifact({ format, appPath, output: artifactsRoot })
+       }
+diff --git a/apps/desktop/scripts/smoke-packaged-runtime.ts b/apps/desktop/scripts/smoke-packaged-runtime.ts
+index 6c3c12c8..99d710d2 100644
+--- a/apps/desktop/scripts/smoke-packaged-runtime.ts
++++ b/apps/desktop/scripts/smoke-packaged-runtime.ts
+@@ -2,6 +2,7 @@
+ import { join } from 'node:path'
+ import { parseArgs } from 'node:util'
+ import { desktopArtifactOutput, resolveDesktopBuildTarget, resolveDesktopTargetBuildPaths } from './desktop-build-paths.mjs'
++import { DANIEL_BOT_PRODUCT_NAME } from './desktop-release-environment.mjs'
+ import { readDesktopRuntime, verifyDesktopRuntime } from '../src/runtime-tree.ts'
+ import { verifyWindowsCode } from './windows-runtime-signature.mjs'
+ import { smokePreparedRuntime } from './smoke-prepared-runtime.ts'
+@@ -13,9 +14,11 @@ const target = resolveDesktopBuildTarget()
+ const windows = target === 'win-x64'
+ const artifacts = desktopArtifactOutput(paths, { unsigned: values.unsigned, skipNotarization: values['skip-notarization'] }).directory
+ const application = windows ? join(artifacts, 'win-unpacked')
+-  : join(artifacts, target === 'mac-arm64' ? 'mac-arm64' : 'mac', 'DeepSeek Harness.app', 'Contents')
++  : join(artifacts, target === 'mac-arm64' ? 'mac-arm64' : 'mac', `${DANIEL_BOT_PRODUCT_NAME}.app`, 'Contents')
+ const resources = join(application, windows ? 'resources' : 'Resources')
+-const executable = windows ? join(application, 'DeepSeek Harness.exe') : join(application, 'MacOS', 'DeepSeek Harness')
++const executable = windows
++  ? join(application, `${DANIEL_BOT_PRODUCT_NAME}.exe`)
++  : join(application, 'MacOS', DANIEL_BOT_PRODUCT_NAME)
+ const descriptor = await verifyDesktopRuntime(paths.dsh, readDesktopRuntime(paths.dsh).release.version,
+   resolveDesktopPackageTarget(target))
+ if (windows && !values.unsigned) await verifyWindowsCode(application)
+diff --git a/apps/desktop/scripts/sync-daniel-plugin.mjs b/apps/desktop/scripts/sync-daniel-plugin.mjs
+new file mode 100644
+index 00000000..6740c2cf
+--- /dev/null
++++ b/apps/desktop/scripts/sync-daniel-plugin.mjs
+@@ -0,0 +1,143 @@
++#!/usr/bin/env node
++/**
++ * Stage the Daniel plugin package into `apps/desktop/resources/vendor/daniel-dsh-plugin`,
++ * which `electron-builder` ships as `<App>.app/Contents/Resources/vendor/daniel-dsh-plugin`.
++ *
++ * The tarball stays the source of truth: the extracted directory is generated and ignored by
++ * git, so `pnpm -C apps/desktop package:*` needs this step once after each plugin release.
++ *
++ * Usage:
++ *   node scripts/sync-daniel-plugin.mjs --from ../releases/daniel-dsh-plugin-0.11.0.tgz
++ *   DANIEL_PLUGIN_TGZ=/path/to/plugin.tgz node scripts/sync-daniel-plugin.mjs
++ *   node scripts/sync-daniel-plugin.mjs --from /path/to/extracted/package
++ *
++ * Idempotent: an extracted copy whose file inventory digest matches the input is left untouched.
++ */
++
++import { createHash } from 'node:crypto'
++import { spawnSync } from 'node:child_process'
++import {
++  cpSync,
++  existsSync,
++  mkdirSync,
++  readdirSync,
++  readFileSync,
++  renameSync,
++  rmSync,
++  statSync,
++} from 'node:fs'
++import { join, relative, sep } from 'node:path'
++import { fileURLToPath } from 'node:url'
++import { parseArgs } from 'node:util'
++
++const APP_ROOT = fileURLToPath(new URL('..', import.meta.url))
++const VENDOR_ROOT = join(APP_ROOT, 'resources', 'vendor')
++const TARGET = join(VENDOR_ROOT, 'daniel-dsh-plugin')
++const PACKAGE_NAME = 'daniel-dsh-plugin'
++/** Directories that never ship: development-only notes, dependencies, and version control. */
++const EXCLUDED = new Set(['specs', 'node_modules', '.git'])
++
++function log(message) {
++  process.stdout.write(`${message}\n`)
++}
++
++function fail(message) {
++  try {
++    if (typeof VENDOR_ROOT !== 'undefined') {
++      for (const name of readdirSync(VENDOR_ROOT)) {
++        if (name.startsWith('.staging-')) rmSync(join(VENDOR_ROOT, name), { recursive: true, force: true })
++      }
++    }
++  } catch {}
++  process.stderr.write(`sync-daniel-plugin: ${message}\n`)
++  process.exit(1)
++}
++
++/** List every regular file below a directory with its digest, in byte order of relative path. */
++function inventory(root) {
++  if (!existsSync(join(root, 'package.json'))) fail(`${root} 不是插件包目录（缺 package.json）`)
++  const files = []
++  const visit = (directory) => {
++    for (const entry of readdirSync(directory, { withFileTypes: true })) {
++      if (EXCLUDED.has(entry.name)) continue
++      const path = join(directory, entry.name)
++      const name = relative(root, path).split(sep).join('/')
++      if (entry.isDirectory()) visit(path)
++      else if (entry.isFile()) {
++        const body = readFileSync(path)
++        files.push({ path: name, bytes: body.byteLength, sha256: createHash('sha256').update(body).digest('hex') })
++      } else fail(`不支持的目录项：${name}`)
++    }
++  }
++  visit(root)
++  return files.sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0))
++}
++
++function digest(files) {
++  const hash = createHash('sha256')
++  for (const file of files) hash.update(`${file.path}\0${String(file.bytes)}\0${file.sha256}\n`)
++  return hash.digest('hex')
++}
++
++const { values } = parseArgs({
++  options: {
++    from: { type: 'string' },
++    help: { type: 'boolean', short: 'h' },
++  },
++})
++
++if (values.help === true) {
++  log('用法：node scripts/sync-daniel-plugin.mjs --from <插件 .tgz 或已解包目录>')
++  process.exit(0)
++}
++
++const source = values.from ?? process.env.DANIEL_PLUGIN_TGZ
++if (source === undefined || source === '') fail('缺少输入：传 --from <插件 .tgz 或已解包目录>，或设 DANIEL_PLUGIN_TGZ')
++if (!existsSync(source)) fail(`输入不存在：${source}`)
++
++mkdirSync(VENDOR_ROOT, { recursive: true })
++const staging = join(VENDOR_ROOT, `.staging-${String(process.pid)}`)
++rmSync(staging, { recursive: true, force: true })
++mkdirSync(staging, { recursive: true })
++
++try {
++  const extracted = join(staging, 'package')
++  if (statSync(source).isDirectory()) {
++    cpSync(source, extracted, {
++      recursive: true,
++      dereference: true,
++      filter: (path) => !EXCLUDED.has(path.split(sep).pop() ?? ''),
++    })
++  } else {
++    const tar = spawnSync('tar', ['-xzf', source, '-C', staging], { stdio: ['ignore', 'ignore', 'inherit'] })
++    if (tar.error !== undefined) fail(`无法运行 tar：${tar.error.message}`)
++    if (tar.status !== 0) fail(`解包失败（exit ${String(tar.status)}）：${source}`)
++  }
++  if (!existsSync(join(extracted, 'package.json'))) fail(`压缩包内没有 package/package.json：${source}`)
++
++  const manifest = JSON.parse(readFileSync(join(extracted, 'package.json'), 'utf8'))
++  if (manifest.name !== PACKAGE_NAME) fail(`包名不符：期望 ${PACKAGE_NAME}，实际 ${String(manifest.name)}`)
++  if (manifest.dsh?.bundle?.patch === undefined) fail('插件包没有声明 dsh.bundle.patch，Host 不会把它当作 bundle 加载')
++
++  const expected = inventory(extracted)
++  const expectedDigest = digest(expected)
++  if (existsSync(join(TARGET, 'package.json'))) {
++    try {
++      if (digest(inventory(TARGET)) === expectedDigest) {
++        log(`✓ 未变化，保留现有副本：${TARGET}`)
++        log(`  ${PACKAGE_NAME}@${String(manifest.version)} · ${String(expected.length)} 个文件 · ${expectedDigest.slice(0, 12)}`)
++        rmSync(staging, { recursive: true, force: true })
++        process.exit(0)
++      }
++    } catch {
++      // A damaged copy is replaced below.
++    }
++  }
++
++  rmSync(TARGET, { recursive: true, force: true })
++  renameSync(extracted, TARGET)
++  log(`✓ 已写入 ${TARGET}`)
++  log(`  ${PACKAGE_NAME}@${String(manifest.version)} · ${String(expected.length)} 个文件 · ${expectedDigest.slice(0, 12)}`)
++} finally {
++  rmSync(staging, { recursive: true, force: true })
++}
+diff --git a/apps/desktop/scripts/verify-retained-desktop.ts b/apps/desktop/scripts/verify-retained-desktop.ts
+index 613580da..122f5763 100644
+--- a/apps/desktop/scripts/verify-retained-desktop.ts
++++ b/apps/desktop/scripts/verify-retained-desktop.ts
+@@ -6,6 +6,7 @@ import { join } from 'node:path'
+ import type { DesktopRetainedManifest } from './desktop-release-store.ts'
+ import type { DesktopPublishConfig } from './desktop-publish-config.ts'
+ import { verifyMacOSDiskImage, verifyMacOSNotarizedApplication } from './verify-macos-signature.mjs'
++import { DANIEL_BOT_PRODUCT_NAME } from './desktop-release-environment.mjs'
+ 
+ /**
+  * Verify Windows Authenticode or macOS DMG and archived app notarization on the original platform.
+@@ -39,6 +40,6 @@ export async function verifyRetainedDesktopSignatures(
+   const extracted = await mkdtemp(join(tmpdir(), 'desktop-publish-verify-'))
+   try {
+     run('/usr/bin/ditto', ['-x', '-k', zipPath, extracted])
+-    verifyMacOSNotarizedApplication(join(extracted, 'DeepSeek Harness.app'), config.macOS)
++    verifyMacOSNotarizedApplication(join(extracted, `${DANIEL_BOT_PRODUCT_NAME}.app`), config.macOS)
+   } finally { await rm(extracted, { recursive: true, force: true }) }
+ }
+diff --git a/apps/desktop/src/daniel-home.ts b/apps/desktop/src/daniel-home.ts
+new file mode 100644
+index 00000000..44c09580
+--- /dev/null
++++ b/apps/desktop/src/daniel-home.ts
+@@ -0,0 +1,116 @@
++/** Daniel Bot's private data roots, separated from the shared `~/.dsh` installation. */
++
++import { chmodSync, mkdirSync } from 'node:fs'
++import { homedir } from 'node:os'
++import { join } from 'node:path'
++
++/** Data-root directory name that owns every Daniel Bot file on this machine. */
++export const DANIEL_BOT_DIRECTORY = 'Daniel Bot'
++
++/** Harness home override; unset resolves to `~/Library/Application Support/Daniel Bot/dsh-home`. */
++export const DSH_HOME_ENV = 'DSH_HOME'
++
++/** Daniel data home override; unset resolves to `~/Library/Application Support/Daniel Bot/daniel-home`. */
++export const DANIEL_HOME_ENV = 'DANIEL_HOME'
++
++/** The two roots one Daniel Bot launch owns. */
++export interface DanielHomes {
++  /** Harness home holding `profiles/desktop` and the Host's runtime state. */
++  readonly dshHome: string
++  /** Daniel data home holding sessions, the app overlay, and audit records. */
++  readonly danielHome: string
++}
++
++function configured(env: NodeJS.ProcessEnv, name: string): string | undefined {
++  const value = env[name]?.trim()
++  return value === undefined || value === '' ? undefined : value
++}
++
++/**
++ * Resolve the platform data root that holds Daniel Bot's own directories.
++ * The default never depends on `$DSH_HOME`, so an inherited environment cannot
++ * move the product's directory tree.
++ * @param platform - Operating system naming the data root; defaults to this process's.
++ * @param home - OS home directory; defaults to {@link homedir}.
++ * @param env - Environment supplying `APPDATA` and `XDG_DATA_HOME`; defaults to this process's.
++ * @returns Absolute directory, whether or not it exists.
++ */
++export function danielDataRoot(
++  platform: NodeJS.Platform = process.platform,
++  home: string = homedir(),
++  env: NodeJS.ProcessEnv = process.env,
++): string {
++  if (platform === 'darwin') return join(home, 'Library', 'Application Support', DANIEL_BOT_DIRECTORY)
++  if (platform === 'win32') return join(env.APPDATA ?? join(home, 'AppData', 'Roaming'), DANIEL_BOT_DIRECTORY)
++  return join(env.XDG_DATA_HOME ?? join(home, '.local', 'share'), DANIEL_BOT_DIRECTORY)
++}
++
++/**
++ * Resolve the Harness home: `$DSH_HOME`, else Daniel Bot's private `dsh-home`.
++ * A blank or whitespace-only override counts as unset, as in `@deepseek-ai/dsh-home-paths`.
++ * @param env - Environment supplying `$DSH_HOME`; defaults to this process's.
++ * @param platform - Operating system naming the default root; defaults to this process's.
++ * @param home - OS home directory; defaults to {@link homedir}.
++ * @returns Absolute Harness home path.
++ */
++export function resolveDanielDshHome(
++  env: NodeJS.ProcessEnv = process.env,
++  platform: NodeJS.Platform = process.platform,
++  home: string = homedir(),
++): string {
++  return configured(env, DSH_HOME_ENV) ?? join(danielDataRoot(platform, home, env), 'dsh-home')
++}
++
++/**
++ * Resolve Daniel's data home: `$DANIEL_HOME`, else Daniel Bot's private `daniel-home`.
++ * @param env - Environment supplying `$DANIEL_HOME`; defaults to this process's.
++ * @param platform - Operating system naming the default root; defaults to this process's.
++ * @param home - OS home directory; defaults to {@link homedir}.
++ * @returns Absolute Daniel data home path.
++ */
++export function resolveDanielHome(
++  env: NodeJS.ProcessEnv = process.env,
++  platform: NodeJS.Platform = process.platform,
++  home: string = homedir(),
++): string {
++  return configured(env, DANIEL_HOME_ENV) ?? join(danielDataRoot(platform, home, env), 'daniel-home')
++}
++
++/**
++ * Create one product-owned directory and enforce owner-only access.
++ * The recursive mode applies to new directories only, so the final directory is
++ * also chmod'ed to 0700 when an earlier launch (or a restore) left it wider.
++ * @param directory - Absolute directory to create.
++ * @throws When the directory cannot be created or its mode cannot be set.
++ */
++export function ensurePrivateDirectory(directory: string): void {
++  mkdirSync(directory, { recursive: true, mode: 0o700 })
++  chmodSync(directory, 0o700)
++}
++
++/**
++ * Create both data roots and publish them to the process environment, so the
++ * Host child process and every later resolution in this launch agree.
++ * Must run before the first `resolveDesktopPaths()` and before the Host spawns.
++ * Existing `~/.dsh` content is deliberately left alone: this product starts from
++ * a fresh profile and imports nothing (D-019).
++ * @param env - Environment to write `$DSH_HOME` and `$DANIEL_HOME` into; defaults to this process's.
++ * @param platform - Operating system naming the default roots; defaults to this process's.
++ * @param home - OS home directory; defaults to {@link homedir}.
++ * @returns The resolved absolute roots.
++ */
++export function installDanielHomes(
++  env: NodeJS.ProcessEnv = process.env,
++  platform: NodeJS.Platform = process.platform,
++  home: string = homedir(),
++): DanielHomes {
++  const homes: DanielHomes = {
++    dshHome: resolveDanielDshHome(env, platform, home),
++    danielHome: resolveDanielHome(env, platform, home),
++  }
++  ensurePrivateDirectory(homes.dshHome)
++  ensurePrivateDirectory(homes.danielHome)
++  env[DSH_HOME_ENV] = homes.dshHome
++  env[DANIEL_HOME_ENV] = homes.danielHome
++  return homes
++}
+diff --git a/apps/desktop/src/daniel-plugin.ts b/apps/desktop/src/daniel-plugin.ts
+new file mode 100644
+index 00000000..5f5a751d
+--- /dev/null
++++ b/apps/desktop/src/daniel-plugin.ts
+@@ -0,0 +1,238 @@
++/** The embedded Daniel plugin: its profile copy, activation, and five-key configuration. */
++
++import { createHash } from 'node:crypto'
++import {
++  chmodSync,
++  copyFileSync,
++  existsSync,
++  lstatSync,
++  mkdirSync,
++  readdirSync,
++  readFileSync,
++  renameSync,
++  rmSync,
++  writeFileSync,
++} from 'node:fs'
++import { join, relative, sep } from 'node:path'
++import { readProfileManifest, writeProfileBundles } from '@deepseek-ai/dsh-app-boot'
++
++/** Package name the profile resolves and the Host mounts. */
++export const DANIEL_PLUGIN_NAME = 'daniel-dsh-plugin'
++
++/** Profile user layer; the official Host has no `--patch` channel, so the runtime config lives here. */
++export const PROFILE_PATCH_FILENAME = 'cordis.patch.yml'
++
++/** Daniel data home file the Daniel application reads for the same settings. */
++export const APP_OVERLAY_FILENAME = 'app-overlay.yml'
++
++/** Version of the five-key configuration written below; bump when a key's meaning changes. */
++const CONFIG_SCHEMA_VERSION = 1
++/** Interpreter that runs the vendored Daniel CLI; the bundled Python is a later work group (S2 §2.6). */
++const DANIEL_PYTHON = 'python3'
++/** Per-call deadline handed to the plugin. */
++const DANIEL_TIMEOUT_MS = 180_000
++/** Output-trace tier of the plugin (`off` | `summary` | `full`). */
++const DANIEL_TRACE_MODE = 'summary'
++
++/** Where the packaged plugin lives and where its data goes. */
++export interface DanielPluginEmbeds {
++  /** Directory shipped in the application's resources that holds the plugin package. */
++  readonly pluginSource: string
++  /** Absolute Daniel data home recorded in the plugin configuration. */
++  readonly danielHome: string
++}
++
++/** Outcome of one embedding attempt. */
++export interface DanielPluginInstallation {
++  /** Whether the profile holds a loadable plugin copy after this launch. */
++  readonly installed: boolean
++  /** Whether this launch replaced that copy. */
++  readonly copied: boolean
++}
++
++interface InventoryFile {
++  readonly path: string
++  readonly bytes: number
++  /** Hex SHA-256 of the file body. */
++  readonly sha256: string
++}
++
++/**
++ * List every regular file below a directory with its digest.
++ * @param root - Existing package directory.
++ * @returns Files in byte order of their slash-separated relative paths.
++ * @throws When the directory is not a package or holds an entry that is neither file nor directory.
++ */
++function inventory(root: string): InventoryFile[] {
++  if (!existsSync(join(root, 'package.json'))) throw new Error(`daniel plugin: ${root} is not a package directory`)
++  const files: InventoryFile[] = []
++  const visit = (directory: string): void => {
++    for (const entry of readdirSync(directory, { withFileTypes: true })) {
++      const path = join(directory, entry.name)
++      const name = relative(root, path).split(sep).join('/')
++      if (entry.isDirectory()) visit(path)
++      else if (entry.isFile()) {
++        const body = readFileSync(path)
++        files.push({ path: name, bytes: body.byteLength, sha256: createHash('sha256').update(body).digest('hex') })
++      } else throw new Error(`daniel plugin: unsupported filesystem entry ${name}`)
++    }
++  }
++  visit(root)
++  return files.sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0))
++}
++
++/**
++ * Fold a file inventory into one digest that changes with any path, size, or content.
++ * @param files - Inventory from {@link inventory}.
++ * @returns Hex SHA-256 of the framed inventory.
++ */
++function inventoryDigest(files: readonly InventoryFile[]): string {
++  const hash = createHash('sha256')
++  for (const file of files) hash.update(`${file.path}\0${String(file.bytes)}\0${file.sha256}\n`)
++  return hash.digest('hex')
++}
++
++/** Copy one directory tree, preserving the executable bits the vendored CLI needs. */
++function copyTree(source: string, destination: string): void {
++  mkdirSync(destination, { recursive: true, mode: 0o700 })
++  for (const entry of readdirSync(source, { withFileTypes: true })) {
++    const from = join(source, entry.name)
++    const to = join(destination, entry.name)
++    if (entry.isDirectory()) { copyTree(from, to); continue }
++    if (!entry.isFile()) throw new Error(`daniel plugin: unsupported filesystem entry ${from}`)
++    copyFileSync(from, to)
++    chmodSync(to, lstatSync(from).mode & 0o777)
++  }
++}
++
++/**
++ * Materialize the packaged plugin as a real directory inside the profile.
++ * A copy whose inventory digest already matches the packaged one is kept untouched,
++ * so a relaunch neither rewrites files nor changes their timestamps.
++ * @param source - Packaged plugin directory, normally `<Resources>/vendor/daniel-dsh-plugin`.
++ * @param profileDir - Desktop profile whose `node_modules` receives the copy.
++ * @returns Whether the profile now holds the plugin and whether it was rewritten.
++ */
++export function embedDanielPlugin(source: string, profileDir: string): DanielPluginInstallation {
++  const target = join(profileDir, 'node_modules', DANIEL_PLUGIN_NAME)
++  const installed = existsSync(join(target, 'package.json'))
++  if (!existsSync(join(source, 'package.json'))) return { installed, copied: false }
++  const expected = inventoryDigest(inventory(source))
++  if (installed) {
++    try {
++      if (inventoryDigest(inventory(target)) === expected) return { installed: true, copied: false }
++    } catch {
++      // A damaged copy is replaced rather than repaired in place.
++    }
++  }
++  const staging = `${target}.staging-${String(process.pid)}`
++  rmSync(staging, { recursive: true, force: true })
++  mkdirSync(join(profileDir, 'node_modules'), { recursive: true, mode: 0o700 })
++  copyTree(source, staging)
++  rmSync(target, { recursive: true, force: true })
++  renameSync(staging, target)
++  return { installed: true, copied: true }
++}
++
++/**
++ * Append the plugin to the profile's ordered bundle list.
++ * @param profileDir - Desktop profile directory holding `package.json`.
++ * @returns Whether the manifest changed.
++ */
++export function activateDanielPlugin(profileDir: string): boolean {
++  const manifest = readProfileManifest('desktop', profileDir)
++  const bundles = manifest.dsh?.profile?.bundles ?? []
++  if (bundles.includes(DANIEL_PLUGIN_NAME)) return false
++  writeProfileBundles(profileDir, manifest, [...bundles, DANIEL_PLUGIN_NAME])
++  return true
++}
++
++/** Whether the profile carries a plugin copy, independent of its inventory. */
++export function danielPluginPresent(profileDir: string): boolean {
++  return existsSync(join(profileDir, 'node_modules', DANIEL_PLUGIN_NAME, 'package.json'))
++}
++
++/** Quote a scalar as a JSON string, which is also a valid YAML double-quoted scalar. */
++function yamlString(value: string): string {
++  return JSON.stringify(value)
++}
++
++/**
++ * Render the plugin row.
++ * Every key the plugin's `Config` declares is written, because a non-insert patch
++ * replaces the targeted row's whole `config`, so an omitted key would delete it.
++ * The row id matches the plugin's own bundle patch, so this user layer overrides it
++ * in place instead of inserting a second instance.
++ */
++function pluginRow(embeds: DanielPluginEmbeds, profileDir: string): string[] {
++  const entry = join(profileDir, 'node_modules', DANIEL_PLUGIN_NAME, 'vendor', 'data', 'daniel-cli', 'bin', 'daniel')
++  return [
++    `# schema: ${String(CONFIG_SCHEMA_VERSION)}`,
++    '- id: daniel',
++    '  config:',
++    `    entry: ${yamlString(entry)}`,
++    `    python: ${yamlString(DANIEL_PYTHON)}`,
++    `    danielHome: ${yamlString(embeds.danielHome)}`,
++    `    timeoutMs: ${String(DANIEL_TIMEOUT_MS)}`,
++    `    trace: ${DANIEL_TRACE_MODE}`,
++    '',
++  ]
++}
++
++/** Whether an existing patch file is template-generated and therefore safe to replace without a backup. */
++function disposablePatch(body: string): boolean {
++  if (body.trim() === '') return true
++  const meaningful = body.split('\n').map(line => line.trim()).filter(line => line !== '' && !line.startsWith('#'))
++  return meaningful.length === 0 || (meaningful.length === 1 && meaningful[0] === '[]')
++}
++
++/** Write a file only when its content differs, keeping a rolling backup of foreign content. */
++function writeIfChanged(path: string, body: string, backup: boolean): boolean {
++  const current = existsSync(path) ? readFileSync(path, 'utf8') : undefined
++  if (current === body) return false
++  if (backup && current !== undefined && !disposablePatch(current)) {
++    writeFileSync(`${path}.bak-daniel`, current, { mode: 0o600 })
++  }
++  writeFileSync(path, body, { mode: 0o600 })
++  return true
++}
++
++/**
++ * Pin the plugin's five-key configuration in the profile user layer.
++ * Rewritten every launch because crash recovery backs that layer up and empties it.
++ * @param embeds - Plugin location inputs.
++ * @param profileDir - Desktop profile directory.
++ * @returns Whether the file changed.
++ */
++export function writeDanielProfilePatch(embeds: DanielPluginEmbeds, profileDir: string): boolean {
++  const body = [
++    '# Daniel Bot · 应用层配置，由桌面端在每次启动时重写；手工修改会在下次启动被覆盖。',
++    '# 官方 Host 调用 runProfile 时 patchFiles 为空（apps/desktop-host/src/index.ts），没有启动期 --patch 通道，',
++    '# 因此插件运行所需的 5 个键写进 profile 的用户层；行 id 与插件自带 bundle patch 相同，原地覆盖 config。',
++    ...pluginRow(embeds, profileDir),
++  ].join('\n')
++  return writeIfChanged(join(profileDir, PROFILE_PATCH_FILENAME), body, true)
++}
++
++/**
++ * Record the same five-key configuration for the Daniel application layer.
++ * The official Host does not read this file yet; it keeps the Daniel application and
++ * the plugin configuration from drifting apart.
++ * @param embeds - Plugin location inputs, including the Daniel data home.
++ * @param profileDir - Desktop profile directory the plugin was copied into.
++ * @returns Whether the file changed.
++ */
++export function writeDanielAppOverlay(embeds: DanielPluginEmbeds, profileDir: string): boolean {
++  ensureDanielHome(embeds.danielHome)
++  const body = [
++    '# Daniel Bot · 应用层配置，由桌面端在每次启动时重写；手工修改会在下次启动被覆盖。',
++    '# 与 profile 的 cordis.patch.yml 保持同一份 5 键配置（entry/python/danielHome/timeoutMs/trace）。',
++    ...pluginRow(embeds, profileDir),
++  ].join('\n')
++  return writeIfChanged(join(embeds.danielHome, APP_OVERLAY_FILENAME), body, false)
++}
++
++/** Create the Daniel data home before writing into it. */
++function ensureDanielHome(danielHome: string): void {
++  mkdirSync(danielHome, { recursive: true, mode: 0o700 })
++}
+diff --git a/apps/desktop/src/locale.ts b/apps/desktop/src/locale.ts
+index f5d30b82..9be1ec0a 100644
+--- a/apps/desktop/src/locale.ts
++++ b/apps/desktop/src/locale.ts
+@@ -31,17 +31,18 @@ export const en = {
+   application: 'Application',
+   fileMenu: 'File',
+   closePage: 'Close Page or Window',
+-  aboutMenu: 'About DeepSeek Harness',
+-  aboutProduct: 'DeepSeek Harness',
++  aboutMenu: 'About Daniel Bot',
++  aboutProduct: 'Daniel Bot',
+   aboutVersion: 'Version V{version}',
+-  hideApplication: 'Hide DeepSeek Harness',
++  aboutNotice: 'Built on DeepSeek Harness (MIT License). Unofficial distribution, not affiliated with or endorsed by DeepSeek.',
++  hideApplication: 'Hide Daniel Bot',
+   hideOtherApplications: 'Hide Others',
+   showAllApplications: 'Show All',
+-  quitApplication: 'Quit DeepSeek Harness',
+-  openApplication: 'Open DeepSeek Harness',
++  quitApplication: 'Quit Daniel Bot',
++  openApplication: 'Open Daniel Bot',
+   quit: 'Quit',
+   cancel: 'Cancel',
+-  quitTitle: 'Quit DeepSeek Harness?',
++  quitTitle: 'Quit Daniel Bot?',
+   quitActiveTasks: 'Running tasks will be interrupted.',
+   quitScheduledTasks: 'Scheduled tasks will not run while the app is closed.',
+   quitActiveAndScheduledTasks: 'Running tasks will be interrupted, and scheduled tasks will not run while the app is closed.',
+@@ -56,7 +57,7 @@ export const en = {
+   copy: 'Copy',
+   paste: 'Paste',
+   selectAll: 'Select All',
+-  startupFailed: 'DeepSeek Harness is unavailable',
++  startupFailed: 'Daniel Bot is unavailable',
+   fatalSummary: 'The application could not start or stopped unexpectedly.',
+   startupAddressInUse: 'Another DSH instance (such as dsh web or the desktop app) is running. They cannot start at the same time. Quit the other running DSH instance, then restart.',
+   diagnosticTruncated: '… Error details shortened.',
+@@ -71,10 +72,10 @@ export const en = {
+   restartApplication: 'Restart',
+   recoveryOperationFailed: 'The recovery operation failed',
+   disableThirdPartyPlugins: 'Disable third-party plugins, back up profile patch, and restart',
+-  welcomeTitle: 'DeepSeek Harness',
+-  welcomeBrand: 'DeepSeek Harness',
++  welcomeTitle: 'Daniel Bot',
++  welcomeBrand: 'Daniel Bot',
+   welcomeTaglineBefore: 'Welcome to ',
+-  welcomeTaglineBrand: 'DeepSeek Harness',
++  welcomeTaglineBrand: 'Daniel Bot',
+   welcomeTaglineAfter: '',
+   welcomeDescription: 'Build potential. Explore intelligence.',
+   welcomeAuthStarting: 'Opening sign in…',
+@@ -92,7 +93,7 @@ export const en = {
+   welcomeSignIn: 'Sign in',
+   welcomeApiKey: 'Add API Key',
+   welcomeKeyTitle: 'Add an API key to get started',
+-  welcomeKeyDescription: 'Configure official DeepSeek models to start using Harness',
++  welcomeKeyDescription: 'Configure official DeepSeek models to start using Daniel Bot',
+   welcomeKeyPlaceholder: 'Enter API key',
+   welcomeKeySave: 'Save and continue',
+   welcomeKeyLater: 'Set up later',
+@@ -137,7 +138,7 @@ export const en = {
+   updateFullscreenTimeout: 'Could not exit fullscreen. Exit fullscreen, then retry the update.',
+   updateStopFailed: 'Could not safely stop the tasks. The update has not been installed. Please try again later.',
+   updateTechnicalDetails: 'View technical details',
+-  updateTitle: 'DeepSeek Harness Update',
++  updateTitle: 'Daniel Bot Update',
+   updateAvailable: 'New version available: {version}',
+   updateDetail: 'Once the download is complete, you can install the update and restart the app.',
+   installAndRestart: 'Install and Restart',
+@@ -211,17 +212,18 @@ export const zh = {
+   application: '应用',
+   fileMenu: '文件',
+   closePage: '关闭页面或窗口',
+-  aboutMenu: '关于 DeepSeek Harness',
+-  aboutProduct: 'DeepSeek Harness',
++  aboutMenu: '关于 Daniel Bot',
++  aboutProduct: 'Daniel Bot',
+   aboutVersion: '版本 V{version}',
+-  hideApplication: '隐藏 DeepSeek Harness',
++  aboutNotice: '基于 DeepSeek Harness（MIT License）构建，非官方发行版，与 DeepSeek 官方无关。',
++  hideApplication: '隐藏 Daniel Bot',
+   hideOtherApplications: '隐藏其他',
+   showAllApplications: '显示全部',
+-  quitApplication: '退出 DeepSeek Harness',
+-  openApplication: '打开 DeepSeek Harness',
++  quitApplication: '退出 Daniel Bot',
++  openApplication: '打开 Daniel Bot',
+   quit: '退出',
+   cancel: '取消',
+-  quitTitle: '退出 DeepSeek Harness？',
++  quitTitle: '退出 Daniel Bot？',
+   quitActiveTasks: '当前正在运行的任务将会中断',
+   quitScheduledTasks: '应用关闭期间，定时任务不会运行',
+   quitActiveAndScheduledTasks: '当前正在运行的任务将会中断，且应用关闭期间，定时任务不会运行',
+@@ -236,7 +238,7 @@ export const zh = {
+   copy: '复制',
+   paste: '粘贴',
+   selectAll: '全选',
+-  startupFailed: 'DeepSeek Harness 无法使用',
++  startupFailed: 'Daniel Bot 无法使用',
+   fatalSummary: '应用无法启动或已意外停止。',
+   startupAddressInUse: '有其他正在运行的 DSH（如其他 dsh web、桌面端），无法同时启动，请退出其他正在运行的 DSH 后重启。',
+   diagnosticTruncated: '… 错误详情已截短。',
+@@ -251,10 +253,10 @@ export const zh = {
+   restartApplication: '重启',
+   recoveryOperationFailed: '恢复操作失败',
+   disableThirdPartyPlugins: '禁用第三方插件、备份 profile patch 并重启',
+-  welcomeTitle: 'DeepSeek Harness',
+-  welcomeBrand: 'DeepSeek Harness',
++  welcomeTitle: 'Daniel Bot',
++  welcomeBrand: 'Daniel Bot',
+   welcomeTaglineBefore: '欢迎使用 ',
+-  welcomeTaglineBrand: 'DeepSeek Harness',
++  welcomeTaglineBrand: 'Daniel Bot',
+   welcomeTaglineAfter: '',
+   welcomeDescription: '组装无限可能，共探智能上限',
+   welcomeAuthStarting: '正在打开登录…',
+@@ -317,7 +319,7 @@ export const zh = {
+   updateFullscreenTimeout: '无法退出全屏，请退出全屏后重试更新',
+   updateStopFailed: '未能安全停止任务，更新尚未安装，请稍后重试。',
+   updateTechnicalDetails: '查看技术详情',
+-  updateTitle: 'DeepSeek Harness 更新',
++  updateTitle: 'Daniel Bot 更新',
+   updateAvailable: '发现新版本 {version}',
+   updateDetail: '下载完成后，可安装并重启应用。',
+   installAndRestart: '安装并重启',
+@@ -389,17 +391,18 @@ export const ja = {
+   application: 'アプリケーション',
+   fileMenu: 'ファイル',
+   closePage: 'ページまたはウィンドウを閉じる',
+-  aboutMenu: 'DeepSeek Harness について',
+-  aboutProduct: 'DeepSeek Harness',
++  aboutMenu: 'Daniel Bot について',
++  aboutProduct: 'Daniel Bot',
+   aboutVersion: 'バージョン V{version}',
+-  hideApplication: 'DeepSeek Harness を隠す',
++  aboutNotice: 'DeepSeek Harness（MIT License）を基に構築した非公式版です。DeepSeek 公式とは関係ありません。',
++  hideApplication: 'Daniel Bot を隠す',
+   hideOtherApplications: 'ほかを隠す',
+   showAllApplications: 'すべて表示',
+-  quitApplication: 'DeepSeek Harness を終了',
+-  openApplication: 'DeepSeek Harness を開く',
++  quitApplication: 'Daniel Bot を終了',
++  openApplication: 'Daniel Bot を開く',
+   quit: '終了',
+   cancel: 'キャンセル',
+-  quitTitle: 'DeepSeek Harness を終了しますか？',
++  quitTitle: 'Daniel Bot を終了しますか？',
+   quitActiveTasks: '実行中のタスクは中断されます。',
+   quitScheduledTasks: 'アプリの終了中はスケジュールされたタスクが実行されません。',
+   quitActiveAndScheduledTasks: '実行中のタスクは中断され、アプリの終了中はスケジュールされたタスクが実行されません。',
+@@ -414,7 +417,7 @@ export const ja = {
+   copy: 'コピー',
+   paste: '貼り付け',
+   selectAll: 'すべて選択',
+-  startupFailed: 'DeepSeek Harness を利用できません',
++  startupFailed: 'Daniel Bot を利用できません',
+   fatalSummary: 'アプリケーションを起動できなかったか、予期せず停止しました。',
+   startupAddressInUse: '別の DSH インスタンス (dsh web やデスクトップアプリなど) が実行中です。同時に起動することはできません。実行中の他の DSH インスタンスを終了してから再起動してください。',
+   diagnosticTruncated: '… エラー詳細は省略されています。',
+@@ -429,10 +432,10 @@ export const ja = {
+   restartApplication: '再起動',
+   recoveryOperationFailed: '復旧操作に失敗しました',
+   disableThirdPartyPlugins: 'サードパーティのプラグインを無効化し、プロファイルパッチをバックアップして再起動',
+-  welcomeTitle: 'DeepSeek Harness',
+-  welcomeBrand: 'DeepSeek Harness',
++  welcomeTitle: 'Daniel Bot',
++  welcomeBrand: 'Daniel Bot',
+   welcomeTaglineBefore: 'ようこそ ',
+-  welcomeTaglineBrand: 'DeepSeek Harness',
++  welcomeTaglineBrand: 'Daniel Bot',
+   welcomeTaglineAfter: '',
+   welcomeDescription: '可能性を築く。知能を探求する。',
+   welcomeAuthStarting: 'ログインを開いています…',
+@@ -450,7 +453,7 @@ export const ja = {
+   welcomeSignIn: 'ログイン',
+   welcomeApiKey: 'APIキーを追加',
+   welcomeKeyTitle: 'APIキーを追加して開始',
+-  welcomeKeyDescription: '公式のDeepSeekモデルを設定してHarnessを使い始めましょう',
++  welcomeKeyDescription: '公式のDeepSeekモデルを設定してDaniel Botを使い始めましょう',
+   welcomeKeyPlaceholder: 'APIキーを入力',
+   welcomeKeySave: '保存して続行',
+   welcomeKeyLater: '後で設定',
+@@ -495,7 +498,7 @@ export const ja = {
+   updateFullscreenTimeout: 'フルスクリーンを終了できませんでした。フルスクリーンを終了してからアップデートを再試行してください。',
+   updateStopFailed: 'タスクを安全に停止できませんでした。アップデートはインストールされていません。後でもう一度お試しください。',
+   updateTechnicalDetails: '技術的な詳細を表示',
+-  updateTitle: 'DeepSeek Harness アップデート',
++  updateTitle: 'Daniel Bot アップデート',
+   updateAvailable: '新しいバージョンがあります: {version}',
+   updateDetail: 'ダウンロードが完了したら、アップデートをインストールしてアプリを再起動できます。',
+   installAndRestart: 'インストールして再起動',
+@@ -567,17 +570,18 @@ export const es = {
+   application: 'Solicitud',
+   fileMenu: 'Archivo',
+   closePage: 'Cerrar página o ventana',
+-  aboutMenu: 'Acerca de DeepSeek Harness',
+-  aboutProduct: 'DeepSeek Harness',
++  aboutMenu: 'Acerca de Daniel Bot',
++  aboutProduct: 'Daniel Bot',
+   aboutVersion: 'Versión V{version}',
+-  hideApplication: 'Ocultar DeepSeek Harness',
++  aboutNotice: 'Construido sobre DeepSeek Harness (MIT License). Distribución no oficial, sin relación con DeepSeek.',
++  hideApplication: 'Ocultar Daniel Bot',
+   hideOtherApplications: 'Ocultar otros',
+   showAllApplications: 'Mostrar todo',
+-  quitApplication: 'Salir de DeepSeek Harness',
+-  openApplication: 'Abrir DeepSeek Harness',
++  quitApplication: 'Salir de Daniel Bot',
++  openApplication: 'Abrir Daniel Bot',
+   quit: 'Salir',
+   cancel: 'Cancelar',
+-  quitTitle: '¿Salir de DeepSeek Harness?',
++  quitTitle: '¿Salir de Daniel Bot?',
+   quitActiveTasks: 'Las tareas en ejecución se interrumpirán.',
+   quitScheduledTasks: 'Las tareas programadas no se ejecutarán mientras la aplicación esté cerrada.',
+   quitActiveAndScheduledTasks: 'Las tareas en ejecución se interrumpirán y las tareas programadas no se ejecutarán mientras la aplicación esté cerrada.',
+@@ -592,7 +596,7 @@ export const es = {
+   copy: 'Copiar',
+   paste: 'Pegar',
+   selectAll: 'Seleccionar todo',
+-  startupFailed: 'DeepSeek Harness no está disponible',
++  startupFailed: 'Daniel Bot no está disponible',
+   fatalSummary: 'La aplicación no pudo iniciarse o se detuvo inesperadamente.',
+   startupAddressInUse: 'Se está ejecutando otra instancia de DSH (como la web de dsh o la aplicación de escritorio). No pueden empezar al mismo tiempo. Salga de la otra instancia DSH en ejecución y luego reinicie.',
+   diagnosticTruncated: '… Detalles del error acortados.',
+@@ -607,10 +611,10 @@ export const es = {
+   restartApplication: 'Reiniciar',
+   recoveryOperationFailed: 'La operación de recuperación falló',
+   disableThirdPartyPlugins: 'Deshabilite los complementos de terceros, haga una copia de seguridad del parche del perfil y reinicie',
+-  welcomeTitle: 'DeepSeek Harness',
+-  welcomeBrand: 'DeepSeek Harness',
++  welcomeTitle: 'Daniel Bot',
++  welcomeBrand: 'Daniel Bot',
+   welcomeTaglineBefore: 'Bienvenido a ',
+-  welcomeTaglineBrand: 'DeepSeek Harness',
++  welcomeTaglineBrand: 'Daniel Bot',
+   welcomeTaglineAfter: '',
+   welcomeDescription: 'Desarrollar potencial. Explora la inteligencia.',
+   welcomeAuthStarting: 'Abriendo inicio de sesión…',
+@@ -628,7 +632,7 @@ export const es = {
+   welcomeSignIn: 'Iniciar sesión',
+   welcomeApiKey: 'Agregar clave API',
+   welcomeKeyTitle: 'Agregue una clave API para comenzar',
+-  welcomeKeyDescription: 'Configura los modelos oficiales DeepSeek para empezar a utilizar Harness',
++  welcomeKeyDescription: 'Configura los modelos oficiales DeepSeek para empezar a utilizar Daniel Bot',
+   welcomeKeyPlaceholder: 'Ingrese la clave API',
+   welcomeKeySave: 'Guardar y continuar',
+   welcomeKeyLater: 'Configurar más tarde',
+@@ -673,7 +677,7 @@ export const es = {
+   updateFullscreenTimeout: 'No se pudo salir de la pantalla completa. Salga de la pantalla completa y luego vuelva a intentar la actualización.',
+   updateStopFailed: 'No se pudieron detener las tareas de forma segura. La actualización no se ha instalado. Inténtelo de nuevo más tarde.',
+   updateTechnicalDetails: 'Ver detalles técnicos',
+-  updateTitle: 'Actualización DeepSeek Harness',
++  updateTitle: 'Actualización Daniel Bot',
+   updateAvailable: 'Nueva versión disponible: {version}',
+   updateDetail: 'Una vez que se completa la descarga, puede instalar la actualización y reiniciar la aplicación.',
+   installAndRestart: 'Instalar y reiniciar',
+@@ -745,17 +749,18 @@ export const fr = {
+   application: 'Application',
+   fileMenu: 'Fichier',
+   closePage: 'Fermer la page ou la fenêtre',
+-  aboutMenu: 'À propos de DeepSeek Harness',
+-  aboutProduct: 'DeepSeek Harness',
++  aboutMenu: 'À propos de Daniel Bot',
++  aboutProduct: 'Daniel Bot',
+   aboutVersion: 'VersionV{version}',
+-  hideApplication: 'Masquer DeepSeek Harness',
++  aboutNotice: 'Construit sur DeepSeek Harness (MIT License). Distribution non officielle, sans lien avec DeepSeek.',
++  hideApplication: 'Masquer Daniel Bot',
+   hideOtherApplications: 'Masquer les autres',
+   showAllApplications: 'Afficher tout',
+-  quitApplication: 'Quitter DeepSeek Harness',
+-  openApplication: 'Ouvrir DeepSeek Harness',
++  quitApplication: 'Quitter Daniel Bot',
++  openApplication: 'Ouvrir Daniel Bot',
+   quit: 'Quitter',
+   cancel: 'Annuler',
+-  quitTitle: 'Quitter DeepSeek Harness ?',
++  quitTitle: 'Quitter Daniel Bot ?',
+   quitActiveTasks: 'Les tâches en cours seront interrompues.',
+   quitScheduledTasks: "Les tâches planifiées ne s'exécuteront pas lorsque l'application est fermée.",
+   quitActiveAndScheduledTasks: "Les tâches en cours d'exécution seront interrompues et les tâches planifiées ne s'exécuteront pas tant que l'application sera fermée.",
+@@ -770,7 +775,7 @@ export const fr = {
+   copy: 'Copier',
+   paste: 'Coller',
+   selectAll: 'Sélectionner tout',
+-  startupFailed: "DeepSeek Harness n'est pas disponible",
++  startupFailed: "Daniel Bot n'est pas disponible",
+   fatalSummary: "L'application n'a pas pu démarrer ou s'est arrêtée de manière inattendue.",
+   startupAddressInUse: "Une autre instance DSH (telle que le Web dsh ou l'application de bureau) est en cours d'exécution. Ils ne peuvent pas démarrer en même temps. Quittez l'autre instance DSH en cours d'exécution, puis redémarrez.",
+   diagnosticTruncated: '… Détails de l’erreur raccourcis.',
+@@ -785,10 +790,10 @@ export const fr = {
+   restartApplication: 'Redémarrer',
+   recoveryOperationFailed: "L'opération de récupération a échoué",
+   disableThirdPartyPlugins: 'Désactivez les plugins tiers, sauvegardez le correctif de profil et redémarrez',
+-  welcomeTitle: 'DeepSeek Harness',
+-  welcomeBrand: 'DeepSeek Harness',
++  welcomeTitle: 'Daniel Bot',
++  welcomeBrand: 'Daniel Bot',
+   welcomeTaglineBefore: 'Bienvenue à ',
+-  welcomeTaglineBrand: 'DeepSeek Harness',
++  welcomeTaglineBrand: 'Daniel Bot',
+   welcomeTaglineAfter: '',
+   welcomeDescription: "Développer le potentiel. Explorez l'intelligence.",
+   welcomeAuthStarting: 'Ouverture de la connexion…',
+@@ -806,7 +811,7 @@ export const fr = {
+   welcomeSignIn: 'Connectez-vous',
+   welcomeApiKey: 'Ajouter une clé API',
+   welcomeKeyTitle: 'Ajoutez une clé API pour commencer',
+-  welcomeKeyDescription: 'Configurez les modèles DeepSeek officiels pour commencer à utiliser Harness',
++  welcomeKeyDescription: 'Configurez les modèles DeepSeek officiels pour commencer à utiliser Daniel Bot',
+   welcomeKeyPlaceholder: 'Entrez la clé API',
+   welcomeKeySave: 'Enregistrer et continuer',
+   welcomeKeyLater: 'Configurer plus tard',
+@@ -851,7 +856,7 @@ export const fr = {
+   updateFullscreenTimeout: 'Impossible de quitter le mode plein écran. Quittez le mode plein écran, puis réessayez la mise à jour.',
+   updateStopFailed: "Impossible d'arrêter les tâches en toute sécurité. La mise à jour n'a pas été installée. Veuillez réessayer plus tard.",
+   updateTechnicalDetails: 'Voir les détails techniques',
+-  updateTitle: 'Mise à jour DeepSeek Harness',
++  updateTitle: 'Mise à jour Daniel Bot',
+   updateAvailable: 'Nouvelle version disponible : {version}',
+   updateDetail: "Une fois le téléchargement terminé, vous pouvez installer la mise à jour et redémarrer l'application.",
+   installAndRestart: 'Installer et redémarrer',
+@@ -923,17 +928,18 @@ export const de = {
+   application: 'Anwendung',
+   fileMenu: 'Datei',
+   closePage: 'Seite oder Fenster schließen',
+-  aboutMenu: 'Über DeepSeek Harness',
+-  aboutProduct: 'DeepSeek Harness',
++  aboutMenu: 'Über Daniel Bot',
++  aboutProduct: 'Daniel Bot',
+   aboutVersion: 'Version V{version}',
+-  hideApplication: 'DeepSeek Harness ausblenden',
++  aboutNotice: 'Auf DeepSeek Harness (MIT License) aufgebaut. Inoffizielle Distribution, nicht mit DeepSeek verbunden.',
++  hideApplication: 'Daniel Bot ausblenden',
+   hideOtherApplications: 'Andere ausblenden',
+   showAllApplications: 'Alle einblenden',
+-  quitApplication: 'DeepSeek Harness beenden',
+-  openApplication: 'DeepSeek Harness öffnen',
++  quitApplication: 'Daniel Bot beenden',
++  openApplication: 'Daniel Bot öffnen',
+   quit: 'Beenden',
+   cancel: 'Abbrechen',
+-  quitTitle: 'DeepSeek Harness beenden?',
++  quitTitle: 'Daniel Bot beenden?',
+   quitActiveTasks: 'Laufende Aufgaben werden unterbrochen.',
+   quitScheduledTasks: 'Geplante Aufgaben werden nicht ausgeführt, während die App geschlossen ist.',
+   quitActiveAndScheduledTasks: 'Laufende Aufgaben werden unterbrochen und geplante Aufgaben werden nicht ausgeführt, während die App geschlossen ist.',
+@@ -948,7 +954,7 @@ export const de = {
+   copy: 'Kopieren',
+   paste: 'Einfügen',
+   selectAll: 'Alles auswählen',
+-  startupFailed: 'DeepSeek Harness ist nicht verfügbar',
++  startupFailed: 'Daniel Bot ist nicht verfügbar',
+   fatalSummary: 'Die Anwendung konnte nicht gestartet werden oder wurde unerwartet gestoppt.',
+   startupAddressInUse: 'Eine andere DSH-Instanz (z. B. dsh Web oder die Desktop-App) wird ausgeführt. Sie können nicht gleichzeitig starten. Beenden Sie die andere laufende DSH-Instanz und starten Sie sie neu.',
+   diagnosticTruncated: '… Fehlerdetails gekürzt.',
+@@ -963,10 +969,10 @@ export const de = {
+   restartApplication: 'Neustart',
+   recoveryOperationFailed: 'Der Wiederherstellungsvorgang ist fehlgeschlagen',
+   disableThirdPartyPlugins: 'Deaktivieren Sie Plugins von Drittanbietern, sichern Sie den Profil-Patch und starten Sie neu',
+-  welcomeTitle: 'DeepSeek Harness',
+-  welcomeBrand: 'DeepSeek Harness',
++  welcomeTitle: 'Daniel Bot',
++  welcomeBrand: 'Daniel Bot',
+   welcomeTaglineBefore: 'Willkommen bei ',
+-  welcomeTaglineBrand: 'DeepSeek Harness',
++  welcomeTaglineBrand: 'Daniel Bot',
+   welcomeTaglineAfter: '',
+   welcomeDescription: 'Potenzial aufbauen. Entdecken Sie Intelligenz.',
+   welcomeAuthStarting: 'Anmeldung wird geöffnet…',
+@@ -984,7 +990,7 @@ export const de = {
+   welcomeSignIn: 'Anmelden',
+   welcomeApiKey: 'API-Schlüssel hinzufügen',
+   welcomeKeyTitle: 'Fügen Sie einen API-Schlüssel hinzu, um loszulegen',
+-  welcomeKeyDescription: 'Konfigurieren Sie offizielle DeepSeek-Modelle für die Verwendung von Harness',
++  welcomeKeyDescription: 'Konfigurieren Sie offizielle DeepSeek-Modelle für die Verwendung von Daniel Bot',
+   welcomeKeyPlaceholder: 'API-Schlüssel eingeben',
+   welcomeKeySave: 'Speichern und fortfahren',
+   welcomeKeyLater: 'Später einrichten',
+@@ -1029,7 +1035,7 @@ export const de = {
+   updateFullscreenTimeout: 'Der Vollbildmodus konnte nicht beendet werden. Beenden Sie den Vollbildmodus und versuchen Sie dann erneut, das Update durchzuführen.',
+   updateStopFailed: 'Die Aufgaben konnten nicht sicher gestoppt werden. Das Update wurde nicht installiert. Bitte versuchen Sie es später noch einmal.',
+   updateTechnicalDetails: 'Technische Details anzeigen',
+-  updateTitle: 'DeepSeek Harness-Update',
++  updateTitle: 'Daniel Bot-Update',
+   updateAvailable: 'Neue Version verfügbar: {version}',
+   updateDetail: 'Sobald der Download abgeschlossen ist, können Sie das Update installieren und die App neu starten.',
+   installAndRestart: 'Installieren und neu starten',
+@@ -1101,17 +1107,18 @@ export const ru = {
+   application: 'Приложение',
+   fileMenu: 'Файл',
+   closePage: 'Закрыть страницу или окно',
+-  aboutMenu: 'О DeepSeek Harness',
+-  aboutProduct: 'DeepSeek Harness',
++  aboutMenu: 'О Daniel Bot',
++  aboutProduct: 'Daniel Bot',
+   aboutVersion: 'Версия V{version}',
+-  hideApplication: 'Скрыть DeepSeek Harness',
++  aboutNotice: 'Собрано на основе DeepSeek Harness (MIT License). Неофициальная сборка, не связана с DeepSeek.',
++  hideApplication: 'Скрыть Daniel Bot',
+   hideOtherApplications: 'Скрыть других',
+   showAllApplications: 'Показать все',
+-  quitApplication: 'Выйти из DeepSeek Harness',
+-  openApplication: 'Открыть DeepSeek Harness',
++  quitApplication: 'Выйти из Daniel Bot',
++  openApplication: 'Открыть Daniel Bot',
+   quit: 'Выйти',
+   cancel: 'Отмена',
+-  quitTitle: 'Выйти из DeepSeek Harness?',
++  quitTitle: 'Выйти из Daniel Bot?',
+   quitActiveTasks: 'Выполнение задач будет прервано.',
+   quitScheduledTasks: 'Запланированные задачи не будут выполняться, пока приложение закрыто.',
+   quitActiveAndScheduledTasks: 'Выполнение задач будет прервано, а запланированные задачи не будут выполняться, пока приложение закрыто.',
+@@ -1126,7 +1133,7 @@ export const ru = {
+   copy: 'Копировать',
+   paste: 'Вставить',
+   selectAll: 'Выбрать все',
+-  startupFailed: 'DeepSeek Harness недоступен.',
++  startupFailed: 'Daniel Bot недоступен.',
+   fatalSummary: 'Приложение не могло запуститься или неожиданно остановилось.',
+   startupAddressInUse: 'Другой экземпляр DSH (например, веб-приложение dsh или настольное приложение) запущен. Они не могут начаться одновременно. Закройте другой работающий экземпляр DSH, а затем перезапустите.',
+   diagnosticTruncated: '… Подробности об ошибках сокращены.',
+@@ -1141,10 +1148,10 @@ export const ru = {
+   restartApplication: 'Перезапустить',
+   recoveryOperationFailed: 'Операция восстановления не удалась',
+   disableThirdPartyPlugins: 'Отключите сторонние плагины, создайте резервную копию патча профиля и перезапустите.',
+-  welcomeTitle: 'DeepSeek Harness',
+-  welcomeBrand: 'DeepSeek Harness',
++  welcomeTitle: 'Daniel Bot',
++  welcomeBrand: 'Daniel Bot',
+   welcomeTaglineBefore: 'Добро пожаловать в ',
+-  welcomeTaglineBrand: 'DeepSeek Harness',
++  welcomeTaglineBrand: 'Daniel Bot',
+   welcomeTaglineAfter: '',
+   welcomeDescription: 'Развивайте потенциал. Исследуйте интеллект.',
+   welcomeAuthStarting: 'Открытие входа в систему…',
+@@ -1162,7 +1169,7 @@ export const ru = {
+   welcomeSignIn: 'Войти',
+   welcomeApiKey: 'Добавить ключ API',
+   welcomeKeyTitle: 'Добавьте ключ API, чтобы начать работу.',
+-  welcomeKeyDescription: 'Настройте официальные модели DeepSeek, чтобы начать использовать Harness.',
++  welcomeKeyDescription: 'Настройте официальные модели DeepSeek, чтобы начать использовать Daniel Bot.',
+   welcomeKeyPlaceholder: 'Введите ключ API',
+   welcomeKeySave: 'Сохранить и продолжить',
+   welcomeKeyLater: 'Настроить позже',
+@@ -1207,7 +1214,7 @@ export const ru = {
+   updateFullscreenTimeout: 'Не удалось выйти из полноэкранного режима. Выйдите из полноэкранного режима и повторите попытку обновления.',
+   updateStopFailed: 'Не удалось безопасно остановить задачи. Обновление не установлено. Пожалуйста, повторите попытку позже.',
+   updateTechnicalDetails: 'Посмотреть технические подробности',
+-  updateTitle: 'DeepSeek Harness Обновление',
++  updateTitle: 'Daniel Bot Обновление',
+   updateAvailable: 'Доступна новая версия: {version}.',
+   updateDetail: 'После завершения загрузки вы можете установить обновление и перезапустить приложение.',
+   installAndRestart: 'Установить и перезапустить',
+@@ -1279,17 +1286,18 @@ export const pt = {
+   application: 'Aplicativo',
+   fileMenu: 'Arquivo',
+   closePage: 'Fechar página ou janela',
+-  aboutMenu: 'Sobre DeepSeek Harness',
+-  aboutProduct: 'DeepSeek Harness',
++  aboutMenu: 'Sobre Daniel Bot',
++  aboutProduct: 'Daniel Bot',
+   aboutVersion: 'Versão V{version}',
+-  hideApplication: 'Ocultar DeepSeek Harness',
++  aboutNotice: 'Construído sobre DeepSeek Harness (MIT License). Distribuição não oficial, sem vínculo com a DeepSeek.',
++  hideApplication: 'Ocultar Daniel Bot',
+   hideOtherApplications: 'Ocultar outros',
+   showAllApplications: 'Mostrar tudo',
+-  quitApplication: 'Sair de DeepSeek Harness',
+-  openApplication: 'Abra DeepSeek Harness',
++  quitApplication: 'Sair de Daniel Bot',
++  openApplication: 'Abra Daniel Bot',
+   quit: 'Sair',
+   cancel: 'Cancelar',
+-  quitTitle: 'Sair de DeepSeek Harness?',
++  quitTitle: 'Sair de Daniel Bot?',
+   quitActiveTasks: 'As tarefas em execução serão interrompidas.',
+   quitScheduledTasks: 'As tarefas agendadas não serão executadas enquanto o aplicativo estiver fechado.',
+   quitActiveAndScheduledTasks: 'As tarefas em execução serão interrompidas e as tarefas agendadas não serão executadas enquanto o aplicativo estiver fechado.',
+@@ -1304,7 +1312,7 @@ export const pt = {
+   copy: 'Copiar',
+   paste: 'Colar',
+   selectAll: 'Selecionar tudo',
+-  startupFailed: 'DeepSeek Harness não está disponível',
++  startupFailed: 'Daniel Bot não está disponível',
+   fatalSummary: 'O aplicativo não pôde ser iniciado ou parou inesperadamente.',
+   startupAddressInUse: 'Outra instância DSH (como dsh web ou aplicativo de desktop) está em execução. Eles não podem começar ao mesmo tempo. Saia da outra instância DSH em execução e reinicie.',
+   diagnosticTruncated: '… Detalhes do erro reduzidos.',
+@@ -1319,10 +1327,10 @@ export const pt = {
+   restartApplication: 'Reiniciar',
+   recoveryOperationFailed: 'A operação de recuperação falhou',
+   disableThirdPartyPlugins: 'Desative plug-ins de terceiros, faça backup do patch do perfil e reinicie',
+-  welcomeTitle: 'DeepSeek Harness',
+-  welcomeBrand: 'DeepSeek Harness',
++  welcomeTitle: 'Daniel Bot',
++  welcomeBrand: 'Daniel Bot',
+   welcomeTaglineBefore: 'Bem-vindo ao ',
+-  welcomeTaglineBrand: 'DeepSeek Harness',
++  welcomeTaglineBrand: 'Daniel Bot',
+   welcomeTaglineAfter: '',
+   welcomeDescription: 'Construir potencial. Explore a inteligência.',
+   welcomeAuthStarting: 'Abrindo login…',
+@@ -1340,7 +1348,7 @@ export const pt = {
+   welcomeSignIn: 'Faça login',
+   welcomeApiKey: 'Adicionar chave API',
+   welcomeKeyTitle: 'Adicione uma chave API para começar',
+-  welcomeKeyDescription: 'Configure modelos DeepSeek oficiais para começar a usar o Harness',
++  welcomeKeyDescription: 'Configure modelos DeepSeek oficiais para começar a usar o Daniel Bot',
+   welcomeKeyPlaceholder: 'Insira a chave de API',
+   welcomeKeySave: 'Salvar e continuar',
+   welcomeKeyLater: 'Configurar mais tarde',
+@@ -1385,7 +1393,7 @@ export const pt = {
+   updateFullscreenTimeout: 'Não foi possível sair da tela cheia. Saia da tela inteira e tente atualizar novamente.',
+   updateStopFailed: 'Não foi possível interromper as tarefas com segurança. A atualização não foi instalada. Por favor, tente novamente mais tarde.',
+   updateTechnicalDetails: 'Ver detalhes técnicos',
+-  updateTitle: 'DeepSeek Harness Atualização',
++  updateTitle: 'Daniel Bot Atualização',
+   updateAvailable: 'Nova versão disponível: {version}',
+   updateDetail: 'Assim que o download for concluído, você pode instalar a atualização e reiniciar o aplicativo.',
+   installAndRestart: 'Instalar e reiniciar',
+diff --git a/apps/desktop/src/main.ts b/apps/desktop/src/main.ts
+index d8d0e30c..84b9929e 100644
+--- a/apps/desktop/src/main.ts
++++ b/apps/desktop/src/main.ts
+@@ -25,6 +25,7 @@ import {
+ } from 'electron'
+ import { resolveDesktopPaths } from './paths.ts'
+ import { DesktopProjectManager } from './project-manager.ts'
++import { installDanielHomes, resolveDanielHome } from './daniel-home.ts'
+ import { DesktopHostFatalError, DesktopHostProcess, DesktopHostUncleanExitError } from './host-process.ts'
+ import { DesktopPlatformView, PLATFORM_IPC, platformBounds } from './platform-view.ts'
+ import { installDesktopFileDrag } from './file-drag.ts'
+@@ -103,7 +104,10 @@ const recovery = new DesktopFatalRecovery({
+   show: options => dialog.showMessageBox(options),
+   stop: () => { shuttingDown = true; return stopForRecovery() },
+   disablePlugins: async () => {
+-    const manager = new DesktopProjectManager(resolveDesktopPaths(), runtimeResources())
++    const manager = new DesktopProjectManager(resolveDesktopPaths(), runtimeResources(), {
++      pluginSource: danielPluginSource(),
++      danielHome: resolveDanielHome(),
++    })
+     const backupPath = await manager.disableAllPlugins()
+     console.info('Desktop profile recovery completed:', { profilePatchBackup: backupPath ?? null, homePatch: 'unchanged' })
+   },
+@@ -213,6 +217,16 @@ function runtimeResources(): RuntimeResources {
+   return { node, nodeBin, pnpm, dsh }
+ }
+ 
++/**
++ * Vendored Daniel plugin, shipped as a real directory outside the asar archive.
++ * An unpackaged launch reads it from the checkout's own resources.
++ */
++function danielPluginSource(): string {
++  return app.isPackaged
++    ? join(process.resourcesPath, 'vendor', 'daniel-dsh-plugin')
++    : join(app.getAppPath(), 'resources', 'vendor', 'daniel-dsh-plugin')
++}
++
+ function developmentPrimaryRuntime(): string {
+   const directory = process.env.DSH_DESKTOP_PRIMARY_RUNTIME_DIR
+   if (directory === undefined || directory === '') {
+@@ -366,6 +380,8 @@ function createWindow(preload: string, show = false, primary = false): BrowserWi
+ }
+ 
+ async function main(): Promise<void> {
++  // Own both data roots before anything resolves ~/.dsh or copies the environment to the Host.
++  const danielHomes = installDanielHomes()
+   const desktopSettings = readDesktopSettings(app.getPath('userData'))
+   void pruneCrashReports(app.getPath('logs'))
+   const journalDirectory = process.env.DSH_DESKTOP_UPDATE_JOURNAL_DIR
+@@ -377,7 +393,10 @@ async function main(): Promise<void> {
+     ? developmentPrimaryRuntime()
+     : join(process.resourcesPath, 'runtime', 'primary-runtime')
+   const activeProject = paths.profile
+-  const manager = new DesktopProjectManager(paths, resources)
++  const manager = new DesktopProjectManager(paths, resources, {
++    pluginSource: danielPluginSource(),
++    danielHome: danielHomes.danielHome,
++  })
+   // Dock and Finder launches inherit only launchd's environment; every Host shares one login-shell read.
+   const loginShellRead = new AbortController()
+   // The probe runs in its own process group, which outlives Desktop unless the read is aborted.
+@@ -457,7 +476,8 @@ async function main(): Promise<void> {
+   // chrome and its content never mix languages.
+   const showAbout = async (): Promise<void> => {
+     await ordinaryMessageBox({ type: 'info', title: locale.messages.aboutMenu, message: locale.messages.aboutProduct,
+-      detail: formatDesktopMessage(locale.messages.aboutVersion, { version: app.getVersion() }),
++      // The licence and non-affiliation notice belongs in the About surface, not only in the bundle.
++      detail: `${formatDesktopMessage(locale.messages.aboutVersion, { version: app.getVersion() })}\n\n${locale.messages.aboutNotice}`,
+       buttons: [locale.messages.updateAcknowledge], cancelId: 0 })
+   }
+   const commandManager = new DesktopCommandManager({
+@@ -1029,14 +1049,22 @@ async function main(): Promise<void> {
+ 
+   const applicationIconPath = development ? join(app.getAppPath(), 'resources', 'icon-windows.png')
+     : join(process.resourcesPath, 'icon.png')
+-  app.setAboutPanelOptions({
+-    applicationName: 'DeepSeek Harness',
+-    applicationVersion: app.getVersion(),
+-    // The release has no separate build number; omit Electron's bundle version.
+-    version: '',
+-    copyright: '',
+-    iconPath: applicationIconPath,
+-  })
++  // The About surface names the product and carries the licence and non-affiliation notice.
++  // It is rebuilt with the menu so switching language never leaves a stale notice behind.
++  const refreshAboutPanel = (): void => {
++    const messages = currentDesktopLocale().messages
++    app.setAboutPanelOptions({
++      applicationName: messages.aboutProduct,
++      applicationVersion: app.getVersion(),
++      // The release has no separate build number; omit Electron's bundle version.
++      version: '',
++      // Info.plist owns the copyright line; the About panel carries the licence notice instead.
++      copyright: '',
++      credits: messages.aboutNotice,
++      iconPath: applicationIconPath,
++    })
++  }
++  refreshAboutPanel()
+   // A custom application menu replaces Electron's default menu, so macOS needs
+   // its standard menus and application hide commands declared explicitly.
+   // Keep app.name stable: Electron derives its default userData directory from it.
+@@ -1087,6 +1115,7 @@ async function main(): Promise<void> {
+         submenu: [...applicationItems(), devToolsF12Shortcut],
+       }, ...platformMenus()]))
+     tray?.relabel()
++    refreshAboutPanel()
+   }
+   refreshApplicationMenu()
+   const trayIconPath = development ? join(app.getAppPath(), 'resources', 'tray-windows.ico') : join(process.resourcesPath, 'tray.ico')
+diff --git a/apps/desktop/src/project-manager.ts b/apps/desktop/src/project-manager.ts
+index 9e96b912..ee5db2bd 100644
+--- a/apps/desktop/src/project-manager.ts
++++ b/apps/desktop/src/project-manager.ts
+@@ -24,6 +24,15 @@ import type { DesktopRelease } from './release.ts'
+ import { readDesktopRuntime } from './runtime-tree.ts'
+ import { initProfile, removeLinkProjections, sanitizeProfile } from '@deepseek-ai/dsh-app-boot'
+ import { PROFILE_TEMPLATES, type ProfileTemplate } from '@deepseek-ai/dsh-official-bundles'
++import {
++  activateDanielPlugin,
++  DANIEL_PLUGIN_NAME,
++  danielPluginPresent,
++  embedDanielPlugin,
++  writeDanielAppOverlay,
++  writeDanielProfilePatch,
++  type DanielPluginEmbeds,
++} from './daniel-plugin.ts'
+ 
+ const PROJECT_NAME = '@deepseek-ai/dsh-desktop-runtime'
+ const DSH_PACKAGE = '@deepseek-ai/dsh'
+@@ -61,19 +70,33 @@ export class DesktopProjectManager {
+   /**
+    * @param paths - Electron-owned package state and reserved desktop profile paths.
+    * @param runtime - location of the bundled application runtime.
++   * @param daniel - embedded Daniel plugin settings; omitted by callers that only manage the official profile.
+    */
+   constructor(
+     readonly paths: DesktopPaths,
+     readonly runtime: { readonly dsh: string },
++    readonly daniel: DanielPluginEmbeds | undefined = undefined,
+   ) {}
+ 
+   /**
+    * Back up the profile patch and disable third-party bundles without loading application resources.
++   * The embedded Daniel plugin stays enabled: it is first-party here, and the Host cannot start
++   * without it on a product build. Its user layer is rewritten immediately, because recovery moved
++   * the previous one aside.
+    * The caller must stop the Host first.
+    * @returns Backup path after the locked profile write, or undefined if the patch was absent.
+    */
+   async disableAllPlugins(): Promise<string | undefined> {
+-    return this.withLock(() => sanitizeProfile('dsh', this.paths.profile, WEB_PROFILE.bundles))
++    return this.withLock(() => {
++      const embedded = this.daniel !== undefined && danielPluginPresent(this.paths.profile)
++      const bundles = embedded ? [...WEB_PROFILE.bundles, DANIEL_PLUGIN_NAME] : [...WEB_PROFILE.bundles]
++      const backupPath = sanitizeProfile('dsh', this.paths.profile, bundles)
++      if (embedded && this.daniel !== undefined) {
++        writeDanielProfilePatch(this.daniel, this.paths.profile)
++        writeDanielAppOverlay(this.daniel, this.paths.profile)
++      }
++      return backupPath
++    })
+   }
+ 
+   /**
+@@ -86,9 +109,28 @@ export class DesktopProjectManager {
+       migrateProfileSettings(this.paths.profile)
+       createPluginProfile(this.paths.profile)
+       removeLinkProjections(this.paths.profile)
++      this.installDanielPlugin()
+     })
+   }
+ 
++  /**
++   * Copy the packaged plugin into the profile, activate it, and pin its configuration.
++   * Runs inside the profile lock: the Host has not started, so no reader sees the copy move.
++   * A build without the vendor directory keeps the shell usable and leaves any earlier copy alone.
++   */
++  private installDanielPlugin(): void {
++    const daniel = this.daniel
++    if (daniel === undefined) return
++    const installation = embedDanielPlugin(daniel.pluginSource, this.paths.profile)
++    if (!installation.installed) {
++      console.warn(`desktop: Daniel plugin missing at ${daniel.pluginSource}; Daniel abilities stay unavailable in this build`)
++      return
++    }
++    activateDanielPlugin(this.paths.profile)
++    writeDanielProfilePatch(daniel, this.paths.profile)
++    writeDanielAppOverlay(daniel, this.paths.profile)
++  }
++
+   private async withLock<T>(operation: () => T | Promise<T>): Promise<T> {
+     mkdirSync(this.paths.profile, { recursive: true, mode: 0o700 })
+     const lockPath = join(realpathSync(this.paths.profile), 'lock')
+diff --git a/apps/desktop/tests/background-notice.spec.ts b/apps/desktop/tests/background-notice.spec.ts
+index cfccf81d..4c4f11c3 100644
+--- a/apps/desktop/tests/background-notice.spec.ts
++++ b/apps/desktop/tests/background-notice.spec.ts
+@@ -31,7 +31,7 @@ it('keeps the window visible until confirmation and remembers acknowledgement ac
+   f.notice.close(f.hide)
+   expect(f.hide).not.toHaveBeenCalled()
+   expect(existsSync(f.markerPath)).toBe(false)
+-  expect(f.show).toHaveBeenCalledExactlyOnceWith({ type: 'info', title: 'DeepSeek Harness',
++  expect(f.show).toHaveBeenCalledExactlyOnceWith({ type: 'info', title: 'Daniel Bot',
+     message: '正在运行的任务不会中断，可在系统托盘中重新打开窗口', buttons: ['确认'], defaultId: 0, cancelId: -1 })
+   expect(f.focus).toHaveBeenCalledOnce()
+   f.response.resolve({ response: 0, checkboxChecked: false })
+diff --git a/apps/desktop/tests/cli-launcher.spec.ts b/apps/desktop/tests/cli-launcher.spec.ts
+index 67e38da2..14c8984c 100644
+--- a/apps/desktop/tests/cli-launcher.spec.ts
++++ b/apps/desktop/tests/cli-launcher.spec.ts
+@@ -24,7 +24,7 @@ function fixture() {
+   const resources = join(application, ...platform === 'darwin' ? ['Contents', 'Resources'] : ['resources'])
+   const cli = join(resources, 'runtime', 'cli')
+   prepareDesktopCli(cli, platform)
+-  const electron = join(application, ...platform === 'darwin' ? ['Contents', 'MacOS', 'DeepSeek Harness'] : ['DeepSeek Harness.exe'])
++  const electron = join(application, ...platform === 'darwin' ? ['Contents', 'MacOS', 'Daniel Bot'] : ['Daniel Bot.exe'])
+   mkdirSync(dirname(electron), { recursive: true })
+   if (platform === 'win32') copyFileSync(process.execPath, electron)
+   else symlinkSync(process.execPath, electron)
+diff --git a/apps/desktop/tests/command-management.spec.ts b/apps/desktop/tests/command-management.spec.ts
+index bef9121d..0d1247e3 100644
+--- a/apps/desktop/tests/command-management.spec.ts
++++ b/apps/desktop/tests/command-management.spec.ts
+@@ -24,7 +24,7 @@ it.each([
+   ['darwin', 'en-US', en], ['darwin', 'zh-CN', zh],
+   ['win32', 'en-US', en], ['win32', 'zh-CN', zh],
+ ] as const)('records command status on %s in %s', async (platform, language, messages) => {
+-  const destination = platform === 'darwin' ? '/usr/local/bin/dsh' : 'C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd'
++  const destination = platform === 'darwin' ? '/usr/local/bin/dsh' : 'C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd'
+   const other = platform === 'darwin' ? '/opt/homebrew/bin/dsh' : 'C:\\Program Files\\nodejs\\dsh.cmd'
+   const states = [
+     { managed: false, available: false, destination },
+diff --git a/apps/desktop/tests/crash-report.spec.ts b/apps/desktop/tests/crash-report.spec.ts
+index ec2f6e75..baf5033c 100644
+--- a/apps/desktop/tests/crash-report.spec.ts
++++ b/apps/desktop/tests/crash-report.spec.ts
+@@ -27,7 +27,7 @@ const input = (overrides: Partial<CrashReportInput> = {}): CrashReportInput => (
+     errno: -4058, code: 'ENOENT', syscall: 'open', path: 'C:\\Temp\\dsh-subprocess-x\\out.log',
+   }),
+   rendererConsole: [],
+-  app: { name: 'DeepSeek Harness', version: '0.1.7', platform: 'win32', arch: 'x64', electron: '44.0.0', node: '24.18.1', locale: 'zh_CN' },
++  app: { name: 'Daniel Bot', version: '0.1.7', platform: 'win32', arch: 'x64', electron: '44.0.0', node: '24.18.1', locale: 'zh_CN' },
+   time: new Date('2026-09-22T10:30:00.123Z'),
+   ...overrides,
+ })
+@@ -41,7 +41,7 @@ it('renders the facts header, the inspected error with its properties and cause,
+     error: new Error('wrapper', { cause: input().error }),
+     rendererConsole: ['dsh-app://app/assets/entry.js:12 client-modules: bundle script plugins/??a/client.js&rev=1 failed to load'],
+   }))
+-  expect(text).toContain('time: 2026-09-22T10:30:00.123Z\nsource: host\nphase: running\napp: DeepSeek Harness 0.1.7\nplatform: win32 x64\nelectron: 44.0.0\nnode: 24.18.1\nlocale: zh_CN\n')
++  expect(text).toContain('time: 2026-09-22T10:30:00.123Z\nsource: host\nphase: running\napp: Daniel Bot 0.1.7\nplatform: win32 x64\nelectron: 44.0.0\nnode: 24.18.1\nlocale: zh_CN\n')
+   expect(text).toContain('--- error ---\nError: wrapper')
+   expect(text).toContain("syscall: 'open'")
+   expect(text).toContain("path: 'C:\\\\Temp\\\\dsh-subprocess-x\\\\out.log'")
+diff --git a/apps/desktop/tests/daniel-plugin.spec.ts b/apps/desktop/tests/daniel-plugin.spec.ts
+new file mode 100644
+index 00000000..33d9a6de
+--- /dev/null
++++ b/apps/desktop/tests/daniel-plugin.spec.ts
+@@ -0,0 +1,156 @@
++/** Embedded Daniel plugin: profile copy, bundle activation, and its five-key configuration. */
++
++import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
++import { tmpdir } from 'node:os'
++import { join } from 'node:path'
++import { afterEach, describe, expect, it } from 'vitest'
++import { resolveDesktopPaths } from '../src/paths.ts'
++import { DesktopProjectManager } from '../src/project-manager.ts'
++import {
++  activateDanielPlugin,
++  DANIEL_PLUGIN_NAME,
++  embedDanielPlugin,
++  writeDanielAppOverlay,
++  writeDanielProfilePatch,
++} from '../src/daniel-plugin.ts'
++import { runtimeFixture } from './runtime-fixture.ts'
++
++const roots: string[] = []
++function temporaryRoot(): string {
++  const root = mkdtempSync(join(tmpdir(), 'dsh-desktop-daniel-'))
++  roots.push(root)
++  return root
++}
++afterEach(() => {
++  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true })
++})
++
++/** Packaged plugin shape: a manifest declaring a bundle patch, a patch file, and an executable CLI entry. */
++function pluginFixture(root: string): string {
++  const source = join(root, 'resources', 'vendor', DANIEL_PLUGIN_NAME)
++  const entry = join(source, 'vendor', 'data', 'daniel-cli', 'bin', 'daniel')
++  mkdirSync(join(entry, '..'), { recursive: true })
++  writeFileSync(join(source, 'package.json'), JSON.stringify({
++    name: DANIEL_PLUGIN_NAME,
++    version: '0.11.0',
++    type: 'module',
++    dsh: { bundle: { patch: './cordis.patch.yml' } },
++  }))
++  writeFileSync(join(source, 'cordis.patch.yml'), '- insert:\n    - id: daniel\n      name: daniel-dsh-plugin\n      config:\n        python: python3\n        timeoutMs: 180000\n')
++  writeFileSync(join(source, 'lib.js'), 'export const identity = {}\n')
++  writeFileSync(entry, '#!/usr/bin/env python3\n')
++  chmodSync(entry, 0o755)
++  return source
++}
++
++function profileFixture(root: string): string {
++  const profile = join(root, 'dsh-home', 'profiles', 'desktop')
++  mkdirSync(profile, { recursive: true, mode: 0o700 })
++  writeFileSync(join(profile, 'package.json'), JSON.stringify({
++    name: 'dsh-profile-desktop',
++    private: true,
++    dependencies: {},
++    dsh: { profile: { bundles: ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app'] } },
++  }))
++  return profile
++}
++
++function bundles(profile: string): string[] {
++  return (JSON.parse(readFileSync(join(profile, 'package.json'), 'utf8')) as {
++    dsh: { profile: { bundles: string[] } }
++  }).dsh.profile.bundles
++}
++
++describe('embedded Daniel plugin', () => {
++  it('copies the packaged plugin once and keeps an identical copy untouched', () => {
++    const root = temporaryRoot()
++    const source = pluginFixture(root)
++    const profile = profileFixture(root)
++    const target = join(profile, 'node_modules', DANIEL_PLUGIN_NAME)
++
++    expect(embedDanielPlugin(source, profile)).toEqual({ installed: true, copied: true })
++    expect(statSync(join(target, 'vendor', 'data', 'daniel-cli', 'bin', 'daniel')).mode & 0o111).not.toBe(0)
++    const before = readFileSync(join(target, 'lib.js'), 'utf8')
++
++    expect(embedDanielPlugin(source, profile)).toEqual({ installed: true, copied: false })
++    expect(readFileSync(join(target, 'lib.js'), 'utf8')).toBe(before)
++  })
++
++  it('replaces a damaged copy with the packaged one', () => {
++    const root = temporaryRoot()
++    const source = pluginFixture(root)
++    const profile = profileFixture(root)
++    embedDanielPlugin(source, profile)
++    writeFileSync(join(profile, 'node_modules', DANIEL_PLUGIN_NAME, 'lib.js'), 'broken\n')
++
++    expect(embedDanielPlugin(source, profile)).toEqual({ installed: true, copied: true })
++    expect(readFileSync(join(profile, 'node_modules', DANIEL_PLUGIN_NAME, 'lib.js'), 'utf8')).toBe('export const identity = {}\n')
++  })
++
++  it('activates the bundle once and writes all five configuration keys', () => {
++    const root = temporaryRoot()
++    const source = pluginFixture(root)
++    const profile = profileFixture(root)
++    embedDanielPlugin(source, profile)
++    const embeds = { pluginSource: source, danielHome: join(root, 'daniel-home') }
++
++    expect(activateDanielPlugin(profile)).toBe(true)
++    expect(activateDanielPlugin(profile)).toBe(false)
++    expect(bundles(profile)).toEqual(['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app', DANIEL_PLUGIN_NAME])
++
++    expect(writeDanielProfilePatch(embeds, profile)).toBe(true)
++    expect(writeDanielProfilePatch(embeds, profile)).toBe(false)
++    const patch = readFileSync(join(profile, 'cordis.patch.yml'), 'utf8')
++    expect(patch.match(/^- id: daniel$/gmu)).toHaveLength(1)
++    for (const key of ['entry', 'python', 'danielHome', 'timeoutMs', 'trace']) {
++      expect(patch).toContain(`    ${key}:`)
++    }
++
++    expect(writeDanielAppOverlay(embeds, profile)).toBe(true)
++    expect(writeDanielAppOverlay(embeds, profile)).toBe(false)
++    const overlay = readFileSync(join(embeds.danielHome, 'app-overlay.yml'), 'utf8')
++    expect(overlay.match(/^- id: daniel$/gmu)).toHaveLength(1)
++    for (const key of ['entry', 'python', 'danielHome', 'timeoutMs', 'trace']) {
++      expect(overlay).toContain(`    ${key}:`)
++    }
++  })
++
++  it('keeps the plugin activated and configured across crash recovery', async () => {
++    const root = temporaryRoot()
++    const dsh = join(root, 'resources', 'dsh')
++    runtimeFixture(dsh)
++    const source = pluginFixture(root)
++    const danielHome = join(root, 'daniel-home')
++    const manager = new DesktopProjectManager(resolveDesktopPaths(join(root, 'dsh-home')), { dsh }, {
++      pluginSource: source,
++      danielHome,
++    })
++
++    await manager.applyRelease()
++    expect(bundles(manager.paths.profile)).toContain(DANIEL_PLUGIN_NAME)
++    expect(readFileSync(join(manager.paths.profile, 'cordis.patch.yml'), 'utf8')).toContain('    danielHome:')
++
++    await manager.disableAllPlugins()
++    expect(bundles(manager.paths.profile)).toContain(DANIEL_PLUGIN_NAME)
++    expect(bundles(manager.paths.profile)).toContain('@deepseek-ai/dsh-web-app')
++    expect(readFileSync(join(manager.paths.profile, 'cordis.patch.yml'), 'utf8')).toContain('    entry:')
++    expect(existsSync(join(danielHome, 'app-overlay.yml'))).toBe(true)
++
++    await manager.applyRelease()
++    expect(bundles(manager.paths.profile).filter(name => name === DANIEL_PLUGIN_NAME)).toHaveLength(1)
++  })
++
++  it('keeps the shell usable when the packaged plugin is absent', async () => {
++    const root = temporaryRoot()
++    const dsh = join(root, 'resources', 'dsh')
++    runtimeFixture(dsh)
++    const manager = new DesktopProjectManager(resolveDesktopPaths(join(root, 'dsh-home')), { dsh }, {
++      pluginSource: join(root, 'resources', 'vendor', DANIEL_PLUGIN_NAME),
++      danielHome: join(root, 'daniel-home'),
++    })
++
++    await expect(manager.applyRelease()).resolves.toBeUndefined()
++    expect(bundles(manager.paths.profile)).toEqual(['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app'])
++    expect(existsSync(join(manager.paths.profile, 'node_modules', DANIEL_PLUGIN_NAME))).toBe(false)
++  })
++})
+diff --git a/apps/desktop/tests/desktop-build-version-discovery.spec.ts b/apps/desktop/tests/desktop-build-version-discovery.spec.ts
+index 0fe063d1..15d7233d 100644
+--- a/apps/desktop/tests/desktop-build-version-discovery.spec.ts
++++ b/apps/desktop/tests/desktop-build-version-discovery.spec.ts
+@@ -36,16 +36,16 @@ describe('desktop build version discovery', () => {
+   })
+ 
+   it('numbers a stable product version under the documented test prerelease', async () => {
+-    const artifactsRoot = await artifactsWith([`deepseek-harness-${STABLE}-test.${DATE}.4-win-x64.exe`])
++    const artifactsRoot = await artifactsWith([`daniel-bot-${STABLE}-test.${DATE}.4-win-x64.exe`])
+     await expect(suggestDesktopBuildVersion({ productVersion: STABLE, target: 'win-x64', environment: {}, date: DATE, artifactsRoot }))
+       .resolves.toBe(`${STABLE}-test.${DATE}.5`)
+   })
+ 
+   it('numbers after the highest local artifact for the same date', async () => {
+     const artifactsRoot = await artifactsWith([
+-      `deepseek-harness-${PRERELEASE}.${DATE}.1-win-x64.exe`,
+-      `deepseek-harness-${PRERELEASE}.${DATE}.2-win-x64.exe`,
+-      `deepseek-harness-${PRERELEASE}.${DATE}.10-win-x64.exe`,
++      `daniel-bot-${PRERELEASE}.${DATE}.1-win-x64.exe`,
++      `daniel-bot-${PRERELEASE}.${DATE}.2-win-x64.exe`,
++      `daniel-bot-${PRERELEASE}.${DATE}.10-win-x64.exe`,
+     ])
+     await expect(suggestDesktopBuildVersion({ productVersion: PRERELEASE, target: 'win-x64', environment: {}, date: DATE, artifactsRoot }))
+       .resolves.toBe(`${PRERELEASE}.${DATE}.11`)
+@@ -53,9 +53,9 @@ describe('desktop build version discovery', () => {
+ 
+   it('ignores artifacts from another date or product version', async () => {
+     const artifactsRoot = await artifactsWith([
+-      `deepseek-harness-${PRERELEASE}.20260920.7-win-x64.exe`,
+-      `deepseek-harness-0.1.5-alpha.1.${DATE}.9-win-x64.exe`,
+-      `deepseek-harness-${PRERELEASE}-win-x64.exe`,
++      `daniel-bot-${PRERELEASE}.20260920.7-win-x64.exe`,
++      `daniel-bot-0.1.5-alpha.1.${DATE}.9-win-x64.exe`,
++      `daniel-bot-${PRERELEASE}-win-x64.exe`,
+       'unrelated.exe',
+     ])
+     await expect(suggestDesktopBuildVersion({ productVersion: PRERELEASE, target: 'win-x64', environment: {}, date: DATE, artifactsRoot }))
+@@ -64,8 +64,8 @@ describe('desktop build version discovery', () => {
+ 
+   it('reads macOS artifact names too', async () => {
+     const artifactsRoot = await artifactsWith([
+-      `deepseek-harness-${PRERELEASE}.${DATE}.3-mac-arm64.dmg`,
+-      `deepseek-harness-${PRERELEASE}.${DATE}.3-mac-arm64.zip`,
++      `daniel-bot-${PRERELEASE}.${DATE}.3-mac-arm64.dmg`,
++      `daniel-bot-${PRERELEASE}.${DATE}.3-mac-arm64.zip`,
+     ])
+     await expect(suggestDesktopBuildVersion({ productVersion: PRERELEASE, target: 'mac-arm64', environment: {}, date: DATE, artifactsRoot }))
+       .resolves.toBe(`${PRERELEASE}.${DATE}.4`)
+@@ -73,9 +73,9 @@ describe('desktop build version discovery', () => {
+ 
+   it('numbers after existing unnotarized DMG and ZIP artifacts', async () => {
+     const artifactsRoot = await artifactsWith([
+-      `deepseek-harness-${PRERELEASE}.${DATE}.2-mac-arm64-unnotarized.dmg`,
+-      `deepseek-harness-${PRERELEASE}.${DATE}.4-mac-arm64-unnotarized.zip`,
+-      `deepseek-harness-${PRERELEASE}.${DATE}.9-mac-arm64-unnotarized.zip.blockmap`,
++      `daniel-bot-${PRERELEASE}.${DATE}.2-mac-arm64-unnotarized.dmg`,
++      `daniel-bot-${PRERELEASE}.${DATE}.4-mac-arm64-unnotarized.zip`,
++      `daniel-bot-${PRERELEASE}.${DATE}.9-mac-arm64-unnotarized.zip.blockmap`,
+     ])
+     await expect(suggestDesktopBuildVersion({ productVersion: PRERELEASE, target: 'mac-arm64', environment: {}, date: DATE, artifactsRoot }))
+       .resolves.toBe(`${PRERELEASE}.${DATE}.5`)
+@@ -83,8 +83,8 @@ describe('desktop build version discovery', () => {
+ 
+   it('counts unsigned Windows artifacts written under their own suffix', async () => {
+     const artifactsRoot = await artifactsWith([
+-      `deepseek-harness-${PRERELEASE}.${DATE}.2-win-x64-unsigned.exe`,
+-      `deepseek-harness-${PRERELEASE}.${DATE}.5-win-x64-unsigned.exe.blockmap`,
++      `daniel-bot-${PRERELEASE}.${DATE}.2-win-x64-unsigned.exe`,
++      `daniel-bot-${PRERELEASE}.${DATE}.5-win-x64-unsigned.exe.blockmap`,
+     ])
+     await expect(suggestDesktopBuildVersion({ productVersion: PRERELEASE, target: 'win-x64', environment: {}, date: DATE, artifactsRoot }))
+       .resolves.toBe(`${PRERELEASE}.${DATE}.3`)
+diff --git a/apps/desktop/tests/desktop-publication-preflight.spec.ts b/apps/desktop/tests/desktop-publication-preflight.spec.ts
+index 39e717a8..be9711c2 100644
+--- a/apps/desktop/tests/desktop-publication-preflight.spec.ts
++++ b/apps/desktop/tests/desktop-publication-preflight.spec.ts
+@@ -23,7 +23,7 @@ it.each(['mac-arm64', 'win-x64'] as const)('preflights a complete retained %s bu
+       bucket: 'fixture-1250000000', origin: 'https://EXAMPLE.com:443/', credentialsFile: join(root, 'absent-credentials.json'),
+     }))
+     const commit = 'b'.repeat(40)
+-    const base = `deepseek-harness-1.0.0-${target}`
++    const base = `daniel-bot-1.0.0-${target}`
+     const extension = target === 'win-x64' ? 'exe' : 'zip'
+     const bytes = 'fixture installer bytes'
+     await writeFile(join(artifacts, `${base}.${extension}`), bytes)
+diff --git a/apps/desktop/tests/desktop-publication-summary.spec.ts b/apps/desktop/tests/desktop-publication-summary.spec.ts
+index 5267d290..5048585b 100644
+--- a/apps/desktop/tests/desktop-publication-summary.spec.ts
++++ b/apps/desktop/tests/desktop-publication-summary.spec.ts
+@@ -13,7 +13,7 @@ const plan: DesktopUploadPlan = {
+   environment: 'production', target: 'win-x64', version: '1.0.0', bucket: 'production-1234567890',
+   publicUrl: 'https://download.example.com/dsh-desk/feeds/win-x64/', secretIdEnvName: 'SECRET_ID', secretKeyEnvName: 'SECRET_KEY',
+   artifacts: [
+-    { path: '/not-read/installer.exe', filename: 'deepseek-harness-1.0.0-win-x64.exe', key: 'dsh-desk/bin/win-x64/latest/deepseek-harness-1.0.0-win-x64.exe',
++    { path: '/not-read/installer.exe', filename: 'daniel-bot-1.0.0-win-x64.exe', key: 'dsh-desk/bin/win-x64/latest/daniel-bot-1.0.0-win-x64.exe',
+       contents: 'installer bytes', contentType: 'application/octet-stream', channelMetadata: false },
+     { path: '/not-read/latest.yml', filename: 'latest.yml', key: 'dsh-desk/feeds/win-x64/latest.yml',
+       contents: 'version: 1.0.0\n', contentType: 'application/yaml', channelMetadata: true },
+@@ -23,7 +23,7 @@ const plan: DesktopUploadPlan = {
+ it('shows production destinations and tag after approval with upload-byte fingerprints', async () => {
+   const summary = await desktopPublicationSummary(source, plan, 'c'.repeat(64))
+   await expect(summary).toMatchFileSnapshot('./expected/publication-production.md')
+-  expect(summary).toContain('/latest/deepseek-harness-1.0.0-win-x64.exe')
++  expect(summary).toContain('/latest/daniel-bot-1.0.0-win-x64.exe')
+   expect(summary).toContain('https&#58;//download.example.com/dsh-desk/feeds/win-x64/latest.yml')
+   expect(summary).toContain(createHash('sha256').update('version: 1.0.0\n').digest('hex'))
+   expect(summary).not.toContain('测试 release ID |')
+diff --git a/apps/desktop/tests/desktop-upload-plan.spec.ts b/apps/desktop/tests/desktop-upload-plan.spec.ts
+index def8cb19..3b115175 100644
+--- a/apps/desktop/tests/desktop-upload-plan.spec.ts
++++ b/apps/desktop/tests/desktop-upload-plan.spec.ts
+@@ -50,7 +50,7 @@ async function fixture(
+   await writeFile(join(appRoot, 'package.json'), `${JSON.stringify({ version })}\n`)
+ 
+   const [os, arch] = target.split('-') as ['mac' | 'win', 'arm64' | 'x64']
+-  const base = `deepseek-harness-${version}-${os}-${arch}`
++  const base = `daniel-bot-${version}-${os}-${arch}`
+   const origin = environment === 'test'
+     ? TEST_ORIGIN
+     : 'https://download.deepseek.com'
+@@ -155,7 +155,7 @@ describe('desktop upload plan', () => {
+     expect(plan.version).toBe('1.2.3-alpha.4')
+     expect(plan.artifacts).toHaveLength(1)
+     expect(plan.artifacts[0]).toMatchObject({
+-      path: join(paths.artifactsRoot, 'deepseek-harness-1.2.3-alpha.4-win-x64.exe'),
++      path: join(paths.artifactsRoot, 'daniel-bot-1.2.3-alpha.4-win-x64.exe'),
+       key: 'desktop/dsh-latest-windows-x64.exe', channelMetadata: false,
+     })
+   })
+@@ -168,7 +168,7 @@ describe('desktop upload plan', () => {
+       DOWNLOAD_TEST_RELEASE_ID: RELEASE_ID, DOWNLOAD_TEST_COS_BUCKET: TEST_BUCKET,
+     })
+     if (failure === 'checksum') {
+-      const path = join(paths.artifactsRoot, 'deepseek-harness-1.2.3-win-x64.exe')
++      const path = join(paths.artifactsRoot, 'daniel-bot-1.2.3-win-x64.exe')
+       await writeFile(path, Buffer.alloc((await readFile(path)).length))
+     }
+     await expect(createDesktopUploadPlan('win-x64', { ...paths, latest: true }))
+@@ -189,14 +189,14 @@ describe('desktop upload plan', () => {
+     const paths = await fixture('win-x64', '1.2.3', 'production')
+     const plan = await createDesktopUploadPlan('win-x64', paths)
+     expect(plan.artifacts.map(artifact => artifact.key)).toEqual([
+-      'dsh-desk/bin/win-x64/deepseek-harness-1.2.3-win-x64.exe',
+-      'dsh-desk/bin/win-x64/deepseek-harness-1.2.3-win-x64.exe.blockmap',
++      'dsh-desk/bin/win-x64/daniel-bot-1.2.3-win-x64.exe',
++      'dsh-desk/bin/win-x64/daniel-bot-1.2.3-win-x64.exe.blockmap',
+       'dsh-desk/feeds/win-x64/nightly.yml',
+     ])
+     expect(load(plan.artifacts[2]!.contents!)).toMatchObject({
+       version: '1.2.3',
+       files: [{
+-        url: 'https://download.deepseek.com/dsh-desk/bin/win-x64/deepseek-harness-1.2.3-win-x64.exe',
++        url: 'https://download.deepseek.com/dsh-desk/bin/win-x64/daniel-bot-1.2.3-win-x64.exe',
+         sha512: digest('signed NSIS executable fixture'),
+       }],
+     })
+@@ -213,9 +213,9 @@ describe('desktop upload plan', () => {
+       bucket: TEST_BUCKET,
+     })
+     expect(plan.artifacts.map(artifact => artifact.filename)).toEqual([
+-      'deepseek-harness-1.2.3-mac-arm64.dmg',
+-      'deepseek-harness-1.2.3-mac-arm64.zip',
+-      'deepseek-harness-1.2.3-mac-arm64.zip.blockmap',
++      'daniel-bot-1.2.3-mac-arm64.dmg',
++      'daniel-bot-1.2.3-mac-arm64.zip',
++      'daniel-bot-1.2.3-mac-arm64.zip.blockmap',
+       'nightly-mac.yml',
+     ])
+     expect(plan.artifacts.at(-1)).toMatchObject({
+@@ -255,9 +255,9 @@ describe('desktop upload plan', () => {
+     const paths = await fixture('mac-arm64', '1.2.3-alpha.4')
+     const plan = await createDesktopUploadPlan('mac-arm64', paths)
+     expect(plan.artifacts.map(artifact => artifact.filename)).toEqual([
+-      'deepseek-harness-1.2.3-alpha.4-mac-arm64.dmg',
+-      'deepseek-harness-1.2.3-alpha.4-mac-arm64.zip',
+-      'deepseek-harness-1.2.3-alpha.4-mac-arm64.zip.blockmap',
++      'daniel-bot-1.2.3-alpha.4-mac-arm64.dmg',
++      'daniel-bot-1.2.3-alpha.4-mac-arm64.zip',
++      'daniel-bot-1.2.3-alpha.4-mac-arm64.zip.blockmap',
+       'nightly-mac.yml',
+     ])
+   })
+@@ -266,8 +266,8 @@ describe('desktop upload plan', () => {
+     const paths = await fixture('win-x64', '2.0.0', 'production')
+     const plan = await createDesktopUploadPlan('win-x64', paths)
+     expect(plan.artifacts.map(artifact => artifact.filename)).toEqual([
+-      'deepseek-harness-2.0.0-win-x64.exe',
+-      'deepseek-harness-2.0.0-win-x64.exe.blockmap',
++      'daniel-bot-2.0.0-win-x64.exe',
++      'daniel-bot-2.0.0-win-x64.exe.blockmap',
+       'nightly.yml',
+     ])
+     expect(plan).toMatchObject({
+@@ -278,7 +278,7 @@ describe('desktop upload plan', () => {
+ 
+   it.each(['missing', 'empty'])('rejects a %s Windows blockmap before publishing its feed', async (condition) => {
+     const paths = await fixture('win-x64')
+-    const path = join(paths.artifactsRoot, 'deepseek-harness-1.2.3-win-x64.exe.blockmap')
++    const path = join(paths.artifactsRoot, 'daniel-bot-1.2.3-win-x64.exe.blockmap')
+     if (condition === 'missing') await rm(path)
+     else await writeFile(path, '')
+     await expect(createDesktopUploadPlan('win-x64', paths)).rejects.toThrow(/missing or empty artifact.*\.exe\.blockmap/u)
+@@ -311,7 +311,7 @@ describe('desktop upload plan', () => {
+     expect(plan.version).toBe('1.2.3')
+     await expect(createDesktopUploadPlan('mac-arm64', { ...paths, packagedProductVersion: '1.2.4' }))
+       .rejects.toThrow(/completion record/u)
+-    await writeFile(join(paths.artifactsRoot, 'deepseek-harness-1.2.3-mac-arm64.zip'), 'tampered')
++    await writeFile(join(paths.artifactsRoot, 'daniel-bot-1.2.3-mac-arm64.zip'), 'tampered')
+     await expect(createDesktopUploadPlan('mac-arm64', { ...paths, packagedProductVersion: '1.2.3' }))
+       .rejects.toThrow(/size.*metadata/u)
+   })
+@@ -319,7 +319,7 @@ describe('desktop upload plan', () => {
+   it('rejects stale architecture metadata and modified updater bytes', async () => {
+     const paths = await fixture('mac-arm64')
+     const metadataPath = join(paths.artifactsRoot, 'nightly-mac.yml')
+-    const zipPath = join(paths.artifactsRoot, 'deepseek-harness-1.2.3-mac-arm64.zip')
++    const zipPath = join(paths.artifactsRoot, 'daniel-bot-1.2.3-mac-arm64.zip')
+     await writeFile(zipPath, 'modified')
+     await expect(createDesktopUploadPlan('mac-arm64', paths)).rejects.toThrow(/size.*metadata/u)
+ 
+@@ -327,7 +327,7 @@ describe('desktop upload plan', () => {
+     await writeFile(metadataPath, `${JSON.stringify({
+       version: '1.2.3',
+       files: [{
+-        url: 'deepseek-harness-1.2.3-mac-x64.zip',
++        url: 'daniel-bot-1.2.3-mac-x64.zip',
+         size: Buffer.byteLength(x64),
+         sha512: digest(x64),
+       }],
+diff --git a/apps/desktop/tests/expected/about-panel.json b/apps/desktop/tests/expected/about-panel.json
+index 8dc6ee90..260f1296 100644
+--- a/apps/desktop/tests/expected/about-panel.json
++++ b/apps/desktop/tests/expected/about-panel.json
+@@ -1,54 +1,76 @@
+ {
+   "darwin:en-US": {
+     "menu": [
+-      { "label": "About DeepSeek Harness", "role": "about" },
+-      { "type": "separator" }
++      {
++        "label": "About Daniel Bot",
++        "role": "about"
++      },
++      {
++        "type": "separator"
++      }
+     ],
+     "options": {
+-      "applicationName": "DeepSeek Harness",
++      "applicationName": "Daniel Bot",
+       "applicationVersion": "1.0.0",
+       "version": "",
+       "copyright": "",
+-      "iconPath": "<app icon>"
++      "iconPath": "<app icon>",
++      "credits": "Built on DeepSeek Harness (MIT License). Unofficial distribution, not affiliated with or endorsed by DeepSeek."
+     }
+   },
+   "darwin:zh-CN": {
+     "menu": [
+-      { "label": "关于 DeepSeek Harness", "role": "about" },
+-      { "type": "separator" }
++      {
++        "label": "关于 Daniel Bot",
++        "role": "about"
++      },
++      {
++        "type": "separator"
++      }
+     ],
+     "options": {
+-      "applicationName": "DeepSeek Harness",
++      "applicationName": "Daniel Bot",
+       "applicationVersion": "1.0.0",
+       "version": "",
+       "copyright": "",
+-      "iconPath": "<app icon>"
++      "iconPath": "<app icon>",
++      "credits": "基于 DeepSeek Harness（MIT License）构建，非官方发行版，与 DeepSeek 官方无关。"
+     }
+   },
+   "win32:zh-CN": {
+     "menu": [
+-      { "label": "关于 DeepSeek Harness" },
+-      { "type": "separator" }
++      {
++        "label": "关于 Daniel Bot"
++      },
++      {
++        "type": "separator"
++      }
+     ],
+     "options": {
+-      "applicationName": "DeepSeek Harness",
++      "applicationName": "Daniel Bot",
+       "applicationVersion": "1.0.0",
+       "version": "",
+       "copyright": "",
+-      "iconPath": "<app icon>"
++      "iconPath": "<app icon>",
++      "credits": "基于 DeepSeek Harness（MIT License）构建，非官方发行版，与 DeepSeek 官方无关。"
+     }
+   },
+   "win32:en-US": {
+     "menu": [
+-      { "label": "About DeepSeek Harness" },
+-      { "type": "separator" }
++      {
++        "label": "About Daniel Bot"
++      },
++      {
++        "type": "separator"
++      }
+     ],
+     "options": {
+-      "applicationName": "DeepSeek Harness",
++      "applicationName": "Daniel Bot",
+       "applicationVersion": "1.0.0",
+       "version": "",
+       "copyright": "",
+-      "iconPath": "<app icon>"
++      "iconPath": "<app icon>",
++      "credits": "Built on DeepSeek Harness (MIT License). Unofficial distribution, not affiliated with or endorsed by DeepSeek."
+     }
+   }
+ }
+diff --git a/apps/desktop/tests/expected/application-menu-en-US.json b/apps/desktop/tests/expected/application-menu-en-US.json
+index 71b281c6..fe1e4c59 100644
+--- a/apps/desktop/tests/expected/application-menu-en-US.json
++++ b/apps/desktop/tests/expected/application-menu-en-US.json
+@@ -1,6 +1,6 @@
+ [
+   {
+-    "label": "About DeepSeek Harness",
++    "label": "About Daniel Bot",
+     "role": "about"
+   },
+   {
+@@ -24,7 +24,7 @@
+   },
+   {
+     "role": "hide",
+-    "label": "Hide DeepSeek Harness"
++    "label": "Hide Daniel Bot"
+   },
+   {
+     "role": "hideOthers",
+@@ -39,6 +39,6 @@
+   },
+   {
+     "role": "quit",
+-    "label": "Quit DeepSeek Harness"
++    "label": "Quit Daniel Bot"
+   }
+ ]
+diff --git a/apps/desktop/tests/expected/application-menu-zh-CN.json b/apps/desktop/tests/expected/application-menu-zh-CN.json
+index 472aa48a..06e1a133 100644
+--- a/apps/desktop/tests/expected/application-menu-zh-CN.json
++++ b/apps/desktop/tests/expected/application-menu-zh-CN.json
+@@ -1,6 +1,6 @@
+ [
+   {
+-    "label": "关于 DeepSeek Harness",
++    "label": "关于 Daniel Bot",
+     "role": "about"
+   },
+   {
+@@ -24,7 +24,7 @@
+   },
+   {
+     "role": "hide",
+-    "label": "隐藏 DeepSeek Harness"
++    "label": "隐藏 Daniel Bot"
+   },
+   {
+     "role": "hideOthers",
+@@ -39,6 +39,6 @@
+   },
+   {
+     "role": "quit",
+-    "label": "退出 DeepSeek Harness"
++    "label": "退出 Daniel Bot"
+   }
+ ]
+diff --git a/apps/desktop/tests/expected/command-management-win32-en-US.json b/apps/desktop/tests/expected/command-management-win32-en-US.json
+index 34ee59a9..8e56ab69 100644
+--- a/apps/desktop/tests/expected/command-management-win32-en-US.json
++++ b/apps/desktop/tests/expected/command-management-win32-en-US.json
+@@ -4,7 +4,7 @@
+       "type": "info",
+       "title": "Manage dsh Command",
+       "message": "Add the Desktop command to your terminal.",
+-      "detail": "Desktop command: C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd",
++      "detail": "Desktop command: C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd",
+       "buttons": [
+         "Install",
+         "Cancel"
+@@ -16,7 +16,7 @@
+       "type": "info",
+       "title": "Manage dsh Command",
+       "message": "The Desktop command is installed.",
+-      "detail": "Desktop command: C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd\n\nCurrent dsh command: C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd",
++      "detail": "Desktop command: C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd\n\nCurrent dsh command: C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd",
+       "buttons": [
+         "Close",
+         "Repair",
+@@ -29,7 +29,7 @@
+       "type": "info",
+       "title": "Manage dsh Command",
+       "message": "The Desktop command needs repair.",
+-      "detail": "Desktop command: C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd",
++      "detail": "Desktop command: C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd",
+       "buttons": [
+         "Close",
+         "Repair",
+@@ -42,7 +42,7 @@
+       "type": "warning",
+       "title": "Manage dsh Command",
+       "message": "The Desktop command is installed.",
+-      "detail": "Desktop command: C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd\n\nCurrent dsh command: C:\\Program Files\\nodejs\\dsh.cmd\n\nAnother dsh takes precedence. Remove or reorder that installation to use the Desktop command by default. You can also run the Desktop command by its full path.",
++      "detail": "Desktop command: C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd\n\nCurrent dsh command: C:\\Program Files\\nodejs\\dsh.cmd\n\nAnother dsh takes precedence. Remove or reorder that installation to use the Desktop command by default. You can also run the Desktop command by its full path.",
+       "buttons": [
+         "Close",
+         "Repair",
+@@ -55,7 +55,7 @@
+       "type": "info",
+       "title": "Manage dsh Command",
+       "message": "Add the Desktop command to your terminal.",
+-      "detail": "Desktop command: C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd\n\nYour shell command could not be verified. An alias or another dsh installation may take precedence.",
++      "detail": "Desktop command: C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd\n\nYour shell command could not be verified. An alias or another dsh installation may take precedence.",
+       "buttons": [
+         "Install",
+         "Cancel"
+diff --git a/apps/desktop/tests/expected/command-management-win32-zh-CN.json b/apps/desktop/tests/expected/command-management-win32-zh-CN.json
+index c124453a..07caaf61 100644
+--- a/apps/desktop/tests/expected/command-management-win32-zh-CN.json
++++ b/apps/desktop/tests/expected/command-management-win32-zh-CN.json
+@@ -4,7 +4,7 @@
+       "type": "info",
+       "title": "管理 dsh 命令",
+       "message": "将 Desktop 命令添加到终端。",
+-      "detail": "Desktop 命令：C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd",
++      "detail": "Desktop 命令：C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd",
+       "buttons": [
+         "安装",
+         "取消"
+@@ -16,7 +16,7 @@
+       "type": "info",
+       "title": "管理 dsh 命令",
+       "message": "Desktop 命令已安装。",
+-      "detail": "Desktop 命令：C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd\n\n当前 dsh 命令：C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd",
++      "detail": "Desktop 命令：C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd\n\n当前 dsh 命令：C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd",
+       "buttons": [
+         "关闭",
+         "修复",
+@@ -29,7 +29,7 @@
+       "type": "info",
+       "title": "管理 dsh 命令",
+       "message": "Desktop 命令需要修复。",
+-      "detail": "Desktop 命令：C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd",
++      "detail": "Desktop 命令：C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd",
+       "buttons": [
+         "关闭",
+         "修复",
+@@ -42,7 +42,7 @@
+       "type": "warning",
+       "title": "管理 dsh 命令",
+       "message": "Desktop 命令已安装。",
+-      "detail": "Desktop 命令：C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd\n\n当前 dsh 命令：C:\\Program Files\\nodejs\\dsh.cmd\n\n另一个 dsh 的优先级更高。请移除或调整该安装的顺序，以默认使用 Desktop 命令；也可以通过完整路径运行 Desktop 命令。",
++      "detail": "Desktop 命令：C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd\n\n当前 dsh 命令：C:\\Program Files\\nodejs\\dsh.cmd\n\n另一个 dsh 的优先级更高。请移除或调整该安装的顺序，以默认使用 Desktop 命令；也可以通过完整路径运行 Desktop 命令。",
+       "buttons": [
+         "关闭",
+         "修复",
+@@ -55,7 +55,7 @@
+       "type": "info",
+       "title": "管理 dsh 命令",
+       "message": "将 Desktop 命令添加到终端。",
+-      "detail": "Desktop 命令：C:\\Users\\user\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\runtime\\cli\\bin\\dsh.cmd\n\n无法确认 shell 中的命令。别名或另一个 dsh 安装可能具有更高优先级。",
++      "detail": "Desktop 命令：C:\\Users\\user\\AppData\\Local\\Programs\\Daniel Bot\\resources\\runtime\\cli\\bin\\dsh.cmd\n\n无法确认 shell 中的命令。别名或另一个 dsh 安装可能具有更高优先级。",
+       "buttons": [
+         "安装",
+         "取消"
+diff --git a/apps/desktop/tests/expected/fatal-address-in-use-en.txt b/apps/desktop/tests/expected/fatal-address-in-use-en.txt
+index fff3b98a..62cdd4c6 100644
+--- a/apps/desktop/tests/expected/fatal-address-in-use-en.txt
++++ b/apps/desktop/tests/expected/fatal-address-in-use-en.txt
+@@ -1,4 +1,4 @@
+-DeepSeek Harness is unavailable
++Daniel Bot is unavailable
+ The application could not start or stopped unexpectedly.
+ Another DSH instance (such as dsh web or the desktop app) is running. They cannot start at the same time. Quit the other running DSH instance, then restart.
+ The diagnostic report could not be saved. You can provide a screenshot of this dialog when requesting support.
+diff --git a/apps/desktop/tests/expected/fatal-address-in-use-zh-CN.txt b/apps/desktop/tests/expected/fatal-address-in-use-zh-CN.txt
+index 7c6e3dbc..dbd65cb1 100644
+--- a/apps/desktop/tests/expected/fatal-address-in-use-zh-CN.txt
++++ b/apps/desktop/tests/expected/fatal-address-in-use-zh-CN.txt
+@@ -1,4 +1,4 @@
+-DeepSeek Harness 无法使用
++Daniel Bot 无法使用
+ 应用无法启动或已意外停止。
+ 有其他正在运行的 DSH（如其他 dsh web、桌面端），无法同时启动，请退出其他正在运行的 DSH 后重启。
+ 诊断报告未能保存，反馈问题时可提供此窗口的截图。
+diff --git a/apps/desktop/tests/expected/fatal-dialog-en.txt b/apps/desktop/tests/expected/fatal-dialog-en.txt
+index 72cc858a..648c0e9c 100644
+--- a/apps/desktop/tests/expected/fatal-dialog-en.txt
++++ b/apps/desktop/tests/expected/fatal-dialog-en.txt
+@@ -1,4 +1,4 @@
+-DeepSeek Harness is unavailable
++Daniel Bot is unavailable
+ The application could not start or stopped unexpectedly.
+ Desktop Host failed
+ Plugin initialization failed
+diff --git a/apps/desktop/tests/expected/fatal-dialog-with-report-en.txt b/apps/desktop/tests/expected/fatal-dialog-with-report-en.txt
+index 89745ea8..feb82f1b 100644
+--- a/apps/desktop/tests/expected/fatal-dialog-with-report-en.txt
++++ b/apps/desktop/tests/expected/fatal-dialog-with-report-en.txt
+@@ -1,8 +1,8 @@
+-DeepSeek Harness is unavailable
++Daniel Bot is unavailable
+ The application could not start or stopped unexpectedly.
+ Desktop Host failed
+ Plugin initialization failed
+-Diagnostic report: C:\Users\someone\AppData\Roaming\DeepSeek Harness\logs\crash-2026-09-22T10-30-00-000Z-host.log
++Diagnostic report: C:\Users\someone\AppData\Roaming\Daniel Bot\logs\crash-2026-09-22T10-30-00-000Z-host.log
+ 
+ If application files are missing or damaged, close the application and reinstall it. Your tasks are stored separately.
+ Exit
+diff --git a/apps/desktop/tests/expected/fatal-dialog-with-report-zh-CN.txt b/apps/desktop/tests/expected/fatal-dialog-with-report-zh-CN.txt
+index 610b96c5..96e6bc18 100644
+--- a/apps/desktop/tests/expected/fatal-dialog-with-report-zh-CN.txt
++++ b/apps/desktop/tests/expected/fatal-dialog-with-report-zh-CN.txt
+@@ -1,8 +1,8 @@
+-DeepSeek Harness 无法使用
++Daniel Bot 无法使用
+ 应用无法启动或已意外停止。
+ Desktop Host failed
+ Plugin initialization failed
+-诊断报告：C:\Users\someone\AppData\Roaming\DeepSeek Harness\logs\crash-2026-09-22T10-30-00-000Z-host.log
++诊断报告：C:\Users\someone\AppData\Roaming\Daniel Bot\logs\crash-2026-09-22T10-30-00-000Z-host.log
+ 
+ 如果应用文件缺失或损坏，请关闭应用并重新安装。任务数据存储在独立位置。
+ 退出
+diff --git a/apps/desktop/tests/expected/fatal-dialog-zh-CN.txt b/apps/desktop/tests/expected/fatal-dialog-zh-CN.txt
+index c8db153a..efd3e4d6 100644
+--- a/apps/desktop/tests/expected/fatal-dialog-zh-CN.txt
++++ b/apps/desktop/tests/expected/fatal-dialog-zh-CN.txt
+@@ -1,4 +1,4 @@
+-DeepSeek Harness 无法使用
++Daniel Bot 无法使用
+ 应用无法启动或已意外停止。
+ Desktop Host failed
+ Plugin initialization failed
+diff --git a/apps/desktop/tests/expected/publication-mac-arm64.md b/apps/desktop/tests/expected/publication-mac-arm64.md
+index 7b376d9d..3445218d 100644
+--- a/apps/desktop/tests/expected/publication-mac-arm64.md
++++ b/apps/desktop/tests/expected/publication-mac-arm64.md
+@@ -10,7 +10,7 @@
+ | 升级通道 | <code>nightly</code> |
+ | 平台 | <code>mac-arm64</code> |
+ | 测试 release ID | <code>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</code><br>测试下载路径的随机前缀，用于降低地址被猜到的可能性；连续升级测试需使用相同值。 |
+-| 下载地址预览 | <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/mac-arm64/deepseek-harness-1.0.0-mac-arm64.dmg">https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/mac-arm64/deepseek-harness-1.0.0-mac-arm64.dmg</a><br>发布后的目标地址，审批前不保证可下载。 |
++| 下载地址预览 | <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/mac-arm64/daniel-bot-1.0.0-mac-arm64.dmg">https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/mac-arm64/daniel-bot-1.0.0-mac-arm64.dmg</a><br>发布后的目标地址，审批前不保证可下载。 |
+ | 升级 YAML | <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/feeds/mac-arm64/nightly-mac.yml">https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/feeds/mac-arm64/nightly-mac.yml</a><br>本次发布将更新此文件；审批前可能不存在或仍指向旧版本。 |
+ | 打包来源 | <a href="https&#58;//github.com/owner/repo/actions/runs/10/attempts/2">查看打包运行 #10 · 第 2 次尝试</a><br>源码：<code>master @ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</code><br>打包机器：<code>fixture-runner</code> |
+ | 签名与公证 | DMG 校验通过<br>ZIP 内应用校验通过 |
+@@ -37,9 +37,9 @@ release ID 取自原打包产物清单。打包时优先使用表单 `test_relea
+ 
+ | 文件 | 大小 | SHA-256 |
+ | --- | --- | --- |
+-| <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/mac-arm64/deepseek-harness-1.0.0-mac-arm64.dmg">deepseek-harness-1.0.0-mac-arm64.dmg</a> | 11 字节 | <code>eac5da462cb16554774d722fa4093739ffc9ade2f4c6e8ee54041e71908f1408</code> |
+-| <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/mac-arm64/deepseek-harness-1.0.0-mac-arm64.zip">deepseek-harness-1.0.0-mac-arm64.zip</a> | 23 字节 | <code>7039e7b3e00d39fbfb2948ba31b6216ac9ffff01b4117a1cec08025255d9ad10</code> |
+-| <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/mac-arm64/deepseek-harness-1.0.0-mac-arm64.zip.blockmap">deepseek-harness-1.0.0-mac-arm64.zip.blockmap</a> | 16 字节 | <code>4fd6c7d73e713d7f54f173dfc845d046d267f9e62c80a92670b0696131bfb74a</code> |
++| <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/mac-arm64/daniel-bot-1.0.0-mac-arm64.dmg">daniel-bot-1.0.0-mac-arm64.dmg</a> | 11 字节 | <code>eac5da462cb16554774d722fa4093739ffc9ade2f4c6e8ee54041e71908f1408</code> |
++| <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/mac-arm64/daniel-bot-1.0.0-mac-arm64.zip">daniel-bot-1.0.0-mac-arm64.zip</a> | 23 字节 | <code>7039e7b3e00d39fbfb2948ba31b6216ac9ffff01b4117a1cec08025255d9ad10</code> |
++| <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/mac-arm64/daniel-bot-1.0.0-mac-arm64.zip.blockmap">daniel-bot-1.0.0-mac-arm64.zip.blockmap</a> | 16 字节 | <code>4fd6c7d73e713d7f54f173dfc845d046d267f9e62c80a92670b0696131bfb74a</code> |
+ | <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/feeds/mac-arm64/nightly-mac.yml">nightly-mac.yml</a> | 276 字节 | <code>86180a8b9207744d8300e993040f28ad8812f16cf30367b2f04f5dcfadb87452</code> |
+ 
+ </details>
+diff --git a/apps/desktop/tests/expected/publication-production.md b/apps/desktop/tests/expected/publication-production.md
+index 9041d1b3..7b233554 100644
+--- a/apps/desktop/tests/expected/publication-production.md
++++ b/apps/desktop/tests/expected/publication-production.md
+@@ -9,7 +9,7 @@
+ | 版本号 | <code>1.0.0</code> |
+ | 升级通道 | <code>latest</code> |
+ | 平台 | <code>win-x64</code> |
+-| 下载地址预览 | <a href="https&#58;//download.example.com/dsh-desk/bin/win-x64/latest/deepseek-harness-1.0.0-win-x64.exe">https&#58;//download.example.com/dsh-desk/bin/win-x64/latest/deepseek-harness-1.0.0-win-x64.exe</a><br>发布后的目标地址，审批前不保证可下载。 |
++| 下载地址预览 | <a href="https&#58;//download.example.com/dsh-desk/bin/win-x64/latest/daniel-bot-1.0.0-win-x64.exe">https&#58;//download.example.com/dsh-desk/bin/win-x64/latest/daniel-bot-1.0.0-win-x64.exe</a><br>发布后的目标地址，审批前不保证可下载。 |
+ | 升级 YAML | <a href="https&#58;//download.example.com/dsh-desk/feeds/win-x64/latest.yml">https&#58;//download.example.com/dsh-desk/feeds/win-x64/latest.yml</a><br>本次发布将更新此文件；审批前可能不存在或仍指向旧版本。 |
+ | 打包来源 | <a href="https&#58;//github.com/owner/repo/actions/runs/20/attempts/3">查看打包运行 #20 · 第 3 次尝试</a><br>源码：<code>dsh-v1.0.0 @ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</code><br>打包机器：<code>windows-publisher</code> |
+ | 签名与公证 | EXE 签名校验通过 |
+@@ -33,7 +33,7 @@ COS 存储桶：<code>production-1234567890</code>
+ 
+ | 文件 | 大小 | SHA-256 |
+ | --- | --- | --- |
+-| <a href="https&#58;//download.example.com/dsh-desk/bin/win-x64/latest/deepseek-harness-1.0.0-win-x64.exe">deepseek-harness-1.0.0-win-x64.exe</a> | 15 字节 | <code>e34210a6de4f653edf588301431c3d69a633638cbf587345cc50a7fed9f38f4c</code> |
++| <a href="https&#58;//download.example.com/dsh-desk/bin/win-x64/latest/daniel-bot-1.0.0-win-x64.exe">daniel-bot-1.0.0-win-x64.exe</a> | 15 字节 | <code>e34210a6de4f653edf588301431c3d69a633638cbf587345cc50a7fed9f38f4c</code> |
+ | <a href="https&#58;//download.example.com/dsh-desk/feeds/win-x64/latest.yml">latest.yml</a> | 15 字节 | <code>8850e6075dda0080c526269a4de29848c32c2a65e3d81f4a64ed8ce53d4b47c1</code> |
+ 
+ </details>
+diff --git a/apps/desktop/tests/expected/publication-win-x64.md b/apps/desktop/tests/expected/publication-win-x64.md
+index aa7569c0..52de0e36 100644
+--- a/apps/desktop/tests/expected/publication-win-x64.md
++++ b/apps/desktop/tests/expected/publication-win-x64.md
+@@ -10,7 +10,7 @@
+ | 升级通道 | <code>nightly</code> |
+ | 平台 | <code>win-x64</code> |
+ | 测试 release ID | <code>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</code><br>测试下载路径的随机前缀，用于降低地址被猜到的可能性；连续升级测试需使用相同值。 |
+-| 下载地址预览 | <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/win-x64/deepseek-harness-1.0.0-win-x64.exe">https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/win-x64/deepseek-harness-1.0.0-win-x64.exe</a><br>发布后的目标地址，审批前不保证可下载。 |
++| 下载地址预览 | <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/win-x64/daniel-bot-1.0.0-win-x64.exe">https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/win-x64/daniel-bot-1.0.0-win-x64.exe</a><br>发布后的目标地址，审批前不保证可下载。 |
+ | 升级 YAML | <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/feeds/win-x64/nightly.yml">https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/feeds/win-x64/nightly.yml</a><br>本次发布将更新此文件；审批前可能不存在或仍指向旧版本。 |
+ | 打包来源 | <a href="https&#58;//github.com/owner/repo/actions/runs/10/attempts/2">查看打包运行 #10 · 第 2 次尝试</a><br>源码：<code>master @ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</code><br>打包机器：<code>fixture-runner</code> |
+ | 签名与公证 | EXE 签名校验通过 |
+@@ -37,8 +37,8 @@ release ID 取自原打包产物清单。打包时优先使用表单 `test_relea
+ 
+ | 文件 | 大小 | SHA-256 |
+ | --- | --- | --- |
+-| <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/win-x64/deepseek-harness-1.0.0-win-x64.exe">deepseek-harness-1.0.0-win-x64.exe</a> | 23 字节 | <code>7039e7b3e00d39fbfb2948ba31b6216ac9ffff01b4117a1cec08025255d9ad10</code> |
+-| <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/win-x64/deepseek-harness-1.0.0-win-x64.exe.blockmap">deepseek-harness-1.0.0-win-x64.exe.blockmap</a> | 16 字节 | <code>4fd6c7d73e713d7f54f173dfc845d046d267f9e62c80a92670b0696131bfb74a</code> |
++| <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/win-x64/daniel-bot-1.0.0-win-x64.exe">daniel-bot-1.0.0-win-x64.exe</a> | 23 字节 | <code>7039e7b3e00d39fbfb2948ba31b6216ac9ffff01b4117a1cec08025255d9ad10</code> |
++| <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bin/win-x64/daniel-bot-1.0.0-win-x64.exe.blockmap">daniel-bot-1.0.0-win-x64.exe.blockmap</a> | 16 字节 | <code>4fd6c7d73e713d7f54f173dfc845d046d267f9e62c80a92670b0696131bfb74a</code> |
+ | <a href="https&#58;//example.com/dsh-desk/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/feeds/win-x64/nightly.yml">nightly.yml</a> | 272 字节 | <code>faccf50f8398d6781568114dda9a678751e4c01044dd9424d00237c69e58cb59</code> |
+ 
+ </details>
+diff --git a/apps/desktop/tests/expected/test-release-upload-mac-arm64.json b/apps/desktop/tests/expected/test-release-upload-mac-arm64.json
+index 69af29ec..af56190d 100644
+--- a/apps/desktop/tests/expected/test-release-upload-mac-arm64.json
++++ b/apps/desktop/tests/expected/test-release-upload-mac-arm64.json
+@@ -1,15 +1,15 @@
+ [
+   {
+-    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-arm64/deepseek-harness-1.2.3-mac-arm64.dmg"
++    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-arm64/daniel-bot-1.2.3-mac-arm64.dmg"
+   },
+   {
+-    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-arm64/deepseek-harness-1.2.3-mac-arm64.zip"
++    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-arm64/daniel-bot-1.2.3-mac-arm64.zip"
+   },
+   {
+-    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-arm64/deepseek-harness-1.2.3-mac-arm64.zip.blockmap"
++    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-arm64/daniel-bot-1.2.3-mac-arm64.zip.blockmap"
+   },
+   {
+     "key": "dsh-desk/0123456789abcdef0123456789abcdef/feeds/mac-arm64/nightly-mac.yml",
+-    "contents": "version: 1.2.3\npath: >-\n  https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-arm64/deepseek-harness-1.2.3-mac-arm64.zip\nfiles:\n  - url: >-\n      https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-arm64/deepseek-harness-1.2.3-mac-arm64.zip\n    size: 24\n    sha512: >-\n      IgtiHRPFjickTxiSTW6k0ltyBNOF/gpMGj/xflzVV2iRIzUSFPY6BG45u9fR4GmAJSVtN+FMh3NZx7mddUfJLw==\n"
++    "contents": "version: 1.2.3\npath: >-\n  https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-arm64/daniel-bot-1.2.3-mac-arm64.zip\nfiles:\n  - url: >-\n      https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-arm64/daniel-bot-1.2.3-mac-arm64.zip\n    size: 24\n    sha512: >-\n      IgtiHRPFjickTxiSTW6k0ltyBNOF/gpMGj/xflzVV2iRIzUSFPY6BG45u9fR4GmAJSVtN+FMh3NZx7mddUfJLw==\n"
+   }
+ ]
+diff --git a/apps/desktop/tests/expected/test-release-upload-mac-x64.json b/apps/desktop/tests/expected/test-release-upload-mac-x64.json
+index 2c085140..d49be7ad 100644
+--- a/apps/desktop/tests/expected/test-release-upload-mac-x64.json
++++ b/apps/desktop/tests/expected/test-release-upload-mac-x64.json
+@@ -1,15 +1,15 @@
+ [
+   {
+-    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-x64/deepseek-harness-1.2.3-mac-x64.dmg"
++    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-x64/daniel-bot-1.2.3-mac-x64.dmg"
+   },
+   {
+-    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-x64/deepseek-harness-1.2.3-mac-x64.zip"
++    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-x64/daniel-bot-1.2.3-mac-x64.zip"
+   },
+   {
+-    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-x64/deepseek-harness-1.2.3-mac-x64.zip.blockmap"
++    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-x64/daniel-bot-1.2.3-mac-x64.zip.blockmap"
+   },
+   {
+     "key": "dsh-desk/0123456789abcdef0123456789abcdef/feeds/mac-x64/nightly-mac.yml",
+-    "contents": "version: 1.2.3\npath: >-\n  https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-x64/deepseek-harness-1.2.3-mac-x64.zip\nfiles:\n  - url: >-\n      https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-x64/deepseek-harness-1.2.3-mac-x64.zip\n    size: 24\n    sha512: >-\n      IgtiHRPFjickTxiSTW6k0ltyBNOF/gpMGj/xflzVV2iRIzUSFPY6BG45u9fR4GmAJSVtN+FMh3NZx7mddUfJLw==\n"
++    "contents": "version: 1.2.3\npath: >-\n  https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-x64/daniel-bot-1.2.3-mac-x64.zip\nfiles:\n  - url: >-\n      https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/mac-x64/daniel-bot-1.2.3-mac-x64.zip\n    size: 24\n    sha512: >-\n      IgtiHRPFjickTxiSTW6k0ltyBNOF/gpMGj/xflzVV2iRIzUSFPY6BG45u9fR4GmAJSVtN+FMh3NZx7mddUfJLw==\n"
+   }
+ ]
+diff --git a/apps/desktop/tests/expected/test-release-upload-win-x64.json b/apps/desktop/tests/expected/test-release-upload-win-x64.json
+index 9c7db674..365ea5a1 100644
+--- a/apps/desktop/tests/expected/test-release-upload-win-x64.json
++++ b/apps/desktop/tests/expected/test-release-upload-win-x64.json
+@@ -1,12 +1,12 @@
+ [
+   {
+-    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/win-x64/deepseek-harness-1.2.3-win-x64.exe"
++    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/win-x64/daniel-bot-1.2.3-win-x64.exe"
+   },
+   {
+-    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/win-x64/deepseek-harness-1.2.3-win-x64.exe.blockmap"
++    "key": "dsh-desk/0123456789abcdef0123456789abcdef/bin/win-x64/daniel-bot-1.2.3-win-x64.exe.blockmap"
+   },
+   {
+     "key": "dsh-desk/0123456789abcdef0123456789abcdef/feeds/win-x64/nightly.yml",
+-    "contents": "version: 1.2.3\npath: >-\n  https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/win-x64/deepseek-harness-1.2.3-win-x64.exe\nfiles:\n  - url: >-\n      https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/win-x64/deepseek-harness-1.2.3-win-x64.exe\n    size: 30\n    sha512: >-\n      eVumVOW1yvT3fAgGKUnliEzSfhmn8jUfzpNaUPufU1yekWrwJe8wRPC+JOrHH2Hmc/eLynwxjX1yIiER8tVOTA==\n"
++    "contents": "version: 1.2.3\npath: >-\n  https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/win-x64/daniel-bot-1.2.3-win-x64.exe\nfiles:\n  - url: >-\n      https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/bin/win-x64/daniel-bot-1.2.3-win-x64.exe\n    size: 30\n    sha512: >-\n      eVumVOW1yvT3fAgGKUnliEzSfhmn8jUfzpNaUPufU1yekWrwJe8wRPC+JOrHH2Hmc/eLynwxjX1yIiER8tVOTA==\n"
+   }
+ ]
+diff --git a/apps/desktop/tests/expected/welcome/en-api-key.expected.txt b/apps/desktop/tests/expected/welcome/en-api-key.expected.txt
+index 25c5a624..ff3426c6 100644
+--- a/apps/desktop/tests/expected/welcome/en-api-key.expected.txt
++++ b/apps/desktop/tests/expected/welcome/en-api-key.expected.txt
+@@ -1,5 +1,5 @@
+-DeepSeek Harness
+-DeepSeek Harness
++Daniel Bot
++Daniel Bot
+ Add an API key to get started
+ Configure official DeepSeek models to start using Harness
+ Enter API key [password]
+diff --git a/apps/desktop/tests/expected/welcome/en-timeout.expected.txt b/apps/desktop/tests/expected/welcome/en-timeout.expected.txt
+index 2fa1f3a3..5e5bc1a3 100644
+--- a/apps/desktop/tests/expected/welcome/en-timeout.expected.txt
++++ b/apps/desktop/tests/expected/welcome/en-timeout.expected.txt
+@@ -1,5 +1,5 @@
+-DeepSeek Harness
+-DeepSeek Harness
++Daniel Bot
++Daniel Bot
+ Sign in timed out
+ Sign in again
+ Add API Key
+diff --git a/apps/desktop/tests/expected/welcome/en-waiting.expected.txt b/apps/desktop/tests/expected/welcome/en-waiting.expected.txt
+index f6b5b8c1..ee573e27 100644
+--- a/apps/desktop/tests/expected/welcome/en-waiting.expected.txt
++++ b/apps/desktop/tests/expected/welcome/en-waiting.expected.txt
+@@ -1,5 +1,5 @@
+-DeepSeek Harness
+-DeepSeek Harness
++Daniel Bot
++Daniel Bot
+ Browser didn’t open automatically?
+ Copy sign-in link
+ Completing sign in… [disabled]
+diff --git a/apps/desktop/tests/expected/welcome/en.expected.txt b/apps/desktop/tests/expected/welcome/en.expected.txt
+index d559755d..4179cd31 100644
+--- a/apps/desktop/tests/expected/welcome/en.expected.txt
++++ b/apps/desktop/tests/expected/welcome/en.expected.txt
+@@ -1,6 +1,6 @@
+-DeepSeek Harness
+-DeepSeek Harness
+-Welcome to DeepSeek Harness
++Daniel Bot
++Daniel Bot
++Welcome to Daniel Bot
+ Build potential. Explore intelligence.
+ Sign in
+ Add API Key
+diff --git a/apps/desktop/tests/expected/welcome/zh-CN-api-key.expected.txt b/apps/desktop/tests/expected/welcome/zh-CN-api-key.expected.txt
+index 676a5505..08309e21 100644
+--- a/apps/desktop/tests/expected/welcome/zh-CN-api-key.expected.txt
++++ b/apps/desktop/tests/expected/welcome/zh-CN-api-key.expected.txt
+@@ -1,5 +1,5 @@
+-DeepSeek Harness
+-DeepSeek Harness
++Daniel Bot
++Daniel Bot
+ 添加一个 API Key 开始使用
+ 配置 DeepSeek 官方模型，即可开始使用
+ 输入 API 密钥 [password]
+diff --git a/apps/desktop/tests/expected/welcome/zh-CN-timeout.expected.txt b/apps/desktop/tests/expected/welcome/zh-CN-timeout.expected.txt
+index f44aa1da..88dd1020 100644
+--- a/apps/desktop/tests/expected/welcome/zh-CN-timeout.expected.txt
++++ b/apps/desktop/tests/expected/welcome/zh-CN-timeout.expected.txt
+@@ -1,5 +1,5 @@
+-DeepSeek Harness
+-DeepSeek Harness
++Daniel Bot
++Daniel Bot
+ 登录已超时
+ 重新登录
+ 添加 API Key
+diff --git a/apps/desktop/tests/expected/welcome/zh-CN-waiting.expected.txt b/apps/desktop/tests/expected/welcome/zh-CN-waiting.expected.txt
+index faa7d733..80762689 100644
+--- a/apps/desktop/tests/expected/welcome/zh-CN-waiting.expected.txt
++++ b/apps/desktop/tests/expected/welcome/zh-CN-waiting.expected.txt
+@@ -1,5 +1,5 @@
+-DeepSeek Harness
+-DeepSeek Harness
++Daniel Bot
++Daniel Bot
+ 没有自动打开浏览器？
+ 复制登录链接
+ 正在完成登录… [disabled]
+diff --git a/apps/desktop/tests/expected/welcome/zh-CN.expected.txt b/apps/desktop/tests/expected/welcome/zh-CN.expected.txt
+index 7baf913b..2f09683f 100644
+--- a/apps/desktop/tests/expected/welcome/zh-CN.expected.txt
++++ b/apps/desktop/tests/expected/welcome/zh-CN.expected.txt
+@@ -1,6 +1,6 @@
+-DeepSeek Harness
+-DeepSeek Harness
+-欢迎使用 DeepSeek Harness
++Daniel Bot
++Daniel Bot
++欢迎使用 Daniel Bot
+ 组装无限可能，共探智能上限
+ 登录
+ 添加 API Key
+diff --git a/apps/desktop/tests/fatal-recovery.spec.ts b/apps/desktop/tests/fatal-recovery.spec.ts
+index 80f75c2c..e51ec115 100644
+--- a/apps/desktop/tests/fatal-recovery.spec.ts
++++ b/apps/desktop/tests/fatal-recovery.spec.ts
+@@ -28,7 +28,7 @@ async function shown(operations: { show: ReturnType<typeof vi.fn> }): Promise<vo
+   await vi.waitFor(() => { expect(operations.show).toHaveBeenCalled() })
+ }
+ 
+-const REPORT_PATH = 'C:\\Users\\someone\\AppData\\Roaming\\DeepSeek Harness\\logs\\crash-2026-09-22T10-30-00-000Z-host.log'
++const REPORT_PATH = 'C:\\Users\\someone\\AppData\\Roaming\\Daniel Bot\\logs\\crash-2026-09-22T10-30-00-000Z-host.log'
+ 
+ afterEach(() => { vi.restoreAllMocks() })
+ 
+diff --git a/apps/desktop/tests/fixtures/installed-update-packaging.mjs b/apps/desktop/tests/fixtures/installed-update-packaging.mjs
+index bf9d1070..07563f5a 100644
+--- a/apps/desktop/tests/fixtures/installed-update-packaging.mjs
++++ b/apps/desktop/tests/fixtures/installed-update-packaging.mjs
+@@ -10,7 +10,7 @@ if (process.env.DSH_TEST_PACKAGING_FAIL === '1') process.exitCode = 2
+ else {
+   const directory = join(run.root, version, 'installer')
+   await mkdir(directory, { recursive: true })
+-  const filename = `deepseek-harness-${version}-win-x64.exe`
++  const filename = `daniel-bot-${version}-win-x64.exe`
+   const bytes = Buffer.from('inert test bytes, not an installer')
+   await writeFile(join(directory, filename), bytes)
+   await writeFile(join(directory, `${filename}.blockmap`), 'inert test map')
+diff --git a/apps/desktop/tests/installed-update-distribution.spec.ts b/apps/desktop/tests/installed-update-distribution.spec.ts
+index 100a9723..a2b3805c 100644
+--- a/apps/desktop/tests/installed-update-distribution.spec.ts
++++ b/apps/desktop/tests/installed-update-distribution.spec.ts
+@@ -16,7 +16,7 @@ async function fixture<T>(body: (manifest: string) => Promise<T>): Promise<T> {
+     for (const version of versions) {
+       const output = join(run.root, version, 'installer')
+       await mkdir(output, { recursive: true })
+-      const filename = `deepseek-harness-${version}-win-x64.exe`
++      const filename = `daniel-bot-${version}-win-x64.exe`
+       const body = Buffer.from(`inert fixture ${version}`)
+       await writeFile(join(output, filename), body)
+       await writeFile(join(output, `${filename}.blockmap`), 'inert map')
+diff --git a/apps/desktop/tests/installed-update-package-content.spec.ts b/apps/desktop/tests/installed-update-package-content.spec.ts
+index 1b87283f..7eef12a7 100644
+--- a/apps/desktop/tests/installed-update-package-content.spec.ts
++++ b/apps/desktop/tests/installed-update-package-content.spec.ts
+@@ -225,7 +225,7 @@ describe('installed update verification records', () => {
+         const root = join(manifest, '..')
+         const output = join(root, version, 'installer')
+         await mkdir(output)
+-        const name = `deepseek-harness-${version}-win-x64.exe`
++        const name = `daniel-bot-${version}-win-x64.exe`
+         const bytes = Buffer.from('inert installer fixture, never executed')
+         const installer = join(output, name)
+         await writeFile(installer, bytes)
+diff --git a/apps/desktop/tests/installed-update-publication.spec.ts b/apps/desktop/tests/installed-update-publication.spec.ts
+index 8c6bc4f0..3abad41a 100644
+--- a/apps/desktop/tests/installed-update-publication.spec.ts
++++ b/apps/desktop/tests/installed-update-publication.spec.ts
+@@ -52,7 +52,7 @@ async function fixture(body: (context: {
+     for (const version of run.versions) {
+       const directory = join(run.root, version, 'installer')
+       await mkdir(directory, { recursive: true })
+-      const name = `deepseek-harness-${version}-win-x64.exe`
++      const name = `daniel-bot-${version}-win-x64.exe`
+       const bytes = Buffer.from(`inert installer ${version}`)
+       await writeFile(join(directory, name), bytes)
+       await writeFile(join(directory, `${name}.blockmap`), 'inert map')
+diff --git a/apps/desktop/tests/installer-packaging.spec.ts b/apps/desktop/tests/installer-packaging.spec.ts
+index 1e438ded..316ec811 100644
+--- a/apps/desktop/tests/installer-packaging.spec.ts
++++ b/apps/desktop/tests/installer-packaging.spec.ts
+@@ -52,9 +52,9 @@ describe('installer preparation preserves application dependencies', () => {
+       })
+       const appInfo = new AppInfo(metadataPackager, undefined)
+       expect(appInfo.companyName).toBe('Hangzhou DeepSeek Artificial Intelligence Co., Ltd.')
+-      expect(appInfo.copyright).toBe(`Copyright © ${new Date().getFullYear()} DeepSeek Harness`)
++      expect(appInfo.copyright).toBe(`Copyright © ${new Date().getFullYear()} Daniel Bot`)
+       if (platform === 'win32') {
+-        expect(expandMacro(config.nsis.uninstallDisplayName, null, appInfo, {}, false)).toBe('DeepSeek Harness')
++        expect(expandMacro(config.nsis.uninstallDisplayName, null, appInfo, {}, false)).toBe('Daniel Bot')
+         expect(config.nsis.installerLanguages).toEqual(readInstallerLocales().map(locale => locale.id))
+       }
+       const aboutIcon = config.extraResources.find(resource => resource.to === 'icon.png')
+@@ -99,7 +99,7 @@ describe('installer preparation preserves application dependencies', () => {
+       DSH_DESKTOP_TARGET_ARCH: 'x64',
+       DSH_DESKTOP_UNSIGNED: '1',
+     }, 'win32', 'x64')
+-    expect(config.artifactName).toBe('deepseek-harness-${version}-${os}-${arch}-unsigned.${ext}')
++    expect(config.artifactName).toBe('daniel-bot-${version}-${os}-${arch}-unsigned.${ext}')
+   })
+ 
+   it('packages every preload entry point the shell loads', async () => {
+diff --git a/apps/desktop/tests/macos-app-update-config.spec.ts b/apps/desktop/tests/macos-app-update-config.spec.ts
+index bba859fa..d355f67b 100644
+--- a/apps/desktop/tests/macos-app-update-config.spec.ts
++++ b/apps/desktop/tests/macos-app-update-config.spec.ts
+@@ -15,7 +15,7 @@ const update = { publicUrl: 'https://desktop-updates.example.com/dsh-desk/feeds/
+ async function fixture(): Promise<{ appPath: string; resourcesDir: string }> {
+   const root = await mkdtemp(join(tmpdir(), 'desktop-macos-update-config-'))
+   roots.push(root)
+-  const appPath = join(root, 'DeepSeek Harness.app')
++  const appPath = join(root, 'Daniel Bot.app')
+   const resourcesDir = join(appPath, 'Contents', 'Resources')
+   await mkdir(resourcesDir, { recursive: true })
+   return { appPath, resourcesDir }
+@@ -37,14 +37,14 @@ describe('macOS packaged updater configuration', () => {
+ 
+   it('writes and verifies the fixed release feed before signing', async () => {
+     const paths = await fixture()
+-    expect(createMacOSAppUpdateConfig(update, 'deepseek-harness-updater')).toEqual({
++    expect(createMacOSAppUpdateConfig(update, 'daniel-bot-updater')).toEqual({
+       provider: 'generic',
+       url: update.publicUrl,
+       channel: 'nightly',
+-      updaterCacheDirName: 'deepseek-harness-updater',
++      updaterCacheDirName: 'daniel-bot-updater',
+     })
+-    await writeMacOSAppUpdateConfig(paths.resourcesDir, update, 'deepseek-harness-updater')
+-    await expect(verifyMacOSAppUpdateConfig(paths.appPath, update, 'deepseek-harness-updater')).resolves.toBeUndefined()
++    await writeMacOSAppUpdateConfig(paths.resourcesDir, update, 'daniel-bot-updater')
++    await expect(verifyMacOSAppUpdateConfig(paths.appPath, update, 'daniel-bot-updater')).resolves.toBeUndefined()
+   })
+ 
+   it.each([
+@@ -60,8 +60,8 @@ describe('macOS packaged updater configuration', () => {
+   it('rejects another updater cache directory when the signed value is known', async () => {
+     const paths = await fixture()
+     await writeMacOSAppUpdateConfig(paths.resourcesDir, update, 'wrong-updater')
+-    await expect(verifyMacOSAppUpdateConfig(paths.appPath, update, 'deepseek-harness-updater'))
+-      .rejects.toThrow(/expected deepseek-harness-updater/u)
++    await expect(verifyMacOSAppUpdateConfig(paths.appPath, update, 'daniel-bot-updater'))
++      .rejects.toThrow(/expected daniel-bot-updater/u)
+   })
+ })
+ 
+diff --git a/apps/desktop/tests/macos-notarized-application.spec.ts b/apps/desktop/tests/macos-notarized-application.spec.ts
+index 38fc5705..48d37e82 100644
+--- a/apps/desktop/tests/macos-notarized-application.spec.ts
++++ b/apps/desktop/tests/macos-notarized-application.spec.ts
+@@ -10,7 +10,7 @@ vi.mock('node:child_process', async importOriginal => ({
+ }))
+ 
+ const expected = { signingIdentity: 'Example Company (TEAMID1234)', teamId: 'TEAMID1234' }
+-const appPath = '/private build/DeepSeek Harness.app'
++const appPath = '/private build/Daniel Bot.app'
+ const commands = [
+   ['/usr/bin/codesign', ['--verify', '--deep', '--strict', '--verbose=2', appPath]],
+   ['/usr/bin/codesign', ['--display', '--verbose=4', appPath]],
+diff --git a/apps/desktop/tests/macos-signature.spec.ts b/apps/desktop/tests/macos-signature.spec.ts
+index 2e6a2bd4..b80c78a3 100644
+--- a/apps/desktop/tests/macos-signature.spec.ts
++++ b/apps/desktop/tests/macos-signature.spec.ts
+@@ -49,7 +49,7 @@ describe('desktop macOS release signature', () => {
+   it('loads release identifiers from the environment and requires code signing', async () => {
+     const { createElectronBuilderConfig } = await import('../electron-builder.config.mjs')
+     const config = createElectronBuilderConfig(RELEASE_ENVIRONMENT, 'darwin', 'arm64')
+-    expect(config.protocols).toEqual([{ name: 'DeepSeek Harness', schemes: ['dsh'] }])
++    expect(config.protocols).toEqual([{ name: 'Daniel Bot', schemes: ['dsh'] }])
+     expect(portablePath(config.directories.output)).toContain('/.desktop-build/targets/mac-arm64/artifacts')
+     expect(config.mac.extendInfo.NSMicrophoneUsageDescription).toContain('microphone')
+     expect(config.mac.extendInfo.CFBundleLocalizations).toEqual(SHIPPED_LOCALE_IDS.map(id => id === 'zh' ? 'zh_CN' : id))
+@@ -162,7 +162,7 @@ describe('desktop macOS release signature', () => {
+       DSH_DESKTOP_UNSIGNED: '1',
+     }, 'darwin', arch)
+     expect(portablePath(config.directories.output)).toContain(`/targets/mac-${arch}/unsigned-artifacts`)
+-    expect(config.artifactName).toBe('deepseek-harness-${version}-${os}-${arch}-unsigned.${ext}')
++    expect(config.artifactName).toBe('daniel-bot-${version}-${os}-${arch}-unsigned.${ext}')
+     expect(config.mac).toMatchObject({ identity: '-', forceCodeSigning: false, notarize: false, target: ['dmg'] })
+     expect(config.dmg).toMatchObject({ sign: false, writeUpdateInfo: false })
+     expect(config.publish).toBeNull()
+diff --git a/apps/desktop/tests/main-startup.spec.ts b/apps/desktop/tests/main-startup.spec.ts
+index 3b1e63e0..3b2aced8 100644
+--- a/apps/desktop/tests/main-startup.spec.ts
++++ b/apps/desktop/tests/main-startup.spec.ts
+@@ -624,8 +624,11 @@ describe('desktop main startup', () => {
+     await vi.advanceTimersByTimeAsync(0)
+     const zh = locale === 'zh-CN'
+     expect(harness.dialog.showMessageBox).toHaveBeenLastCalledWith(expect.objectContaining({
+-      type: 'info', title: zh ? '关于 DeepSeek Harness' : 'About DeepSeek Harness', message: 'DeepSeek Harness',
+-      detail: zh ? '版本 V1.0.0' : 'Version V1.0.0', buttons: [zh ? '确定' : 'OK'], cancelId: 0,
++      type: 'info', title: zh ? '关于 Daniel Bot' : 'About Daniel Bot', message: 'Daniel Bot',
++      detail: zh
++        ? '版本 V1.0.0\n\n基于 DeepSeek Harness（MIT License）构建，非官方发行版，与 DeepSeek 官方无关。'
++        : 'Version V1.0.0\n\nBuilt on DeepSeek Harness (MIT License). Unofficial distribution, not affiliated with or endorsed by DeepSeek.',
++      buttons: [zh ? '确定' : 'OK'], cancelId: 0,
+     }))
+     // A dialog that cannot open is logged, not surfaced as an unhandled rejection.
+     harness.dialog.showMessageBox.mockRejectedValueOnce(new Error('overlay unavailable'))
+@@ -1068,7 +1071,7 @@ describe('desktop main startup', () => {
+     expect(() => handler(event, 'application', NaN, 34)).toThrow('invalid popup request')
+     const application = handler(event, 'application', 48, 34)
+     expect(harness.menu.buildFromTemplate.mock.lastCall![0].map(item => item.label ?? item.type)).toEqual([
+-      '关于 DeepSeek Harness', 'separator', '检查更新…', '管理 dsh 命令…', 'separator', zh.toggleDevToolsMenu, 'separator', '退出',
++      '关于 Daniel Bot', 'separator', '检查更新…', '管理 dsh 命令…', 'separator', zh.toggleDevToolsMenu, 'separator', '退出',
+     ])
+     expect(harness.popup.mock.lastCall![0]).toMatchObject({ window, x: 48, y: 34 })
+     expect(harness.popup.mock.lastCall![0].callback).toBeTypeOf('function')
+diff --git a/apps/desktop/tests/package-macos.spec.ts b/apps/desktop/tests/package-macos.spec.ts
+index e8fb5dcf..1303d61c 100644
+--- a/apps/desktop/tests/package-macos.spec.ts
++++ b/apps/desktop/tests/package-macos.spec.ts
+@@ -29,14 +29,14 @@ function barrier() {
+ async function fixture(arch: 'arm64' | 'x64' = 'arm64') {
+   const root = await mkdtemp(join(tmpdir(), 'desktop-parallel-notarization-'))
+   const artifactsRoot = join(root, 'artifacts')
+-  const appPath = join(artifactsRoot, arch === 'arm64' ? 'mac-arm64' : 'mac', 'DeepSeek Harness.app')
++  const appPath = join(artifactsRoot, arch === 'arm64' ? 'mac-arm64' : 'mac', 'Daniel Bot.app')
+   await mkdir(join(appPath, 'Contents', 'Resources'), { recursive: true })
+   await writeFile(join(appPath, 'payload'), 'signed content')
+   await writeMacOSAppUpdateConfig(join(appPath, 'Contents', 'Resources'), {
+     publicUrl: `https://desktop-updates.example.com/dsh-desk/0123456789abcdef0123456789abcdef/feeds/mac-${arch}/`,
+-  }, 'deepseek-harness-updater')
++  }, 'daniel-bot-updater')
+   const version = '1.2.3-alpha.1'
+-  const base = `deepseek-harness-${version}-mac-${arch}`
++  const base = `daniel-bot-${version}-mac-${arch}`
+   const request = { arch, artifactsRoot, version, environment }
+   const apple: MacOSArtifactOperations = {
+     copyApp: async (source, destination) => {
+@@ -196,7 +196,7 @@ describe('parallel macOS artifacts', () => {
+   it('passes the actual App and isolated output directory to each single-target builder', () => {
+     const target = resolveDesktopPackageTarget('mac-arm64', 'darwin', 'arm64')
+     for (const format of ['zip', 'dmg'] as const) {
+-      const appPath = join('private build', format, 'DeepSeek Harness.app')
++      const appPath = join('private build', format, 'Daniel Bot.app')
+       const output = join(dirname(appPath), 'artifacts')
+       expect(desktopElectronBuilderArguments(target, false, { format, appPath, output })).toEqual([
+         'exec', 'electron-builder', '--config', 'electron-builder.config.mjs',
+diff --git a/apps/desktop/tests/quit-confirmation.spec.ts b/apps/desktop/tests/quit-confirmation.spec.ts
+index e7843f6b..157ecd5a 100644
+--- a/apps/desktop/tests/quit-confirmation.spec.ts
++++ b/apps/desktop/tests/quit-confirmation.spec.ts
+@@ -43,7 +43,7 @@ describe('DesktopQuitConfirmation', () => {
+     const f = setup('darwin', async () => ({ activeTasks: true, scheduledTasks: true }))
+     expect(await f.confirmation.confirm()).toBe(true)
+     expect(f.shown).toEqual([{
+-      type: 'warning', title: 'DeepSeek Harness', message: '退出 DeepSeek Harness？',
++      type: 'warning', title: 'Daniel Bot', message: '退出 Daniel Bot？',
+       detail: '当前正在运行的任务将会中断，且应用关闭期间，定时任务不会运行',
+       buttons: ['退出', '取消'], defaultId: 0, cancelId: 1, noLink: true,
+     }])
+@@ -54,7 +54,7 @@ describe('DesktopQuitConfirmation', () => {
+     f.answer(1)
+     expect(await f.confirmation.confirm()).toBe(false)
+     expect(f.shown).toEqual([{
+-      type: 'none', icon: f.icon, title: 'DeepSeek Harness', message: 'Quit DeepSeek Harness?',
++      type: 'none', icon: f.icon, title: 'Daniel Bot', message: 'Quit Daniel Bot?',
+       detail: 'Scheduled tasks will not run while the app is closed.',
+       buttons: ['Quit', 'Cancel'], defaultId: 0, cancelId: 1, noLink: true,
+     }])
+diff --git a/apps/desktop/tests/retain-desktop-ci.spec.ts b/apps/desktop/tests/retain-desktop-ci.spec.ts
+index f83592fa..e897eda0 100644
+--- a/apps/desktop/tests/retain-desktop-ci.spec.ts
++++ b/apps/desktop/tests/retain-desktop-ci.spec.ts
+@@ -22,10 +22,10 @@ it.each([
+   await mkdir(join(config, 'presets'), { recursive: true })
+   await writeFile(join(appRoot, 'package.json'), '{"version":"1.0.0"}')
+   await writeFile(join(config, 'presets/test.env'), `DSH_DESKTOP_AUTO_UPDATE_ENV=test\nDOWNLOAD_TEST_RELEASE_ID=${'a'.repeat(32)}\n`)
+-  const names = debug ? (target === 'win-x64' ? [`deepseek-harness-1.0.0-win-x64-${qualification}.exe`]
+-    : [`deepseek-harness-1.0.0-${target}-${qualification}.dmg`, `deepseek-harness-1.0.0-${target}-${qualification}.zip`]) : target === 'win-x64'
+-    ? ['deepseek-harness-1.0.0-win-x64.exe', 'deepseek-harness-1.0.0-win-x64.exe.blockmap', 'win-x64-release.json', 'nightly.yml']
+-    : [`deepseek-harness-1.0.0-${target}.dmg`, `deepseek-harness-1.0.0-${target}.zip`, `deepseek-harness-1.0.0-${target}.zip.blockmap`, `${target}-release.json`, 'nightly-mac.yml']
++  const names = debug ? (target === 'win-x64' ? [`daniel-bot-1.0.0-win-x64-${qualification}.exe`]
++    : [`daniel-bot-1.0.0-${target}-${qualification}.dmg`, `daniel-bot-1.0.0-${target}-${qualification}.zip`]) : target === 'win-x64'
++    ? ['daniel-bot-1.0.0-win-x64.exe', 'daniel-bot-1.0.0-win-x64.exe.blockmap', 'win-x64-release.json', 'nightly.yml']
++    : [`daniel-bot-1.0.0-${target}.dmg`, `daniel-bot-1.0.0-${target}.zip`, `daniel-bot-1.0.0-${target}.zip.blockmap`, `${target}-release.json`, 'nightly-mac.yml']
+   await Promise.all(names.map(name => writeFile(join(artifacts, name), 'fixture')))
+   const env = {
+     DSH_PACKAGING_CONFIG_DIR: config, DSH_PACKAGING_PRESET: 'test', DSH_DESKTOP_TARGET_PLATFORM: target === 'win-x64' ? 'win32' : 'darwin',
+diff --git a/apps/desktop/tests/tray.spec.ts b/apps/desktop/tests/tray.spec.ts
+index 11c3a488..7f1d4e09 100644
+--- a/apps/desktop/tests/tray.spec.ts
++++ b/apps/desktop/tests/tray.spec.ts
+@@ -43,8 +43,8 @@ it('shows the application icon with its name as the tooltip and an Open / Quit m
+   const f = setup()
+   expect(native.createFromPath).toHaveBeenCalledWith('C:/app/resources/tray.ico')
+   expect(f.native.image).toEqual({ path: 'C:/app/resources/tray.ico' })
+-  expect(f.native.setToolTip).toHaveBeenCalledWith('DeepSeek Harness')
+-  expect(labels(native.menus[0]!)).toEqual(['Open DeepSeek Harness', 'separator', 'Quit DeepSeek Harness'])
++  expect(f.native.setToolTip).toHaveBeenCalledWith('Daniel Bot')
++  expect(labels(native.menus[0]!)).toEqual(['Open Daniel Bot', 'separator', 'Quit Daniel Bot'])
+   expect(f.native.setContextMenu).toHaveBeenCalledWith({ template: native.menus[0] })
+ })
+ 
+@@ -63,7 +63,7 @@ it('relabels the menu in the current locale and ignores relabel after disposal',
+   const f = setup()
+   f.setLocale('zh')
+   f.tray.relabel()
+-  expect(labels(native.menus[1]!)).toEqual(['打开 DeepSeek Harness', 'separator', '退出 DeepSeek Harness'])
++  expect(labels(native.menus[1]!)).toEqual(['打开 Daniel Bot', 'separator', '退出 Daniel Bot'])
+   f.tray.dispose()
+   f.tray.dispose()
+   expect(f.native.destroy).toHaveBeenCalledOnce()
+diff --git a/apps/desktop/tests/windows-sign.spec.ts b/apps/desktop/tests/windows-sign.spec.ts
+index 3e0ec371..07bb875d 100644
+--- a/apps/desktop/tests/windows-sign.spec.ts
++++ b/apps/desktop/tests/windows-sign.spec.ts
+@@ -203,7 +203,7 @@ describe('Windows token signing', () => {
+     }, {
+       certificateFile: CERTIFICATE_FILE,
+       signTool: 'C:\\tools\\signtool.exe',
+-      path: 'C:\\release\\DeepSeek Harness.exe',
++      path: 'C:\\release\\Daniel Bot.exe',
+       isNest: false,
+       tokenPin: 'token-secret!',
+       keyContainer: 'te-container',
+@@ -213,7 +213,7 @@ describe('Windows token signing', () => {
+       DSH_DESKTOP_WINDOWS_CER_FILE: CERTIFICATE_FILE,
+       DSH_DESKTOP_WINDOWS_TOKEN_PIN: 'token-secret!',
+       DSH_DESKTOP_WINDOWS_KEY_CONTAINER: 'te-container',
+-      DSH_DESKTOP_WINDOWS_SIGN_TARGET: 'C:\\release\\DeepSeek Harness.exe',
++      DSH_DESKTOP_WINDOWS_SIGN_TARGET: 'C:\\release\\Daniel Bot.exe',
+       DSH_DESKTOP_WINDOWS_SIGN_APPEND: '',
+     })
+   })
+diff --git a/apps/desktop/tests/windows-update-publisher.spec.ts b/apps/desktop/tests/windows-update-publisher.spec.ts
+index a1af8d54..117949dc 100644
+--- a/apps/desktop/tests/windows-update-publisher.spec.ts
++++ b/apps/desktop/tests/windows-update-publisher.spec.ts
+@@ -90,7 +90,7 @@ describe('Windows update publisher', () => {
+         DSH_DESKTOP_AUTO_UPDATE_ENV: 'production',
+       }, 'win32', 'x64')
+       expect(config.win.forceCodeSigning).toBe(true)
+-      expect(config.artifactName).toBe('deepseek-harness-${version}-${os}-${arch}.${ext}')
++      expect(config.artifactName).toBe('daniel-bot-${version}-${os}-${arch}.${ext}')
+       expect(typeof config.win.signtoolOptions.sign).toBe('function')
+       const manager = new WindowsSignToolManager({ platformSpecificBuildOptions: config.win, getCscLink: () => undefined })
+       expect(await manager.computedPublisherName.value).toEqual(['CN=Publisher,O=Company,C=CN'])
+diff --git a/packages/bundle/web-app/cordis.patch.yml b/packages/bundle/web-app/cordis.patch.yml
+index d751fcc4..323acefe 100644
+--- a/packages/bundle/web-app/cordis.patch.yml
++++ b/packages/bundle/web-app/cordis.patch.yml
+@@ -308,16 +308,12 @@
+     - id: ui-settings-models
+       name: '@deepseek-ai/dsh-client-ui-settings-models'
+ 
+-    # Plugin management: the sidebar Plugins page installs, enables, disables,
+-    # and removes the profile's bundles through the `pluginManager` Remote.
+-    # Without a profile-backed Host it reports itself unavailable.
+-    - id: ui-plugin-manager
+-      name: '@deepseek-ai/dsh-client-ui-plugin-manager'
+-
+-    # Read-only Plugin list tab in the Settings Plugins section; the built-in
+-    # bundles the sidebar page leaves out are inspected here.
+-    - id: ui-settings-plugin-inventory
+-      name: '@deepseek-ai/dsh-client-ui-settings-plugin-inventory'
++    # Plugin management is intentionally absent from this surface: the product ships
++    # one embedded bundle and must not expose installing, enabling, disabling, or
++    # removing bundles. The `ui-plugin-manager` page and the
++    # `ui-settings-plugin-inventory` tab are removed here, not disabled, and their
++    # packages stay in the dependency graph until the next packaging change.
++    # Restoring either row brings the Plugins UI back.
+ 
+     - id: ui-conversation
+       name: '@deepseek-ai/dsh-client-ui-conversation'
+@@ -481,8 +477,10 @@
+ # exists, so there is no agent to key by. Behind a preset realm those variables
+ # would never reach the model's shell at all.
+ 
+-- id: tool-plugin-manager
+-  disabled: true
++# The agent-facing `plugin_manager` tool is disabled at the base layer and its
++# preset rows are removed, so no session can enable, disable, or remove the
++# product's embedded bundle. Deleting this disable instead would leave the row
++# enabled wherever a preset does not restate it.
+ 
+ - id: tool-bash
+   disabled: true
+diff --git a/packages/bundle/web-app/presets/cordis.patch.yml b/packages/bundle/web-app/presets/cordis.patch.yml
+index 4494bb15..76ce31d9 100644
+--- a/packages/bundle/web-app/presets/cordis.patch.yml
++++ b/packages/bundle/web-app/presets/cordis.patch.yml
+@@ -130,9 +130,8 @@
+             name: '@deepseek-ai/dsh-tool-skill'
+           - id: present
+             name: '@deepseek-ai/dsh-tool-present'
+-          - id: tool-plugin-manager
+-            name: '@deepseek-ai/dsh-plugin-manager/tools'
+-            disabled: !!js "!ctx.get('profileContext')"
++          # plugin_manager is intentionally absent: sessions must not manage the
++          # product's embedded bundle.
+           - id: tool-plugin-market
+             name: '@deepseek-ai/dsh-plugin-market/tools'
+             disabled: !!js "!ctx.get('profileContext')"
+diff --git a/packages/bundle/web-app/presets/ptc.patch.yml b/packages/bundle/web-app/presets/ptc.patch.yml
+index 67869207..bfd4aeb4 100644
+--- a/packages/bundle/web-app/presets/ptc.patch.yml
++++ b/packages/bundle/web-app/presets/ptc.patch.yml
+@@ -126,9 +126,8 @@
+             name: '@deepseek-ai/dsh-tool-executor-ptc'
+           - id: present
+             name: '@deepseek-ai/dsh-tool-present'
+-          - id: tool-plugin-manager
+-            name: '@deepseek-ai/dsh-plugin-manager/tools'
+-            disabled: true
++          # plugin_manager is intentionally absent: sessions must not manage the
++          # product's embedded bundle.
+           - id: tool-plugin-market
+             name: '@deepseek-ai/dsh-plugin-market/tools'
+             disabled: true
+diff --git a/packages/bundle/web-app/presets/standard.patch.yml b/packages/bundle/web-app/presets/standard.patch.yml
+index 554c2c9d..824c13b4 100644
+--- a/packages/bundle/web-app/presets/standard.patch.yml
++++ b/packages/bundle/web-app/presets/standard.patch.yml
+@@ -122,9 +122,8 @@
+               searchTimeoutMs: 60000
+           - id: present
+             name: '@deepseek-ai/dsh-tool-present'
+-          - id: tool-plugin-manager
+-            name: '@deepseek-ai/dsh-plugin-manager/tools'
+-            disabled: !!js "!ctx.get('profileContext')"
++          # plugin_manager is intentionally absent: sessions must not manage the
++          # product's embedded bundle.
+           - id: tool-plugin-market
+             name: '@deepseek-ai/dsh-plugin-market/tools'
+             disabled: true

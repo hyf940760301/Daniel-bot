@@ -1,0 +1,19 @@
+# 依赖与构建产物
+node_modules/
+*.tgz
+dist/
+
+# 系统与缓存
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+
+# 本地临时
+*.log
+_tmp/
+
+# 改造期开发产物（不随包）
+_skills-src/
+vendor/docs
+vendor/.agents/

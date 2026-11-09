@@ -1,0 +1,15 @@
+{
+ "skill": "kol-outreach",
+ "corpus_version": "0.9.205",
+ "source": "docs/marketing/skills/kol-intelligence.md",
+ "source_sha256": "54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d",
+ "source_lines": 6972,
+ "slices": [
+  {
+   "file": "references/30-outreach.md",
+   "start": 1494,
+   "end": 3209,
+   "title": "§4 阶段 3 · Pitch 外联（结构 ＋ EN 模板库 ＋ §4.13–§4.24 信型骨架）"
+  }
+ ]
+}

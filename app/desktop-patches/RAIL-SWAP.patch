@@ -1,0 +1,334 @@
+diff --git a/packages/client/ui-layout/README.i18n.yaml b/packages/client/ui-layout/README.i18n.yaml
+index 84b97244..ca7b4900 100644
+--- a/packages/client/ui-layout/README.i18n.yaml
++++ b/packages/client/ui-layout/README.i18n.yaml
+@@ -15,8 +15,8 @@
+   en: d152484eb41ac6b4
+   zh: 09388d293f9be9cb
+ /deepseek-ai-dsh-client-ui-layout/use-this-package:
+-  en: 9e534fb456e63716
+-  zh: 2a7b3240074d6b0e
++  en: 68f5ffd03e87d95a
++  zh: 6a4daeec09e4a97a
+ /deepseek-ai-dsh-client-ui-layout/use-this-package/window-chrome-seat:
+   en: 7eac53b38d0777fe
+   zh: 7f9422dff671ba50
+diff --git a/packages/client/ui-layout/README.md b/packages/client/ui-layout/README.md
+index ba24ebf9..38f91cb0 100644
+--- a/packages/client/ui-layout/README.md
++++ b/packages/client/ui-layout/README.md
+@@ -27,7 +27,7 @@ This package provides the Web GUI's four-column AppFrame (capability rail, sideb
+ 
+ Desktop Mod+B toggles the left sidebar through the same layout action used by its controls. The shortcut remains available inside the navigation drawer, is unavailable behind other modal dialogs, and yields to terminal input.
+ 
+-The root slot composes the capability rail, sidebar, main content, and right column. The rail is a real first track: 48px collapsed or 320px expanded, never a floating layer over the sidebar column. AppFrame holds its open request in memory (a fresh mount is the strip) and passes `{ open, onToggle }` to the single root-scoped `shell.rail` occupant; `open` reports the resolved track, so a frame too narrow for the panel tells the occupant it is collapsed. Drawer mode mounts no rail column. The sidebar spans 264–420px, defaults to 280px, and retains a 56px rail when collapsed at widths of 768px and above. Below 768px, without a native Windows caption, it uses a modal drawer without reserving a column; the header retains the reopen controls, and navigation closes the drawer. Below 1024px it collapses automatically, and opening the right panel collapses a manually expanded sidebar. The right panel first opens at 45% of the viewport, then retains the user's pixel preference, capped at 70%. To protect 400px for the center, the frame first collapses the capability rail to its 48px strip, then reduces the right panel to 300px, then reports insufficient room so its occupant closes it, and only then compresses the center further. Dragging has no transition delay; the right handle is absent while closed or fullscreen.
++The root slot composes the sidebar, the capability rail, main content, and right column, in that grid order. The sidebar is the real first track (it owns the window's left edge and its chrome band); the rail is the real second track between it and the centre: 48px collapsed or 320px expanded, never a floating layer over the sidebar column. AppFrame holds its open request in memory (a fresh mount is the strip) and passes `{ open, onToggle }` to the single root-scoped `shell.rail` occupant; `open` reports the resolved track, so a frame too narrow for the panel tells the occupant it is collapsed. Drawer mode mounts no rail column. The sidebar spans 264–420px, defaults to 280px, and retains a 56px rail when collapsed at widths of 768px and above. Below 768px, without a native Windows caption, it uses a modal drawer without reserving a column; the header retains the reopen controls, and navigation closes the drawer. Below 1024px it collapses automatically, and opening the right panel collapses a manually expanded sidebar. The right panel first opens at 45% of the viewport, then retains the user's pixel preference, capped at 70%. To protect 400px for the center, the frame first collapses the capability rail to its 48px strip, then reduces the right panel to 300px, then reports insufficient room so its occupant closes it, and only then compresses the center further. Dragging has no transition delay; the right handle is absent while closed or fullscreen.
+ 
+ When the browser reports a folded device in landscape and the frame is at least 768px wide, the expanded sidebar occupies half the frame. This midpoint heuristic targets book postures with a vertical center fold; it does not identify the hinge direction or reserve its physical width, so horizontal or off-center folds are not supported by this adjustment. Its resize handle is hidden; unfolding restores the saved width. Fold changes at a stable viewport width use the existing track transition; reduced motion disables it. Browsers without the device-posture media feature keep the ordinary layout.
+ 
+diff --git a/packages/client/ui-layout/README.zh.md b/packages/client/ui-layout/README.zh.md
+index 26d6a0c2..53f0b8c9 100644
+--- a/packages/client/ui-layout/README.zh.md
++++ b/packages/client/ui-layout/README.zh.md
+@@ -27,7 +27,7 @@ kind: "package-reference"
+ 
+ 桌面 Mod+B 通过与控件共用的布局操作切换左侧栏。此快捷键在导航抽屉内仍可用，在其他模态弹窗打开时不可用；终端输入优先。
+ 
+-本插件在 root slot 中组合能力栏、侧边栏、主内容和右栏。能力栏是真实的第一条轨道：收起 48px、展开 320px，不是压在侧栏列上的浮层。展开请求存在 AppFrame 内存里（新挂载必定是竖条），框架把 `{ open, onToggle }` 传给 root 作用域的单占位 `shell.rail` 占用方；`open` 反映解算后的轨道状态，放不下面板的窄窗口会告诉占用方已收起。抽屉态不挂载能力栏。侧边栏宽度为 264～420px，默认为 280px，在宽度不低于 768px 时，收起后保留 56px 控制栏。低于 768px 且没有原生 Windows 顶栏时，采用模态抽屉，不占据列宽；标题区域保留重新打开的控件，导航后关闭抽屉。窗口宽度低于 1024px 时自动收起，打开右侧面板也会收起手动展开的侧边栏。右侧面板首次打开时使用视口宽度的 45%，之后保留用户的像素宽度偏好，上限为 70%。为给中栏保留 400px，框架先把能力栏降级为 48px 竖条，再把右侧面板缩减至 300px，然后报告空间不足使占用方将其关闭，最后才进一步压缩中栏。拖动没有过渡延迟；右侧手柄在关闭或全屏时不显示。
++本插件在 root slot 中按「侧边栏 → 能力栏 → 中栏 → 右栏」的网格顺序组合这四列。侧边栏是真实的第一条轨道（它承接窗口左缘与其顶部 chrome 带）；能力栏是紧随其后的第二条轨道：收起 48px、展开 320px，不是压在侧栏列上的浮层。展开请求存在 AppFrame 内存里（新挂载必定是竖条），框架把 `{ open, onToggle }` 传给 root 作用域的单占位 `shell.rail` 占用方；`open` 反映解算后的轨道状态，放不下面板的窄窗口会告诉占用方已收起。抽屉态不挂载能力栏。侧边栏宽度为 264～420px，默认为 280px，在宽度不低于 768px 时，收起后保留 56px 控制栏。低于 768px 且没有原生 Windows 顶栏时，采用模态抽屉，不占据列宽；标题区域保留重新打开的控件，导航后关闭抽屉。窗口宽度低于 1024px 时自动收起，打开右侧面板也会收起手动展开的侧边栏。右侧面板首次打开时使用视口宽度的 45%，之后保留用户的像素宽度偏好，上限为 70%。为给中栏保留 400px，框架先把能力栏降级为 48px 竖条，再把右侧面板缩减至 300px，然后报告空间不足使占用方将其关闭，最后才进一步压缩中栏。拖动没有过渡延迟；右侧手柄在关闭或全屏时不显示。
+ 
+ 当浏览器报告设备处于横屏半折叠状态，且框架宽度不低于 768px 时，展开的侧边栏占据一半宽度。这一中点启发式面向折痕竖直且位于中央的书本姿态；它不识别铰链方向，也不为实体铰链宽度留空，因此这项调整不支持水平或偏离中央的折痕。此时隐藏拖拽手柄；完全展开后恢复保存的宽度。视口宽度不变时，折叠状态切换复用现有的列宽过渡；减少动态效果时禁用该过渡。不支持 device-posture 媒体特性的浏览器继续使用常规布局。
+ 
+diff --git a/packages/client/ui-layout/src/client/AppFrame.module.css b/packages/client/ui-layout/src/client/AppFrame.module.css
+index cd80f3f7..064b74ee 100644
+--- a/packages/client/ui-layout/src/client/AppFrame.module.css
++++ b/packages/client/ui-layout/src/client/AppFrame.module.css
+@@ -56,10 +56,10 @@
+   }
+ }
+ 
+-/* Capability rail: the frame's first track, left of the sidebar. It owns the
+-   column's fill and clipping; the occupant only draws inside it, so the rail
+-   can never cover the sidebar's pixels (the overlay this replaces did). */
+-.railCol {
++/* Sidebar: the frame's first track. It owns the window's left edge, so the
++   macOS traffic lights and the window drag band live over this column (its own
++   top strip), and everything else starts to its right. */
++.sidebarCol {
+   grid-column: 1;
+   grid-row: 1;
+   min-width: 0;
+@@ -68,13 +68,31 @@
+   border-right: 0.5px solid var(--dsw-alias-border-l3);
+ }
+ 
+-.sidebarCol {
++/* Capability rail: the frame's second track, between the sidebar and the
++   centre. It owns the column's fill and clipping; the occupant only draws
++   inside it, so the rail can never cover the sidebar's pixels (the overlay this
++   replaces did). */
++.railCol {
+   grid-column: 2;
+   grid-row: 1;
+   min-width: 0;
+   overflow: hidden;
+   background: var(--dsw-specific-sidebar-fill);
+   border-right: 0.5px solid var(--dsw-alias-border-l3);
++  /* The window chrome band belongs to the sidebar now, so the rail's own
++     content needs no top clearance: the dock that reads this variable pads
++     just 6px. The one exception is below. */
++  --dsh-frame-top-clearance: 0px;
++}
++
++/* macOS collapse leaves the sidebar column at zero width, so the rail becomes
++   the frame's leftmost column and the traffic lights hang over x 0–48 again.
++   It re-inherits the platform clearance there, exactly as it did when it was
++   the first track, so no rail control lands under the lights. (The Windows
++   caption row needs no such rule: it lives outside the frame's content box,
++   above every column.) */
++:global([data-platform='darwin']) .frame[data-sidebar-collapsed] .railCol {
++  --dsh-frame-top-clearance: 48px;
+ }
+ 
+ .centerCol {
+diff --git a/packages/client/ui-layout/src/client/AppFrame.tsx b/packages/client/ui-layout/src/client/AppFrame.tsx
+index 1c50b94a..16e9fcd6 100644
+--- a/packages/client/ui-layout/src/client/AppFrame.tsx
++++ b/packages/client/ui-layout/src/client/AppFrame.tsx
+@@ -1,17 +1,20 @@
+ /**
+  * Four-column shell frame, registered into the built-in 'root' slot (the web
+- * shell renders only 'root'). Owns the grid tracks (rail | sidebar | center |
++ * shell renders only 'root'). Owns the grid tracks (sidebar | rail | center |
+  * rightbar), the drag handles (pointer capture + rAF throttle), the column
+  * solve (columns.ts), and the child-slot render decisions: the rail and
+  * sidebar slots receive live parameters from that solve. The root-scoped main
+  * slot selects the Conversation or a global panel. Each column occupant owns
+  * its Session binding and reports the geometry it needs.
+  *
+- * The capability rail is a real first track, not a floating overlay: its
+- * occupant draws inside the column the solve reserved, so it never covers the
+- * sidebar's pixels. AppFrame owns the open/collapsed request (memory only);
+- * the solve may still collapse the rail to its 48px strip when the expanded
+- * width would take the center below its minimum.
++ * The sidebar is the first track: it owns the window's left edge and the
++ * chrome band on top of it (macOS traffic lights, window drag). The capability
++ * rail is a real second track, between the sidebar and the centre — not a
++ * floating overlay — so its occupant draws inside the column the solve
++ * reserved and never covers the sidebar's pixels. AppFrame owns the
++ * open/collapsed request (memory only); the solve may still collapse the rail
++ * to its 48px strip when the expanded width would take the center below its
++ * minimum.
+  *
+  * The right column is a track, not a box: its occupant draws its panel anchored
+  * to the frame's right edge at the resolved normal width, and the
+@@ -49,9 +52,10 @@ function CenterColumn(props: { children?: ReactNode; inert: boolean }) {
+ }
+ 
+ /**
+- * Capability rail grid item: a real first track left of the sidebar. Its width
+- * is the solve's resolved rail width (0 when the rail is not mounted, i.e. in
+- * drawer mode), so the occupant never overlaps the sidebar.
++ * Capability rail grid item: a real track between the sidebar and the centre.
++ * Its width is the solve's resolved rail width (0 when the rail is not
++ * mounted, i.e. in drawer mode), so the occupant never overlaps the sidebar or
++ * the centre.
+  */
+ function RailColumn(props: { children?: ReactNode; expanded: boolean }) {
+   return (
+@@ -252,7 +256,11 @@ export function AppFrame({
+   // chase the live window edge. The counter restarts the settle window when a
+   // re-toggle interrupts a running transition.
+   const [animating, setAnimating] = useState(0)
+-  const trackToggle = `${sidebarCollapsed}:${layoutInfo.rightbarTrack}:${centeredSidebar}:${railExpanded}`
++  // Fingerprint of the discrete track states, read left to right in the frame's
++  // own column order (sidebar | rail | rightbar). All four tracks ride one
++  // `grid-template-columns` transition, so this only has to detect *that* a
++  // discrete state flipped — not sequence per-column easing.
++  const trackToggle = `${sidebarCollapsed}:${railExpanded}:${layoutInfo.rightbarTrack}:${centeredSidebar}`
+   const previousToggle = useRef(trackToggle)
+   const previousViewport = useRef(viewport)
+   // Arm the transition before child layout effects measure the new column widths.
+@@ -336,7 +344,7 @@ export function AppFrame({
+         ...(windowsTitlebar
+           ? { '--dsh-windows-sidebar-width': `${cols.sidebar}px` } : {}),
+         gridTemplateColumns:
+-          `${railWidth}px ${cols.sidebar}px minmax(${cols.rightbar === 0 ? 0 : CENTER_MIN}px, 1fr) minmax(0px, ${rightbarMax}px)`,
++          `${cols.sidebar}px ${railWidth}px minmax(${cols.rightbar === 0 ? 0 : CENTER_MIN}px, 1fr) minmax(0px, ${rightbarMax}px)`,
+       }}
+       data-sidebar-collapsed={sidebarCollapsed || undefined}
+       data-sidebar-drawer={drawer || undefined}
+@@ -354,12 +362,15 @@ export function AppFrame({
+       />
+       {drawer && <div className={css.drawerMask} data-sidebar-mask aria-hidden="true"
+         onClick={drawerOpen ? () => { actions.toggleSidebar() } : undefined} />}
+-      {!drawer && <RailColumn expanded={railExpanded}>{rail}</RailColumn>}
++      {/* DOM order matches the grid order (sidebar | rail): tab order follows the
++          visual left-to-right reading order, and the rail column keeps its
++          resolved track. */}
+       <div className={css.sidebarCol}
+         style={drawer ? { width: sidebarWidth } : undefined}
+         {...{ inert: drawer && sidebarCollapsed ? '' : undefined }}>
+         {sidebar}
+       </div>
++      {!drawer && <RailColumn expanded={railExpanded}>{rail}</RailColumn>}
+       <>
+         <CenterColumn inert={drawerOpen}>{main}</CenterColumn>
+         <RightbarColumn inert={drawerOpen}>
+@@ -378,9 +389,10 @@ export function AppFrame({
+         </div>
+       )}
+       {/* The collapsed sidebar rail is fixed-width: no resize handle while closed.
+-          The capability rail sits before the sidebar, so the handle rides the
+-          sidebar's right edge at rail + sidebar. */}
+-      {!drawer && !centeredSidebar && !sidebarCollapsed && <DragHandle side="sidebar" left={railWidth + cols.sidebar} onStart={onSidebarStart} onDrag={onSidebarDrag} onEnd={onDragEnd} />}
++          The sidebar is the frame's first track, so its right edge is its own
++          width — the same border the capability rail starts from. The rail's
++          expansion therefore never moves this handle. */}
++      {!drawer && !centeredSidebar && !sidebarCollapsed && <DragHandle side="sidebar" left={cols.sidebar} onStart={onSidebarStart} onDrag={onSidebarDrag} onEnd={onDragEnd} />}
+       {layoutInfo.rightbarShown && !layoutInfo.rightbarFullscreen && normal.rightbar > 0 && (
+         <DragHandle side="rightbar" left={viewport - normal.rightbar} onStart={onRightbarStart} onDrag={onRightbarDrag} onEnd={onDragEnd} />
+       )}
+diff --git a/packages/client/ui-layout/src/client/columns.ts b/packages/client/ui-layout/src/client/columns.ts
+index a4c8c877..0111aea0 100644
+--- a/packages/client/ui-layout/src/client/columns.ts
++++ b/packages/client/ui-layout/src/client/columns.ts
+@@ -8,8 +8,9 @@
+ /** Resolved widths for one frame. */
+ export interface Columns { rail: number; sidebar: number; center: number; rightbar: number }
+ 
+-/** Collapsed capability rail: the strip left of the sidebar (and its only
+- * state on frames too narrow to carry the expanded panel). */
++/** Collapsed capability rail: the 48px strip between the sidebar and the
++ * centre (and its only state on frames too narrow to carry the expanded
++ * panel). */
+ export const RAIL_COLLAPSED = 48
+ /** Expanded capability rail: the 320px business map panel. */
+ export const RAIL_EXPANDED = 320
+diff --git a/packages/client/ui-layout/src/client/index.ts b/packages/client/ui-layout/src/client/index.ts
+index 9e6e9556..60bd8a7e 100644
+--- a/packages/client/ui-layout/src/client/index.ts
++++ b/packages/client/ui-layout/src/client/index.ts
+@@ -69,10 +69,10 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
+      */
+     'sidebar': { kind: 'single'; scope: 'root'; owner: SidebarOwnerProps }
+     /**
+-     * The capability rail: a real frame column left of the sidebar, sized by
+-     * the same solve that sizes the other tracks (48px strip or 320px panel).
+-     * Its occupant draws inside that track — unlike `shell.overlay`, it never
+-     * covers the sidebar's pixels.
++     * The capability rail: a real frame column between the sidebar and the
++     * centre, sized by the same solve that sizes the other tracks (48px strip
++     * or 320px panel). Its occupant draws inside that track — unlike
++     * `shell.overlay`, it never covers the sidebar's pixels.
+      *
+      * The frame owns the open request and passes it in: occupants render from
+      * `open` and call `onToggle` to collapse/expand. The solve may still
+diff --git a/packages/client/ui-layout/tests/app-frame.client.spec.tsx b/packages/client/ui-layout/tests/app-frame.client.spec.tsx
+index af4e6205..90430a93 100644
+--- a/packages/client/ui-layout/tests/app-frame.client.spec.tsx
++++ b/packages/client/ui-layout/tests/app-frame.client.spec.tsx
+@@ -120,8 +120,9 @@ function mountFrame(windowWidth = frameWidth, content?: AppFrameProps['renderSlo
+ }
+ 
+ /* The template delegates the squeeze to the grid (jsdom does no layout, so
+-   specs read the specified tracks): [rail px, sidebar px, rightbar growth
+-   limit]. The centre's protected minimum must accompany an open right track. */
++   specs read the specified tracks). Track order is the frame's rendered column
++   order: [sidebar px, rail px, centre, rightbar growth limit]. The centre's
++   protected minimum must accompany an open right track. */
+ function trackList(frame: HTMLElement): number[] {
+   const match = /^([\d.]+)px ([\d.]+)px minmax\((0|400)px, 1fr\) minmax\(0px, ([\d.]+)px\)$/.exec(frame.style.gridTemplateColumns)
+   if (match === null) throw new Error(`unexpected template: ${frame.style.gridTemplateColumns}`)
+@@ -132,14 +133,14 @@ function trackList(frame: HTMLElement): number[] {
+ 
+ /** The sidebar/rightbar tracks these specs have always read. */
+ function tracks(frame: HTMLElement): number[] {
+-  const [rail = 0, sidebar = 0, rightbar = 0] = trackList(frame)
++  const [sidebar = 0, rail = 0, rightbar = 0] = trackList(frame)
+   if (rail !== 0 && rail !== 48 && rail !== 320) throw new Error(`unexpected rail track: ${frame.style.gridTemplateColumns}`)
+   return [sidebar, rightbar]
+ }
+ 
+-/** The capability rail's own track (0 when the frame mounts no rail column). */
++/** The capability rail's own track — the second one, right of the sidebar (0 when the frame mounts no rail column). */
+ function railTrack(frame: HTMLElement): number {
+-  return trackList(frame)[0] ?? 0
++  return trackList(frame)[1] ?? 0
+ }
+ 
+ function handleFor(frame: HTMLElement, side: 'sidebar' | 'rightbar'): HTMLElement {
+@@ -270,6 +271,9 @@ describe('AppFrame', () => {
+   it('keeps the closed sidebar mounted at its 56px rail without a handle', () => {
+     const { frame, instance, sidebarOwner, getByTestId, queryByTestId } = mountFrame()
+     act(() => { instance.actions.toggleSidebar() })
++    // Collapsed, the sidebar keeps its 56px strip at the frame's left edge and
++    // the capability rail stays mounted to its right.
++    expect(trackList(frame)).toEqual([56, 48, 0])
+     expect(tracks(frame)).toEqual([56, 0])
+     expect(sidebarOwner()).toEqual({ collapsed: true, width: 56, drawer: false })
+     expect(getByTestId('sidebar-content')).toBeTruthy()
+@@ -288,6 +292,10 @@ describe('AppFrame', () => {
+     expect(queryByTestId('shell.leading-content')).toBeNull()
+     act(() => { instance.actions.toggleSidebar() })
+     expect(tracks(frame)).toEqual([0, 0])
++    // macOS collapse hides the sidebar column entirely, so the rail (still the
++    // 48px strip) becomes the frame's leftmost column — the state
++    // AppFrame.module.css gives the platform top clearance back for.
++    expect(railTrack(frame)).toBe(48)
+     expect(sidebarOwner()).toEqual({ collapsed: true, width: 0, drawer: false })
+     expect(frame.querySelector('[data-shell-leading]')).not.toBeNull()
+     expect(queryByTestId('shell.leading-content')).toBeTruthy()
+@@ -820,7 +828,7 @@ describe('sidebar drawer', () => {
+ })
+ 
+ describe('AppFrame capability rail column', () => {
+-  it('renders the rail as a real first track and toggles it from frame state', () => {
++  it('renders the rail as a real second track and toggles it from frame state', () => {
+     const { frame, railOwner, railCol } = mountFrame()
+     const rail = railCol()
+     expect(railTrack(frame)).toBe(48)
+@@ -838,6 +846,28 @@ describe('AppFrame capability rail column', () => {
+     expect(railOwner().open).toBe(false)
+   })
+ 
++  it('keeps the sidebar as the first track and the rail as the second, wherever the solve lands', () => {
++    const { frame, getByTestId, railOwner } = mountFrame()
++    // Rendered order: sidebar | rail | centre | rightbar.
++    expect(trackList(frame)).toEqual([280, 48, 0])
++    expect(frame.style.gridTemplateColumns).toBe('280px 48px minmax(0px, 1fr) minmax(0px, 0px)')
++    // The markup follows the same order, so tab order reads left to right.
++    const sidebarContent = getByTestId('sidebar-content')
++    const railContent = getByTestId('shell.rail-content')
++    expect(sidebarContent.compareDocumentPosition(railContent) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
++    // The sidebar handle rides the sidebar's right edge, which is now the
++    // rail's left edge: expanding the rail never moves the handle.
++    expect(handleFor(frame, 'sidebar').style.left).toBe('280px')
++    act(() => { railOwner().onToggle() })
++    expect(railTrack(frame)).toBe(320)
++    expect(handleFor(frame, 'sidebar').style.left).toBe('280px')
++    // Dragging the sidebar moves the rail right with it; the handle tracks the
++    // sidebar's own edge, not the rail's far edge.
++    drag(handleFor(frame, 'sidebar'), 280, 360)
++    expect(trackList(frame)).toEqual([360, 320, 0])
++    expect(handleFor(frame, 'sidebar').style.left).toBe('360px')
++  })
++
+   it('keeps the 48px strip when the expanded rail would take the center floor', () => {
+     frameWidth = 770
+     const { frame, railOwner } = mountFrame()
+diff --git a/packages/extensions/cordis-client-runner/src/client/slot-catalog.ts b/packages/extensions/cordis-client-runner/src/client/slot-catalog.ts
+index bd36c875..a811a91e 100644
+--- a/packages/extensions/cordis-client-runner/src/client/slot-catalog.ts
++++ b/packages/extensions/cordis-client-runner/src/client/slot-catalog.ts
+@@ -3784,8 +3784,8 @@ export const CLIENT_SLOT_API: readonly ClientSlotEntry[] = [
+     key: 'shell.rail',
+     kind: 'single',
+     scope: 'root',
+-    summary: 'The capability rail: a real frame column left of the sidebar, sized by the same solve that sizes the other tracks (48px strip or 320px panel).',
+-    doc: 'The capability rail: a real frame column left of the sidebar, sized by\nthe same solve that sizes the other tracks (48px strip or 320px panel).\nIts occupant draws inside that track — unlike `shell.overlay`, it never\ncovers the sidebar\'s pixels.\n\nThe frame owns the open request and passes it in: occupants render from\n`open` and call `onToggle` to collapse/expand. The solve may still\nresolve an expanded request to the 48px strip on a frame too narrow to\nkeep the center\'s protected minimum; `open` reports that resolved state,\nnever the raw request. Drawer mode mounts no rail column at all.',
++    summary: 'The capability rail: a real frame column between the sidebar and the centre, sized by the same solve that sizes the other tracks (48px strip or 320px panel).',
++    doc: 'The capability rail: a real frame column between the sidebar and the\ncentre, sized by the same solve that sizes the other tracks (48px strip\nor 320px panel). Its occupant draws inside that track — unlike\n`shell.overlay`, it never covers the sidebar\'s pixels.\n\nThe frame owns the open request and passes it in: occupants render from\n`open` and call `onToggle` to collapse/expand. The solve may still\nresolve an expanded request to the 48px strip on a frame too narrow to\nkeep the center\'s protected minimum; `open` reports that resolved state,\nnever the raw request. Drawer mode mounts no rail column at all.',
+     registerOptions: [],
+     ownerProps: [
+       '/** Capability rail owner share: the frame-held open state and its one control. */\nexport interface RailOwnerProps {\n  /**\n   * Resolved expanded state: true only while the solve gives the rail its\n   * 320px track. A request the frame is too narrow to honour reports false, so\n   * the occupant renders its 48px strip instead of a panel inside a strip.\n   */\n  open: boolean\n  /** Flip the frame\'s expand request (the collapse control, `Esc`, and the strip). */\n  onToggle: () => void\n}',

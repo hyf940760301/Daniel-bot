@@ -1,0 +1,21 @@
+{
+ "skill": "kol-negotiation",
+ "corpus_version": "0.9.206",
+ "source": "docs/marketing/skills/kol-intelligence.md",
+ "source_sha256": "20a42e61e38033ed25208f41d6be2bbbcc0d16b6af7f6902423ec1215ab79a31",
+ "source_lines": 7164,
+ "slices": [
+  {
+   "file": "references/40-negotiation.md",
+   "start": 3210,
+   "end": 3779,
+   "title": "§5 阶段 4 · 报价与价格谈判"
+  },
+  {
+   "file": "references/41-four-tables.md",
+   "start": 4093,
+   "end": 4341,
+   "title": "§13 四表交付标准"
+  }
+ ]
+}

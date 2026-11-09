@@ -1,0 +1,49 @@
+{
+  "name": "daniel-dsh-plugin",
+  "version": "0.11.0",
+  "description": "Daniel Bot for DeepSeek Harness（自包含）：装一个插件包即获得 Daniel 的营销能力与数据面（读＋写＋出件），与 CLI／MCP 两种形态互不影响",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "vendor",
+    "cordis.patch.yml",
+    "scripts",
+    "README.md",
+    "tests",
+    "HANDOFF.md"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "daniel",
+    "kol",
+    "marketing"
+  ],
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "smoke": "node scripts/smoke.mjs --call daniel_status",
+    "test:login": "node scripts/test-login.mjs",
+    "test:trace": "node scripts/test-trace.mjs",
+    "golden:capture": "node tests/golden/capture.mjs --out tests/golden/baseline.json",
+    "golden:diff": "node tests/golden/diff.mjs",
+    "test:nulls": "node scripts/test-nulls.mjs",
+    "test:clarify": "node scripts/test-clarify.mjs",
+    "pack": "node scripts/pack.mjs --dest ..",
+    "check:clean": "node scripts/clean-install-check.mjs --tgz ../daniel-dsh-plugin-$(node -p \"require('./package.json').version\").tgz",
+    "test:performance": "node scripts/test-performance.mjs",
+    "test:defects": "node scripts/test-defects.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

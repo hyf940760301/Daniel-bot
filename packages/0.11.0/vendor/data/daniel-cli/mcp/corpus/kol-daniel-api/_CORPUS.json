@@ -1,0 +1,27 @@
+{
+ "skill": "kol-daniel-api",
+ "corpus_version": "0.9.206",
+ "source": "docs/marketing/skills/kol-intelligence.md",
+ "source_sha256": "20a42e61e38033ed25208f41d6be2bbbcc0d16b6af7f6902423ec1215ab79a31",
+ "source_lines": 7164,
+ "slices": [
+  {
+   "file": "references/60-data-layer.md",
+   "start": 5008,
+   "end": 5721,
+   "title": "§15 Daniel 系统数据层直连（含 §15.5.8 实测运维事实）"
+  },
+  {
+   "file": "references/61-creator-tracker.md",
+   "start": 5722,
+   "end": 5900,
+   "title": "§16 Creator Tracker（红人追踪）建链"
+  },
+  {
+   "file": "references/62-full-chain-search.md",
+   "start": 5901,
+   "end": 6376,
+   "title": "§17 KOL 全链路检索"
+  }
+ ]
+}

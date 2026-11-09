@@ -1,0 +1,2967 @@
+{
+  "schema": "daniel.workflow-map.v1",
+  "generated_from": [
+    "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-intelligence/SKILL.md",
+    "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-intelligence/references/02-capability-map.md",
+    "docs/marketing/skills/_CAPABILITY-MAP.json",
+    "docs/marketing/kol/_DANIEL-FIELD-DICTIONARY.md",
+    "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py",
+    "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/*.py",
+    "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md"
+  ],
+  "workflows": [
+    {
+      "id": "stage0-product",
+      "name": "产品说明与 Key Feature",
+      "steps": [
+        "产品事实",
+        "Key Feature 提炼",
+        "官方说明块"
+      ],
+      "agentRationale": [
+        {
+          "title": "产品说明只写有出处的参数",
+          "thinking": "我写的每个参数和功能名，都能在品牌书或官网里翻到原话，翻不到的就留白标待确认。因为这个说明会被对方拿去比对官网——编一个数字，整封邮件立刻被判定成群发模板，后面再解释也拉不回来。宁可少写一句，也不写一句没人背书的话。",
+          "output": "产品说明块（英文）",
+          "trace": {
+            "file": "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-discovery/references/10-discovery-steps.md",
+            "line": 1280
+          }
+        },
+        {
+          "title": "卖点为什么按七个维度核",
+          "thinking": "品类定位、差异化、主要功能、日常功能、硬件、生态、背书，我逐项打勾，缺哪项就明说缺哪项。因为漏掉的卖点不会自己长回来：KOL 照着这份说明写脚本，没写进去的就不会出现在视频里，等上线再补只能重拍。多核一遍的成本，远低于补拍一次。",
+          "output": "完整性核对表 ＋ 缺口清单",
+          "trace": {
+            "file": "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-discovery/references/10-discovery-steps.md",
+            "line": 1299
+          }
+        }
+      ]
+    },
+    {
+      "id": "discovery",
+      "name": "发现",
+      "steps": [
+        "检索词矩阵（含参数澄清）",
+        "跑检索",
+        "名单产线"
+      ]
+    },
+    {
+      "id": "screening",
+      "name": "背调",
+      "steps": [
+        "评分卡",
+        "真实性核验",
+        "shortlist"
+      ]
+    },
+    {
+      "id": "outreach",
+      "name": "外联（KOL Pitch）",
+      "steps": [
+        "首封 Pitch",
+        "跟进",
+        "回复处置"
+      ],
+      "agentRationale": [
+        {
+          "title": "产品段怎么写",
+          "thinking": "我把产品参数和使用场景放在最前面，因为对方判断要不要继续聊，看的是「你到底用没用过这东西」。形容词堆得再多，也不如一句具体参数；写得太像模板，对方连回都不会回。所以这一段每句话，我都要能在品牌物料里找到出处。",
+          "output": "首封邮件正文（英文）",
+          "trace": {
+            "file": "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-outreach/SKILL.md",
+            "line": 40
+          }
+        },
+        {
+          "title": "首封要不要带条款",
+          "thinking": "首封我只讲产品、请他报价，交付、授权、付款这些条款留到第二封。因为第一次接触就甩一整套条款，对方会当成群发的合同模板直接不回；先把产品聊明白，条款反而更好谈。",
+          "output": "首封邮件（英文）＋ 条款邮件（英文）",
+          "trace": {
+            "file": "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-outreach/SKILL.md",
+            "line": 56
+          }
+        }
+      ]
+    },
+    {
+      "id": "negotiation",
+      "name": "谈判",
+      "steps": [
+        "问价",
+        "砍价",
+        "审核表"
+      ],
+      "agentRationale": [
+        {
+          "title": "报价贵不贵怎么判",
+          "thinking": "我不看粉丝量，先把这个号的报价按它最近的实际平均播放折成千次播放成本，再判合理、偏高还是过高。因为粉丝可以买、播放买不了：二十万粉但条均五千播放的号，报出来的单价会高得离谱，只看总价根本比不出问题。",
+          "output": "对内审核表（价格判断三选一）",
+          "trace": {
+            "file": "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-negotiation/SKILL.md",
+            "line": 60
+          }
+        },
+        {
+          "title": "目标价为什么不一刀切",
+          "thinking": "数据扎实又明显报高价的号，我把目标价往上放；常规号就按参考区间往下谈。因为同一套折扣砍所有号，遇到真强的号会直接谈崩；对方一旦觉得你不识货，后面再想拉回来就很难。",
+          "output": "砍价邮件（英文）＋ 目标价",
+          "trace": {
+            "file": "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-negotiation/SKILL.md",
+            "line": 48
+          }
+        }
+      ]
+    },
+    {
+      "id": "contract",
+      "name": "合同",
+      "steps": [
+        "条款适配",
+        "出具合同",
+        "签署归档"
+      ],
+      "agentRationale": [
+        {
+          "title": "合同为什么只换字不动版",
+          "thinking": "我在原母版上换掉条款文字，页边距、字号、行距、签署区一个都不动。因为这份文件的版式就是客户和法务认它的方式：我试过把条款一字不差地重排一遍，还是被退回——对方看到的已经不是同一份文件了。",
+          "output": "合同签署版（PDF）＋ 可复制版",
+          "trace": {
+            "file": "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-contract/SKILL.md",
+            "line": 41
+          }
+        },
+        {
+          "title": "条款改动为什么压到最少",
+          "thinking": "我先列出必须替换的段落，只改这几处，其余照抄母版。因为改动越多，对方越会怀疑「这合同是不是有问题」，然后重新拉一轮谈判，签署周期会拖长一倍。",
+          "output": "条款替换清单",
+          "trace": {
+            "file": "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-contract/SKILL.md",
+            "line": 69
+          }
+        }
+      ]
+    },
+    {
+      "id": "execution",
+      "name": "执行",
+      "steps": [
+        "审稿",
+        "发布",
+        "数据回收"
+      ],
+      "agentRationale": [
+        {
+          "title": "审稿到底卡多严",
+          "thinking": "我只卡三件事：方向讲得对不对、事实有没有错、卖点有没有讲到位，不要求他逐字照品牌方的说明念。因为真人拍视频不可能一字不差，卡太严只会拖到错过发布窗口；但价格、规格这类事实错误必须当场改，那是品牌方要背书的部分。",
+          "output": "逐句审稿意见",
+          "trace": {
+            "file": "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-execution-sov/SKILL.md",
+            "line": 55
+          }
+        },
+        {
+          "title": "回收为什么用同一套字段",
+          "thinking": "发布时间、链接、播放点赞评论、转化信号、授权和付款状态，我按同一套字段记。因为字段各记各的，后面复盘和声量就对不上账，既回答不了这波投放值不值，也没法跟下一批比。",
+          "output": "回收清单",
+          "trace": {
+            "file": "daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-execution-sov/SKILL.md",
+            "line": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "sov",
+      "name": "SOV 与热点",
+      "steps": [
+        "固定竞争集",
+        "份额与情感",
+        "热点追踪"
+      ]
+    },
+    {
+      "id": "data",
+      "name": "数据层",
+      "steps": [
+        "读取",
+        "写入（含回读）"
+      ]
+    },
+    {
+      "id": "ops",
+      "name": "平台运维",
+      "steps": [
+        "需求路由",
+        "环境与账号",
+        "安装与接入",
+        "自检与出包"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "auth.status",
+      "match": {
+        "kind": "cli",
+        "command": "auth status"
+      },
+      "module": "授权",
+      "page": "登录状态",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "登录状态",
+        "判定理由",
+        "会话落点",
+        "退出码"
+      ],
+      "summary": "看登录状态：本地会话 ＋ 一次服务端校验（退出码三档，可脚本判定）",
+      "workflowReason": "平台运维 · 环境与账号；登录态是全部业务命令的前置",
+      "internal": true,
+      "mcpTool": "daniel_auth_status",
+      "inferred": false,
+      "fieldEvidence": {
+        "登录状态": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_auth.py:62 `authenticated`",
+        "判定理由": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_auth.py:12 `reason`",
+        "会话落点": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_auth.py:38 `本机会话文件`",
+        "退出码": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_auth.py:63 `exitCode`"
+      }
+    },
+    {
+      "id": "brands.list",
+      "match": {
+        "kind": "cli",
+        "command": "brands list"
+      },
+      "module": "品牌资产",
+      "page": "品牌列表",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "品牌名",
+        "品类",
+        "目标市场",
+        "竞品"
+      ],
+      "summary": "列出账号可见的全部品牌（跨工作区，不受当前所在工作区影响）",
+      "workflowReason": "跨阶段平台数据的读取；品牌档案是检索口径、背调、产品说明共用的事实源（D-058：平台能力归 data）",
+      "mcpTool": "daniel_brands_list",
+      "inferred": false,
+      "fieldEvidence": {
+        "品牌名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:64 `name`",
+        "品类": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:232 `category`",
+        "目标市场": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:234 `targetCountries`",
+        "竞品": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:108 `competitors`"
+      }
+    },
+    {
+      "id": "brands.show",
+      "match": {
+        "kind": "cli",
+        "command": "brands show"
+      },
+      "module": "品牌资产",
+      "page": "品牌详情",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "品牌编号",
+        "简介",
+        "频道",
+        "竞品",
+        "目标市场"
+      ],
+      "summary": "看单个品牌的完整档案（简介、频道、竞品、目标市场）",
+      "workflowReason": "品牌档案详情：产品说明与各阶段共用的事实源（品类/竞品/目标市场/简介）",
+      "mcpTool": "daniel_brands_show",
+      "inferred": false,
+      "fieldEvidence": {
+        "品牌编号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:45 `id`",
+        "简介": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:231 `description`",
+        "频道": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:319 `youtubeChannelId`",
+        "竞品": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:108 `competitors`",
+        "目标市场": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:234 `targetCountries`"
+      }
+    },
+    {
+      "id": "brands.competitors",
+      "match": {
+        "kind": "cli",
+        "command": "brands competitors"
+      },
+      "module": "品牌资产",
+      "page": "竞品清单",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "竞品名",
+        "品类关键词"
+      ],
+      "summary": "看某个品牌登记在案的竞品与品类关键词",
+      "workflowReason": "跨阶段平台数据的读取；品牌档案是检索口径、背调、产品说明共用的事实源（D-058：平台能力归 data）",
+      "mcpTool": "daniel_brands_competitors",
+      "inferred": false,
+      "fieldEvidence": {
+        "竞品名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:64 `name`",
+        "品类关键词": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:201 `categoryKeywords`"
+      }
+    },
+    {
+      "id": "brands.create",
+      "match": {
+        "kind": "cli",
+        "command": "brands create"
+      },
+      "module": "品牌资产",
+      "page": "新建品牌",
+      "action": "write",
+      "workflow": {
+        "id": "data",
+        "step": 1
+      },
+      "fields": [
+        "品牌名",
+        "简介",
+        "品类",
+        "行业关键词",
+        "目标市场",
+        "样品价",
+        "竞品"
+      ],
+      "summary": "新建品牌",
+      "workflowReason": "跨阶段平台数据的写入（确认＋回读）；品牌档案是检索口径、背调、产品说明共用的事实源（D-058：平台能力归 data）",
+      "writeStage": "live",
+      "mcpTool": "daniel_brands_create",
+      "inferred": false,
+      "fieldEvidence": {
+        "品牌名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:64 `name`",
+        "简介": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:231 `description`",
+        "品类": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:232 `category`",
+        "行业关键词": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:233 `industryKeywords`",
+        "目标市场": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:234 `targetCountries`",
+        "样品价": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:137 `sampleCost`",
+        "竞品": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:108 `competitors`"
+      }
+    },
+    {
+      "id": "brands.update",
+      "match": {
+        "kind": "cli",
+        "command": "brands update"
+      },
+      "module": "品牌资产",
+      "page": "品牌编辑",
+      "action": "write",
+      "workflow": {
+        "id": "data",
+        "step": 1
+      },
+      "fields": [
+        "品牌名",
+        "简介",
+        "品类",
+        "行业关键词",
+        "目标市场",
+        "样品价",
+        "竞品"
+      ],
+      "summary": "修改品牌资料",
+      "workflowReason": "跨阶段平台数据的写入（确认＋回读）；品牌档案是检索口径、背调、产品说明共用的事实源（D-058：平台能力归 data）",
+      "writeStage": "live",
+      "mcpTool": "daniel_brands_update",
+      "inferred": false,
+      "fieldEvidence": {
+        "品牌名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:64 `name`",
+        "简介": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:231 `description`",
+        "品类": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:232 `category`",
+        "行业关键词": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:233 `industryKeywords`",
+        "目标市场": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:234 `targetCountries`",
+        "样品价": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:137 `sampleCost`",
+        "竞品": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:108 `competitors`"
+      }
+    },
+    {
+      "id": "brands.clone",
+      "match": {
+        "kind": "cli",
+        "command": "brands clone"
+      },
+      "module": "品牌资产",
+      "page": "品牌克隆",
+      "action": "write",
+      "workflow": {
+        "id": "data",
+        "step": 1
+      },
+      "fields": [
+        "新品牌名",
+        "目标工作区",
+        "简介",
+        "品类",
+        "目标市场",
+        "样品价",
+        "竞品"
+      ],
+      "summary": "参考某个品牌克隆一个新品牌：复制其简介／品类／行业关键词／目标市场／样品价／竞品（干跑先给计划）",
+      "workflowReason": "跨阶段平台数据的写入（确认＋回读）；品牌档案是检索口径、背调、产品说明共用的事实源（D-058：平台能力归 data）",
+      "writeStage": "live",
+      "mcpTool": "daniel_brands_clone",
+      "inferred": false,
+      "fieldEvidence": {
+        "新品牌名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:64 `name`",
+        "目标工作区": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:35 `workspaceId`",
+        "简介": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:231 `description`",
+        "品类": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:232 `category`",
+        "目标市场": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:234 `targetCountries`",
+        "样品价": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:137 `sampleCost`",
+        "竞品": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:108 `competitors`"
+      }
+    },
+    {
+      "id": "brands.delete",
+      "match": {
+        "kind": "cli",
+        "command": "brands delete"
+      },
+      "module": "品牌资产",
+      "page": "品牌删除",
+      "action": "write",
+      "workflow": {
+        "id": "data",
+        "step": 1
+      },
+      "fields": [
+        "品牌名",
+        "工作区",
+        "删除凭据"
+      ],
+      "summary": "删除品牌（不可逆）",
+      "workflowReason": "跨阶段平台数据的写入（确认＋回读）；品牌档案是检索口径、背调、产品说明共用的事实源（D-058：平台能力归 data）",
+      "writeStage": "live",
+      "mcpTool": "daniel_brands_delete",
+      "inferred": false,
+      "fieldEvidence": {
+        "品牌名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:64 `name`",
+        "工作区": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:35 `workspaceId`",
+        "删除凭据": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_brands.py:8 `delete-token`"
+      }
+    },
+    {
+      "id": "lists.by-brand",
+      "match": {
+        "kind": "cli",
+        "command": "lists by-brand"
+      },
+      "module": "红人名单",
+      "page": "名单列表",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "名单编号",
+        "名单名",
+        "红人数"
+      ],
+      "summary": "列出某个品牌下的全部名单",
+      "workflowReason": "跨阶段平台数据的读取；名单是跨阶段载体：发现落库、背调取人、外联取联系方式（D-058：平台能力归 data）",
+      "mcpTool": "daniel_lists_by_brand",
+      "inferred": false,
+      "fieldEvidence": {
+        "名单编号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:13 `id`",
+        "名单名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:44 `name`",
+        "红人数": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:192 `influencerCount`"
+      }
+    },
+    {
+      "id": "lists.items",
+      "match": {
+        "kind": "cli",
+        "command": "lists items"
+      },
+      "module": "红人名单",
+      "page": "名单成员",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "频道编号",
+        "频道名",
+        "订阅数",
+        "质量分",
+        "互动率",
+        "标签"
+      ],
+      "summary": "看某个名单里的红人条目（含频道、订阅数、评分）",
+      "workflowReason": "名单成员读取（含频道、订阅数、质量分、互动率、标签），背调与外联取人都用它",
+      "mcpTool": "daniel_lists_items",
+      "inferred": false,
+      "fieldEvidence": {
+        "频道编号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:89 `channelId`",
+        "频道名": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:80 `channelTitle`",
+        "订阅数": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:80 `subscriberCount`",
+        "质量分": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:80 `cqiScore`",
+        "互动率": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:80 `engagementRate`",
+        "标签": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:121 `tags`"
+      }
+    },
+    {
+      "id": "lists.saved-channel-ids",
+      "match": {
+        "kind": "cli",
+        "command": "lists saved-channel-ids"
+      },
+      "module": "红人名单",
+      "page": "已存频道",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "频道编号",
+        "编号条数"
+      ],
+      "summary": "看某个品牌下所有名单里已保存过的频道编号（批量加人／去重前先看）",
+      "workflowReason": "跨阶段平台数据的读取；名单是跨阶段载体：发现落库、背调取人、外联取联系方式（D-058：平台能力归 data）",
+      "mcpTool": "daniel_lists_saved_channel_ids",
+      "inferred": false,
+      "fieldEvidence": {
+        "频道编号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:324 `channelIds`",
+        "编号条数": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:53 `count`"
+      }
+    },
+    {
+      "id": "lists.share-status",
+      "match": {
+        "kind": "cli",
+        "command": "lists share-status"
+      },
+      "module": "红人名单",
+      "page": "名单分享",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "是否开启分享",
+        "分享码",
+        "分享时间"
+      ],
+      "summary": "看某个名单的分享状态（是否开启分享、分享码、分享时间）",
+      "workflowReason": "跨阶段平台数据的读取；名单是跨阶段载体：发现落库、背调取人、外联取联系方式（D-058：平台能力归 data）",
+      "mcpTool": "daniel_lists_share_status",
+      "inferred": false,
+      "fieldEvidence": {
+        "是否开启分享": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py lists.share-status 返回说明「是否开启分享」",
+        "分享码": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py lists.share-status 返回说明「分享码」",
+        "分享时间": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py lists.share-status 返回说明「分享时间」"
+      }
+    },
+    {
+      "id": "lists.auto-priority-status",
+      "match": {
+        "kind": "cli",
+        "command": "lists auto-priority-status"
+      },
+      "module": "红人名单",
+      "page": "自动优先级",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "自动优先级状态",
+        "进度百分比",
+        "完成时间",
+        "最近更新时间"
+      ],
+      "summary": "看某个名单的自动优先级状态（跑没跑、进度、完成时间）",
+      "workflowReason": "跨阶段平台数据的读取；名单是跨阶段载体：发现落库、背调取人、外联取联系方式（D-058：平台能力归 data）",
+      "mcpTool": "daniel_lists_auto_priority_status",
+      "inferred": false,
+      "fieldEvidence": {
+        "自动优先级状态": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py lists.auto-priority-status 返回说明「自动优先级状态」",
+        "进度百分比": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py lists.auto-priority-status 返回说明「进度百分比」",
+        "完成时间": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py lists.auto-priority-status 返回说明「完成时间」",
+        "最近更新时间": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py lists.auto-priority-status 返回说明「最近更新时间」"
+      }
+    },
+    {
+      "id": "lists.create",
+      "match": {
+        "kind": "cli",
+        "command": "lists create"
+      },
+      "module": "红人名单",
+      "page": "新建名单",
+      "action": "write",
+      "workflow": {
+        "id": "data",
+        "step": 1
+      },
+      "fields": [
+        "名单名",
+        "品牌"
+      ],
+      "summary": "新建名单",
+      "workflowReason": "跨阶段平台数据的写入（确认＋回读）；名单是跨阶段载体：发现落库、背调取人、外联取联系方式（D-058：平台能力归 data）",
+      "writeStage": "live",
+      "mcpTool": "daniel_lists_create",
+      "inferred": false,
+      "fieldEvidence": {
+        "名单名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:44 `name`",
+        "品牌": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:53 `brandId`"
+      }
+    },
+    {
+      "id": "lists.rename",
+      "match": {
+        "kind": "cli",
+        "command": "lists rename"
+      },
+      "module": "红人名单",
+      "page": "名单改名",
+      "action": "write",
+      "workflow": {
+        "id": "data",
+        "step": 1
+      },
+      "fields": [
+        "名单编号",
+        "名单名",
+        "品牌"
+      ],
+      "summary": "给名单改名",
+      "workflowReason": "跨阶段平台数据的写入（确认＋回读）；名单是跨阶段载体：发现落库、背调取人、外联取联系方式（D-058：平台能力归 data）",
+      "writeStage": "live",
+      "mcpTool": "daniel_lists_rename",
+      "inferred": false,
+      "fieldEvidence": {
+        "名单编号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:13 `listId`",
+        "名单名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:44 `name`",
+        "品牌": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:53 `brandId`"
+      }
+    },
+    {
+      "id": "lists.delete",
+      "match": {
+        "kind": "cli",
+        "command": "lists delete"
+      },
+      "module": "红人名单",
+      "page": "删除名单",
+      "action": "write",
+      "workflow": {
+        "id": "data",
+        "step": 1
+      },
+      "fields": [
+        "名单编号",
+        "名单名",
+        "红人数",
+        "删除凭据"
+      ],
+      "summary": "删除名单（不可逆）",
+      "workflowReason": "跨阶段平台数据的写入（确认＋回读）；名单是跨阶段载体：发现落库、背调取人、外联取联系方式（D-058：平台能力归 data）",
+      "writeStage": "live",
+      "mcpTool": "daniel_lists_delete",
+      "inferred": false,
+      "fieldEvidence": {
+        "名单编号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:13 `id`",
+        "名单名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:44 `name`",
+        "红人数": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:192 `influencerCount`",
+        "删除凭据": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_lists.py:7 `delete-token`"
+      }
+    },
+    {
+      "id": "search.history",
+      "match": {
+        "kind": "cli",
+        "command": "search history"
+      },
+      "module": "红人检索",
+      "page": "检索历史",
+      "action": "read",
+      "workflow": {
+        "id": "discovery",
+        "step": 1
+      },
+      "fields": [
+        "检索式",
+        "检索方式",
+        "发起时间"
+      ],
+      "summary": "看最近的检索记录（关键词、检索方式、发起时间）",
+      "workflowReason": "检索历史用于复用词表与复盘，属阶段 1 的检索记录",
+      "mcpTool": "daniel_search_history",
+      "inferred": false,
+      "fieldEvidence": {
+        "检索式": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_search.py:17 `query`",
+        "检索方式": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py search.history 返回说明「检索方式」",
+        "发起时间": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py search.history 返回说明「发起时间」"
+      }
+    },
+    {
+      "id": "search.job-status",
+      "match": {
+        "kind": "cli",
+        "command": "search job-status"
+      },
+      "module": "红人检索",
+      "page": "检索任务进度（五档阶段）",
+      "action": "read",
+      "workflow": {
+        "id": "discovery",
+        "step": 1
+      },
+      "fields": [
+        "任务状态",
+        "进度"
+      ],
+      "summary": "看某个检索任务跑到哪一步了（阶段固定五档：排队中／检索中／富化中／完成／失败）",
+      "workflowReason": "发现阶段的检索执行与记录；检索产出候选长名单 longlist，是阶段 1 的产线",
+      "mcpTool": "daniel_research_status",
+      "mcpTools": [
+        "daniel_research_status",
+        "daniel_deep_research",
+        "daniel_open_research"
+      ],
+      "inferred": false,
+      "fieldEvidence": {
+        "任务状态": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_search.py:122 `status`",
+        "进度": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py search.job-status 返回说明「进度」"
+      }
+    },
+    {
+      "id": "search.submit",
+      "match": {
+        "kind": "cli",
+        "command": "search submit"
+      },
+      "module": "红人检索",
+      "page": "发起检索（deep／open）",
+      "action": "write",
+      "workflow": {
+        "id": "discovery",
+        "step": 1
+      },
+      "fields": [
+        "检索式",
+        "品牌",
+        "候选上限"
+      ],
+      "summary": "发起品牌深度研究 deep（会触发检索；无品牌时改用 AI 开放研究 open）",
+      "workflowReason": "发现阶段的检索执行与记录；检索产出候选长名单 longlist，是阶段 1 的产线",
+      "writeStage": "live",
+      "mcpTool": "daniel_deep_research",
+      "mcpTools": [
+        "daniel_deep_research",
+        "daniel_deep_research_commit",
+        "daniel_open_research"
+      ],
+      "inferred": false,
+      "fieldEvidence": {
+        "检索式": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_search.py:17 `query`",
+        "品牌": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_search.py:68 `brandId`",
+        "候选上限": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_search.py:28 `limit`"
+      }
+    },
+    {
+      "id": "mentions.jobs",
+      "match": {
+        "kind": "cli",
+        "command": "mentions jobs"
+      },
+      "module": "品牌提及",
+      "page": "提及任务列表",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "任务编号",
+        "状态",
+        "分析时间范围",
+        "视频数"
+      ],
+      "summary": "列出某个品牌的提及分析任务",
+      "workflowReason": "跨阶段平台数据的读取；品牌提及是平台级证据能力，供 SOV/热点与背调复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_mentions_jobs",
+      "inferred": false,
+      "fieldEvidence": {
+        "任务编号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_mentions.py:52 `jobId`",
+        "状态": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_mentions.py:59 `status`",
+        "分析时间范围": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py mentions.jobs 返回说明「分析时间范围」",
+        "视频数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py mentions.jobs 返回说明「视频」"
+      }
+    },
+    {
+      "id": "mentions.status",
+      "match": {
+        "kind": "cli",
+        "command": "mentions status"
+      },
+      "module": "品牌提及",
+      "page": "任务进度与汇总",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "进度百分比",
+        "当前阶段",
+        "已分析数",
+        "完成说明",
+        "结果汇总"
+      ],
+      "summary": "看某个提及任务的进度与汇总",
+      "workflowReason": "跨阶段平台数据的读取；品牌提及是平台级证据能力，供 SOV/热点与背调复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_mentions_status",
+      "inferred": false,
+      "fieldEvidence": {
+        "进度百分比": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_mentions.py:164 `progressPercent`",
+        "当前阶段": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:700 `currentStage`",
+        "已分析数": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:700 `analyzedCount`",
+        "完成说明": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_mentions.py:165 `完成说明`",
+        "结果汇总": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py mentions.status 返回说明「结果汇总」"
+      }
+    },
+    {
+      "id": "mentions.results",
+      "match": {
+        "kind": "cli",
+        "command": "mentions results"
+      },
+      "module": "品牌提及",
+      "page": "视频级评分结果",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "视频标题",
+        "频道",
+        "播放量",
+        "表现评级",
+        "相关性"
+      ],
+      "summary": "看某个提及任务的结果分页（视频级评分）",
+      "workflowReason": "跨阶段平台数据的读取；品牌提及是平台级证据能力，供 SOV/热点与背调复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_mentions_results",
+      "inferred": false,
+      "fieldEvidence": {
+        "视频标题": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py mentions.results 返回说明「视频标题」",
+        "频道": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py mentions.results 返回说明「频道」",
+        "播放量": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py mentions.results 返回说明「播放量」",
+        "表现评级": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:324 `overallPerformance`",
+        "相关性": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:240 `relevanceLabel`"
+      }
+    },
+    {
+      "id": "mentions.run",
+      "match": {
+        "kind": "cli",
+        "command": "mentions run"
+      },
+      "module": "品牌提及",
+      "page": "发起提及分析",
+      "action": "write",
+      "workflow": {
+        "id": "data",
+        "step": 1
+      },
+      "fields": [
+        "品牌",
+        "检索方式",
+        "回溯天数",
+        "最多视频数"
+      ],
+      "summary": "发起一次品牌提及分析（会触发采集）",
+      "workflowReason": "发起品牌提及分析（触发采集；写链带确认与回读），产出归数据层",
+      "writeStage": "live",
+      "mcpTool": "daniel_mentions_run",
+      "inferred": false,
+      "fieldEvidence": {
+        "品牌": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_mentions.py:48 `brandId`",
+        "检索方式": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_mentions.py:115 `searchMode`",
+        "回溯天数": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_mentions.py:116 `timeRangeDays`",
+        "最多视频数": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_mentions.py:116 `maxVideos`"
+      }
+    },
+    {
+      "id": "intel.actions",
+      "match": {
+        "kind": "cli",
+        "command": "intel actions"
+      },
+      "module": "内容情报",
+      "page": "待办动作",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "动作编号",
+        "类型",
+        "标题",
+        "依据",
+        "建议做法"
+      ],
+      "summary": "列出待办动作（系统建议做什么，含依据与建议做法）",
+      "workflowReason": "跨阶段平台数据的读取；Action Center 是平台内容情报（动作/选题/审核单），跨阶段复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_intel_actions",
+      "inferred": false,
+      "fieldEvidence": {
+        "动作编号": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.actions 返回说明「动作编号」",
+        "类型": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.actions 返回说明「类型」",
+        "标题": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.actions 返回说明「标题」",
+        "依据": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.actions 返回说明「依据」",
+        "建议做法": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.actions 返回说明「建议做法」"
+      }
+    },
+    {
+      "id": "intel.keywords",
+      "match": {
+        "kind": "cli",
+        "command": "intel keywords"
+      },
+      "module": "内容情报",
+      "page": "追踪关键词",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "关键词",
+        "来源",
+        "启用状态",
+        "上限与余量"
+      ],
+      "summary": "列出品牌正在追踪的关键词",
+      "workflowReason": "跨阶段平台数据的读取；Action Center 是平台内容情报（动作/选题/审核单），跨阶段复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_intel_keywords",
+      "inferred": false,
+      "fieldEvidence": {
+        "关键词": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.keywords 返回说明「关键词」",
+        "来源": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.keywords 返回说明「来源」",
+        "启用状态": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.keywords 返回说明「启用状态」",
+        "上限与余量": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.keywords 返回说明「上限与余量」"
+      }
+    },
+    {
+      "id": "intel.topics",
+      "match": {
+        "kind": "cli",
+        "command": "intel topics"
+      },
+      "module": "内容情报",
+      "page": "选题",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "选题编号",
+        "标题",
+        "主要关键词",
+        "支撑词"
+      ],
+      "summary": "列出品牌的选题（含主要关键词与支撑词）",
+      "workflowReason": "跨阶段平台数据的读取；Action Center 是平台内容情报（动作/选题/审核单），跨阶段复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_intel_topics",
+      "inferred": false,
+      "fieldEvidence": {
+        "选题编号": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.topics 返回说明「选题编号」",
+        "标题": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.topics 返回说明「标题」",
+        "主要关键词": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.topics 返回说明「主要关键词」",
+        "支撑词": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.topics 返回说明「支撑词」"
+      }
+    },
+    {
+      "id": "intel.reviews",
+      "match": {
+        "kind": "cli",
+        "command": "intel reviews"
+      },
+      "module": "内容情报",
+      "page": "内容审核单",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "审核单",
+        "阶段",
+        "选题标签"
+      ],
+      "summary": "列出内容审核单",
+      "workflowReason": "跨阶段平台数据的读取；Action Center 是平台内容情报（动作/选题/审核单），跨阶段复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_intel_reviews",
+      "inferred": false,
+      "fieldEvidence": {
+        "审核单": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intel.reviews 返回说明「审核单」",
+        "阶段": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/_common.py:374 `stage`",
+        "选题标签": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:241 `topicLabel`"
+      }
+    },
+    {
+      "id": "sov.overview",
+      "match": {
+        "kind": "cli",
+        "command": "sov overview"
+      },
+      "module": "声量份额",
+      "page": "声量总览",
+      "action": "read",
+      "workflow": {
+        "id": "sov",
+        "step": 1
+      },
+      "fields": [
+        "播放量",
+        "视频数",
+        "份额占比"
+      ],
+      "summary": "看品牌与竞品的声量份额总览",
+      "workflowReason": "SOV 份额/热点的取数与明细；SOV 是阶段 6（份额+情感）与阶段 7（热点）的载体",
+      "mcpTool": "daniel_sov_overview",
+      "inferred": false,
+      "fieldEvidence": {
+        "播放量": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sov.overview 返回说明「播放量」",
+        "视频数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sov.overview 返回说明「视频数」",
+        "份额占比": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sov.overview 返回说明「份额占比」"
+      }
+    },
+    {
+      "id": "sov.categories",
+      "match": {
+        "kind": "cli",
+        "command": "sov categories"
+      },
+      "module": "声量份额",
+      "page": "品类档案与竞品",
+      "action": "read",
+      "workflow": {
+        "id": "sov",
+        "step": 0
+      },
+      "fields": [
+        "品类档案",
+        "登记竞品"
+      ],
+      "summary": "看品牌所属的品类档案（含竞品清单与品类词）",
+      "workflowReason": "SOV 的固定竞争集：品类档案里的登记竞品以品牌自配置为准",
+      "mcpTool": "daniel_sov_categories",
+      "inferred": false,
+      "fieldEvidence": {
+        "品类档案": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_sov.py:79 `categoryProfileId`",
+        "登记竞品": "route: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/mcp/corpus/kol-daniel-api/references/60-data-layer.md:360 `competitors`"
+      }
+    },
+    {
+      "id": "sov.brand-videos",
+      "match": {
+        "kind": "cli",
+        "command": "sov brand-videos"
+      },
+      "module": "声量份额",
+      "page": "品牌视频明细",
+      "action": "read",
+      "workflow": {
+        "id": "sov",
+        "step": 1
+      },
+      "fields": [
+        "视频标题",
+        "频道",
+        "播放量",
+        "发布时间"
+      ],
+      "summary": "看品牌（或竞品）被收录的视频明细",
+      "workflowReason": "SOV 份额/热点的取数与明细；SOV 是阶段 6（份额+情感）与阶段 7（热点）的载体",
+      "mcpTool": "daniel_sov_brand_videos",
+      "inferred": false,
+      "fieldEvidence": {
+        "视频标题": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sov.brand-videos 返回说明「视频标题」",
+        "频道": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sov.brand-videos 返回说明「频道」",
+        "播放量": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sov.brand-videos 返回说明「播放量」",
+        "发布时间": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sov.brand-videos 返回说明「发布时间」"
+      }
+    },
+    {
+      "id": "sov.run-exposure",
+      "match": {
+        "kind": "cli",
+        "command": "sov run-exposure"
+      },
+      "module": "声量份额",
+      "page": "发起曝光采集",
+      "action": "write",
+      "workflow": {
+        "id": "sov",
+        "step": 1
+      },
+      "fields": [
+        "品类档案",
+        "市场",
+        "统计窗口"
+      ],
+      "summary": "发起一次曝光采集（会触发采集）",
+      "workflowReason": "发起曝光采集（SOV 的取数触发；写链带确认与回读）",
+      "writeStage": "live",
+      "mcpTool": "daniel_sov_run_exposure",
+      "inferred": false,
+      "fieldEvidence": {
+        "品类档案": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_sov.py:79 `categoryProfileId`",
+        "市场": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_sov.py:22 `country`",
+        "统计窗口": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_sov.py:28 `days`"
+      }
+    },
+    {
+      "id": "ct.campaigns",
+      "match": {
+        "kind": "cli",
+        "command": "ct campaigns"
+      },
+      "module": "合作追踪",
+      "page": "合作活动列表",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "活动编号",
+        "标题",
+        "起止日期",
+        "活动码"
+      ],
+      "summary": "列出某个品牌登记的合作活动",
+      "workflowReason": "跨阶段平台数据的读取；Creator Tracker 是平台级合作追踪（订单/视频/统计），跨阶段复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_ct_campaigns",
+      "inferred": false,
+      "fieldEvidence": {
+        "活动编号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_ct.py:18 `id`",
+        "标题": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_ct.py:18 `name`",
+        "起止日期": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.campaigns 返回说明「起止日期」",
+        "活动码": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_ct.py:200 `活动码`"
+      }
+    },
+    {
+      "id": "ct.campaign-stats",
+      "match": {
+        "kind": "cli",
+        "command": "ct campaign-stats"
+      },
+      "module": "合作追踪",
+      "page": "活动统计",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "订单数",
+        "达人数",
+        "应有视频数",
+        "已关联视频数"
+      ],
+      "summary": "看某个合作活动的统计（订单数／达人数／应有与已关联视频数）",
+      "workflowReason": "跨阶段平台数据的读取；Creator Tracker 是平台级合作追踪（订单/视频/统计），跨阶段复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_ct_campaign_stats",
+      "inferred": false,
+      "fieldEvidence": {
+        "订单数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.campaign-stats 返回说明「订单数」",
+        "达人数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.campaign-stats 返回说明「达人数」",
+        "应有视频数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.campaign-stats 返回说明「应有视频数」",
+        "已关联视频数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.campaign-stats 返回说明「已关联视频数」"
+      }
+    },
+    {
+      "id": "ct.deals",
+      "match": {
+        "kind": "cli",
+        "command": "ct deals"
+      },
+      "module": "合作追踪",
+      "page": "订单明细",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "订单条数",
+        "合作单",
+        "视频统计"
+      ],
+      "summary": "看某个合作活动的订单明细（达人合作单 ＋ 视频表现）",
+      "workflowReason": "跨阶段平台数据的读取；Creator Tracker 是平台级合作追踪（订单/视频/统计），跨阶段复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_ct_deals",
+      "inferred": false,
+      "fieldEvidence": {
+        "订单条数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.deals 返回说明「订单条数」",
+        "合作单": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.deals 返回说明「合作单」",
+        "视频统计": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.deals 返回说明「视频统计」"
+      }
+    },
+    {
+      "id": "ct.videos",
+      "match": {
+        "kind": "cli",
+        "command": "ct videos"
+      },
+      "module": "合作追踪",
+      "page": "共创视频",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "视频条数",
+        "逐条明细"
+      ],
+      "summary": "看某个合作活动下已关联的共创视频明细",
+      "workflowReason": "跨阶段平台数据的读取；Creator Tracker 是平台级合作追踪（订单/视频/统计），跨阶段复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_ct_videos",
+      "inferred": false,
+      "fieldEvidence": {
+        "视频条数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.videos 返回说明「视频条数」",
+        "逐条明细": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.videos 返回说明「逐条明细」"
+      }
+    },
+    {
+      "id": "ct.resolve-channel",
+      "match": {
+        "kind": "cli",
+        "command": "ct resolve-channel"
+      },
+      "module": "合作追踪",
+      "page": "频道解析",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "频道编号",
+        "是否成功"
+      ],
+      "summary": "把频道输入（@handle／链接／UC 编号）解析成频道编号",
+      "workflowReason": "频道实体解析：把 @handle／链接／UC 编号解析成频道编号",
+      "mcpTool": "daniel_ct_resolve_channel",
+      "inferred": false,
+      "fieldEvidence": {
+        "频道编号": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.resolve-channel 返回说明「频道编号」",
+        "是否成功": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.resolve-channel 返回说明「是否成功」"
+      }
+    },
+    {
+      "id": "ct.interests",
+      "match": {
+        "kind": "cli",
+        "command": "ct interests"
+      },
+      "module": "合作追踪",
+      "page": "频道兴趣画像",
+      "action": "read",
+      "workflow": {
+        "id": "data",
+        "step": 0
+      },
+      "fields": [
+        "兴趣来源",
+        "兴趣列表"
+      ],
+      "summary": "看某个频道的内容兴趣画像",
+      "workflowReason": "跨阶段平台数据的读取；Creator Tracker 是平台级合作追踪（订单/视频/统计），跨阶段复用（D-058：平台能力归 data）",
+      "mcpTool": "daniel_ct_interests",
+      "inferred": false,
+      "fieldEvidence": {
+        "兴趣来源": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.interests 返回说明「兴趣来源」",
+        "兴趣列表": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py ct.interests 返回说明「兴趣列表」"
+      }
+    },
+    {
+      "id": "ct.create-campaign",
+      "match": {
+        "kind": "cli",
+        "command": "ct create-campaign"
+      },
+      "module": "合作追踪",
+      "page": "新建活动",
+      "action": "write",
+      "workflow": {
+        "id": "data",
+        "step": 1
+      },
+      "fields": [
+        "活动名",
+        "开始日期",
+        "结束日期",
+        "是否常青"
+      ],
+      "summary": "新建合作活动",
+      "workflowReason": "跨阶段平台数据的写入（确认＋回读）；Creator Tracker 是平台级合作追踪（订单/视频/统计），跨阶段复用（D-058：平台能力归 data）",
+      "writeStage": "live",
+      "mcpTool": "daniel_ct_create_campaign",
+      "inferred": false,
+      "fieldEvidence": {
+        "活动名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_ct.py:123 `title`",
+        "开始日期": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_ct.py:143 `startDate`",
+        "结束日期": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_ct.py:143 `endDate`",
+        "是否常青": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_ct.py:144 `isEvergreen`"
+      }
+    },
+    {
+      "id": "ct.delete-campaign",
+      "match": {
+        "kind": "cli",
+        "command": "ct delete-campaign"
+      },
+      "module": "合作追踪",
+      "page": "删除活动",
+      "action": "write",
+      "workflow": {
+        "id": "data",
+        "step": 1
+      },
+      "fields": [
+        "活动编号",
+        "活动名"
+      ],
+      "summary": "删除合作活动（**不可逆**）",
+      "workflowReason": "跨阶段平台数据的写入（确认＋回读）；Creator Tracker 是平台级合作追踪（订单/视频/统计），跨阶段复用（D-058：平台能力归 data）",
+      "writeStage": "live",
+      "mcpTool": "daniel_ct_delete_campaign",
+      "inferred": false,
+      "fieldEvidence": {
+        "活动编号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_ct.py:48 `campaignId`",
+        "活动名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_ct.py:123 `title`"
+      }
+    },
+    {
+      "id": "authenticity.channel",
+      "match": {
+        "kind": "cli",
+        "command": "authenticity channel"
+      },
+      "module": "真实性核验",
+      "page": "频道真实性评分",
+      "action": "compute",
+      "workflow": {
+        "id": "screening",
+        "step": 1
+      },
+      "fields": [
+        "频道名",
+        "订阅数",
+        "样本视频数",
+        "总分",
+        "信号判定"
+      ],
+      "summary": "按频道看真实性评分（支持频道链接、@handle 或频道编号）",
+      "workflowReason": "按前端口径当场复算真实性评分（该页不落库）",
+      "mcpTool": "daniel_authenticity_channel",
+      "inferred": false,
+      "fieldEvidence": {
+        "频道名": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py authenticity.channel 返回说明「频道名」",
+        "订阅数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py authenticity.channel 返回说明「订阅数」",
+        "样本视频数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py authenticity.channel 返回说明「样本视频数」",
+        "总分": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py authenticity.channel 返回说明「总分」",
+        "信号判定": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py authenticity.channel 返回说明「信号判定」"
+      }
+    },
+    {
+      "id": "authenticity.weights",
+      "match": {
+        "kind": "cli",
+        "command": "authenticity weights"
+      },
+      "module": "真实性核验",
+      "page": "评分权重",
+      "action": "compute",
+      "workflow": {
+        "id": "screening",
+        "step": 0
+      },
+      "fields": [
+        "信号名称",
+        "权重"
+      ],
+      "summary": "看真实性评分各信号的权重口径（离线，不联网）",
+      "workflowReason": "背调评分口径；真实性与造假检测是阶段 2 的判据",
+      "mcpTool": "daniel_authenticity_weights",
+      "inferred": false,
+      "fieldEvidence": {
+        "信号名称": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py authenticity.weights 返回说明「信号名称」",
+        "权重": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py authenticity.weights 返回说明「权重」"
+      }
+    },
+    {
+      "id": "route.probe",
+      "match": {
+        "kind": "cli",
+        "command": "route probe"
+      },
+      "module": "数据通路",
+      "page": "通路探测",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "是否可用",
+        "字段清单",
+        "字段数",
+        "数据样本"
+      ],
+      "summary": "探测一条只读通路是否可用，返回拿到的字段形状（判断字段是否存在只能看 fields 列表；sample 只用于看数据形态、默认截断）",
+      "workflowReason": "平台运维 · 自检与出包；通路体检是平台自检，不面向业务阶段",
+      "internal": true,
+      "mcpTool": "daniel_route_probe",
+      "inferred": false,
+      "fieldEvidence": {
+        "是否可用": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_route.py:79 `available`",
+        "字段清单": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_route.py:28 `fields`",
+        "字段数": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_route.py:80 `field_count`",
+        "数据样本": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_route.py:29 `sample`"
+      }
+    },
+    {
+      "id": "route.catalog",
+      "match": {
+        "kind": "cli",
+        "command": "route catalog"
+      },
+      "module": "数据通路",
+      "page": "通路清单",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "通路名",
+        "请求动词",
+        "说明",
+        "默认入参"
+      ],
+      "summary": "列出可探测的通路清单（离线，不联网）",
+      "workflowReason": "平台运维 · 自检与出包；通路体检是平台自检，不面向业务阶段",
+      "internal": true,
+      "mcpTool": "daniel_route_catalog",
+      "inferred": false,
+      "fieldEvidence": {
+        "通路名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_route.py:17 `route`",
+        "请求动词": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_route.py:79 `method`",
+        "说明": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_route.py:86 `note`",
+        "默认入参": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_route.py:110 `defaultInput`"
+      }
+    },
+    {
+      "id": "route.sweep",
+      "match": {
+        "kind": "cli",
+        "command": "route sweep"
+      },
+      "module": "数据通路",
+      "page": "全量通路扫描",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "可用性",
+        "出口文件"
+      ],
+      "summary": "全量扫描通路可用性（逐条发包探测）",
+      "workflowReason": "平台运维 · 自检与出包；通路体检是平台自检，不面向业务阶段",
+      "writeStage": "live",
+      "internal": true,
+      "mcpTool": "daniel_route_sweep",
+      "inferred": false,
+      "fieldEvidence": {
+        "可用性": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py route.sweep 返回说明「可用性」",
+        "出口文件": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_route.py:213 `out`"
+      }
+    },
+    {
+      "id": "takeover.check",
+      "match": {
+        "kind": "cli",
+        "command": "takeover check"
+      },
+      "module": "接管验收",
+      "page": "只读验收",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "区块",
+        "检查项",
+        "结论",
+        "证据"
+      ],
+      "summary": "跑一遍只读接管验收（品牌/提及/情报/声量/真实性）",
+      "workflowReason": "平台运维 · 自检与出包；接管验收是平台验收，不面向业务阶段",
+      "internal": true,
+      "mcpTool": "daniel_takeover_check",
+      "inferred": false,
+      "fieldEvidence": {
+        "区块": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py takeover.check 返回说明「区块」",
+        "检查项": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_takeover.py:67 `checks`",
+        "结论": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py takeover.check 返回说明「结论」",
+        "证据": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py takeover.check 返回说明「证据」"
+      }
+    },
+    {
+      "id": "takeover.check-writes",
+      "match": {
+        "kind": "cli",
+        "command": "takeover check-writes"
+      },
+      "module": "接管验收",
+      "page": "含写链验收",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "检查项",
+        "状态",
+        "临时对象残留",
+        "回读结论"
+      ],
+      "summary": "含写链的接管验收",
+      "workflowReason": "平台运维 · 自检与出包；接管验收是平台验收，不面向业务阶段",
+      "writeStage": "live",
+      "internal": true,
+      "mcpTool": "daniel_takeover_check_writes",
+      "inferred": false,
+      "fieldEvidence": {
+        "检查项": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_takeover.py:67 `checks`",
+        "状态": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_takeover.py:75 `status`",
+        "临时对象残留": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_takeover.py:98 `临时对象残留`",
+        "回读结论": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_takeover.py:96 `readback`"
+      }
+    },
+    {
+      "id": "parity.selfcheck",
+      "match": {
+        "kind": "cli",
+        "command": "parity selfcheck"
+      },
+      "module": "口径一致性",
+      "page": "口径自检",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "检查项",
+        "通过情况",
+        "差异"
+      ],
+      "summary": "核对判定口径与页面实现是否一致（离线，不联网）",
+      "workflowReason": "平台运维 · 自检与出包；口径一致性自检是平台验收",
+      "internal": true,
+      "mcpTool": "daniel_parity_selfcheck",
+      "inferred": false,
+      "fieldEvidence": {
+        "检查项": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py parity.selfcheck 返回说明「逐项检查」",
+        "通过情况": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py parity.selfcheck 返回说明「通过情况」",
+        "差异": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py parity.selfcheck 返回说明「差异」"
+      }
+    },
+    {
+      "id": "parity.compare",
+      "match": {
+        "kind": "cli",
+        "command": "parity compare"
+      },
+      "module": "口径一致性",
+      "page": "页面逐字比对",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "逐字段比对",
+        "页面抓取数据"
+      ],
+      "summary": "用本地抓取的页面数据做一次逐字比对（离线）",
+      "workflowReason": "平台运维 · 自检与出包；口径一致性自检是平台验收",
+      "internal": true,
+      "mcpTool": "daniel_parity_compare",
+      "inferred": false,
+      "fieldEvidence": {
+        "逐字段比对": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py parity.compare 返回说明「逐字段比对」",
+        "页面抓取数据": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_parity.py:17 `probe`"
+      }
+    },
+    {
+      "id": "account.whoami",
+      "match": {
+        "kind": "cli",
+        "command": "account whoami"
+      },
+      "module": "账号与工作区",
+      "page": "当前账号",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "账号邮箱",
+        "系统角色",
+        "账号状态",
+        "当前工作区"
+      ],
+      "summary": "看当前登录的是哪个账号",
+      "workflowReason": "平台运维 · 环境与账号；账号/工作区/凭据/审计是平台环境",
+      "internal": true,
+      "mcpTool": "daniel_account_whoami",
+      "inferred": false,
+      "fieldEvidence": {
+        "账号邮箱": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:54 `email`",
+        "系统角色": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:531 `systemRole`",
+        "账号状态": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:533 `userStatus`",
+        "当前工作区": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:475 `activeWorkspaceId`"
+      }
+    },
+    {
+      "id": "account.workspaces",
+      "match": {
+        "kind": "cli",
+        "command": "account workspaces"
+      },
+      "module": "账号与工作区",
+      "page": "工作区列表",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "工作区编号",
+        "工作区名称",
+        "是否当前",
+        "配额"
+      ],
+      "summary": "列出账号可见的工作区",
+      "workflowReason": "平台运维 · 环境与账号；账号/工作区/凭据/审计是平台环境",
+      "internal": true,
+      "mcpTool": "daniel_account_workspaces",
+      "inferred": false,
+      "fieldEvidence": {
+        "工作区编号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:254 `id`",
+        "工作区名称": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:255 `name`",
+        "是否当前": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:553 `isActive`",
+        "配额": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:419 `配额`"
+      }
+    },
+    {
+      "id": "account.capabilities",
+      "match": {
+        "kind": "cli",
+        "command": "account capabilities"
+      },
+      "module": "账号与工作区",
+      "page": "能力矩阵",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "系统角色",
+        "账号状态",
+        "模块",
+        "读写结论",
+        "配额"
+      ],
+      "summary": "看这个账号的能力矩阵：每个模块能不能读、能不能写，以及为什么",
+      "workflowReason": "平台运维 · 环境与账号；账号/工作区/凭据/审计是平台环境",
+      "internal": true,
+      "mcpTool": "daniel_account_capabilities",
+      "inferred": false,
+      "fieldEvidence": {
+        "系统角色": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:531 `systemRole`",
+        "账号状态": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:533 `userStatus`",
+        "模块": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:690 `module`",
+        "读写结论": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.capabilities 返回说明「读写结论」",
+        "配额": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:182 `maxBrands`"
+      }
+    },
+    {
+      "id": "account.audit",
+      "match": {
+        "kind": "cli",
+        "command": "account audit"
+      },
+      "module": "账号与工作区",
+      "page": "写操作审计",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "记录条数",
+        "真执行",
+        "未执行",
+        "已回滚",
+        "最近一条"
+      ],
+      "summary": "导出写操作审计：每次写的时间／账号／工作区／品牌／动作／影响范围／回读结果／是否回滚",
+      "workflowReason": "平台运维 · 环境与账号；账号/工作区/凭据/审计是平台环境",
+      "internal": true,
+      "mcpTool": "daniel_account_audit",
+      "inferred": false,
+      "fieldEvidence": {
+        "记录条数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.audit 返回说明「记录条数」",
+        "真执行": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.audit 返回说明「真执行」",
+        "未执行": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.audit 返回说明「未执行」",
+        "已回滚": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.audit 返回说明「已回滚」",
+        "最近一条": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.audit 返回说明「最近一条」"
+      }
+    },
+    {
+      "id": "account.credentials",
+      "match": {
+        "kind": "cli",
+        "command": "account credentials"
+      },
+      "module": "账号与工作区",
+      "page": "凭据来源",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "凭据来源",
+        "掩码邮箱",
+        "钥匙串可用性"
+      ],
+      "summary": "看凭据从哪来（钥匙串/环境变量/明文文件），不回显任何密码",
+      "workflowReason": "平台运维 · 环境与账号；账号/工作区/凭据/审计是平台环境",
+      "internal": true,
+      "mcpTool": "daniel_account_credentials",
+      "inferred": false,
+      "fieldEvidence": {
+        "凭据来源": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:674 `source`",
+        "掩码邮箱": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:842 `email_masked`",
+        "钥匙串可用性": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:35 `keychain`"
+      }
+    },
+    {
+      "id": "account.credentials-set",
+      "match": {
+        "kind": "cli",
+        "command": "account credentials-set"
+      },
+      "module": "账号与工作区",
+      "page": "写入凭据",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "凭据来源",
+        "掩码邮箱",
+        "明文文件是否写入",
+        "服务名"
+      ],
+      "summary": "把 Daniel 登录凭据写进本机系统钥匙串",
+      "workflowReason": "平台运维 · 环境与账号；账号/工作区/凭据/审计是平台环境",
+      "writeStage": "live",
+      "internal": true,
+      "mcpTool": "daniel_account_credentials_set",
+      "inferred": false,
+      "fieldEvidence": {
+        "凭据来源": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:1010 `凭据来源`",
+        "掩码邮箱": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:842 `email_masked`",
+        "明文文件是否写入": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:770 `plaintextWrite`",
+        "服务名": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:763 `service`"
+      }
+    },
+    {
+      "id": "account.paths",
+      "match": {
+        "kind": "cli",
+        "command": "account paths"
+      },
+      "module": "账号与工作区",
+      "page": "数据落点",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "会话",
+        "缓存",
+        "产出",
+        "日志",
+        "账号分区"
+      ],
+      "summary": "看数据落点（会话、缓存、产出、日志各在哪），以及当前账号的数据分区",
+      "workflowReason": "平台运维 · 环境与账号；账号/工作区/凭据/审计是平台环境",
+      "internal": true,
+      "mcpTool": "daniel_account_paths",
+      "inferred": false,
+      "fieldEvidence": {
+        "会话": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.paths 返回说明「会话」",
+        "缓存": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.paths 返回说明「缓存」",
+        "产出": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.paths 返回说明「产出」",
+        "日志": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.paths 返回说明「日志」",
+        "账号分区": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:611 `账号分区`"
+      }
+    },
+    {
+      "id": "account.list",
+      "match": {
+        "kind": "cli",
+        "command": "account list"
+      },
+      "module": "账号与工作区",
+      "page": "本机账号",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "当前账号",
+        "分区落点",
+        "已存账号",
+        "钥匙串"
+      ],
+      "summary": "看当前账号 ＋ 列出本机已存账号（含各自的数据分区与钥匙串条目有无）",
+      "workflowReason": "平台运维 · 环境与账号；账号/工作区/凭据/审计是平台环境",
+      "internal": true,
+      "mcpTool": "daniel_account_list",
+      "inferred": false,
+      "fieldEvidence": {
+        "当前账号": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.list 返回说明「当前账号」",
+        "分区落点": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:1442 `分区落点`",
+        "已存账号": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:1880 `已存账号`",
+        "钥匙串": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:829 `钥匙串`"
+      }
+    },
+    {
+      "id": "account.switch",
+      "match": {
+        "kind": "cli",
+        "command": "account switch"
+      },
+      "module": "账号与工作区",
+      "page": "切换账号",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "切换前后账号",
+        "生效落点",
+        "回读对账"
+      ],
+      "summary": "切换当前账号：之后每条命令的会话／缓存／产出／调度改落该账号的数据分区",
+      "workflowReason": "平台运维 · 环境与账号；账号/工作区/凭据/审计是平台环境",
+      "writeStage": "live",
+      "internal": true,
+      "mcpTool": "daniel_account_switch",
+      "inferred": false,
+      "fieldEvidence": {
+        "切换前后账号": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.switch 返回说明「切换前后」",
+        "生效落点": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:593 `生效落点`",
+        "回读对账": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.switch 返回说明「回读对账」"
+      }
+    },
+    {
+      "id": "account.login",
+      "match": {
+        "kind": "cli",
+        "command": "account login"
+      },
+      "module": "账号与工作区",
+      "page": "登录",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "回读到的账号",
+        "系统角色",
+        "会话落点",
+        "回读校验"
+      ],
+      "summary": "登录并刷新会话（落地会话文件）",
+      "workflowReason": "平台运维 · 环境与账号；账号/工作区/凭据/审计是平台环境",
+      "writeStage": "live",
+      "internal": true,
+      "mcpTool": "daniel_account_login",
+      "inferred": false,
+      "fieldEvidence": {
+        "回读到的账号": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.login 返回说明「回读到的账号」",
+        "系统角色": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:700 `系统角色`",
+        "会话落点": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_account.py:876 `sessionFile`",
+        "回读校验": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py account.login 返回说明「回读校验」"
+      }
+    },
+    {
+      "id": "keywords.check",
+      "match": {
+        "kind": "cli",
+        "command": "keywords check"
+      },
+      "module": "检索词清单",
+      "page": "检索词清单校验",
+      "action": "compute",
+      "workflow": {
+        "id": "discovery",
+        "step": 0
+      },
+      "fields": [
+        "词表规模",
+        "违规项",
+        "判据结论",
+        "检索词清单"
+      ],
+      "summary": "校验一份检索词清单：格式、十类别齐备、词量、重复、负向词、装饰符号、地域锚点位置、计数自洽",
+      "workflowReason": "检索词清单的格式/词量/重复/计数校验，是阶段 1 的词表门禁",
+      "mcpTool": "daniel_keywords_check",
+      "inferred": false,
+      "fieldEvidence": {
+        "词表规模": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py keywords.check 返回说明「词表规模」",
+        "违规项": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py keywords.check 返回说明「违规项」",
+        "判据结论": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_keywords.py:170 `判据`",
+        "检索词清单": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_keywords.py:797 `检索词清单`"
+      }
+    },
+    {
+      "id": "skills.list",
+      "match": {
+        "kind": "cli",
+        "command": "skills list"
+      },
+      "module": "业务语料",
+      "page": "能力域清单",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "语料版本",
+        "能力域",
+        "前置条件",
+        "整束sha256",
+        "切片数"
+      ],
+      "summary": "列出随包分发的全部能力域（摘要、语料版本、前置条件、整束 sha256）",
+      "workflowReason": "平台运维 · 环境与账号；随包语料是各阶段判据的来源，本身是平台资产",
+      "internal": true,
+      "mcpTool": "daniel_skills_list",
+      "inferred": false,
+      "fieldEvidence": {
+        "语料版本": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_skills.py:62 `语料版本`",
+        "能力域": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_skills.py:68 `能力域`",
+        "前置条件": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_skills.py:70 `前置条件`",
+        "整束sha256": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py skills.list 返回说明「整束sha256」",
+        "切片数": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_skills.py:65 `切片数`"
+      }
+    },
+    {
+      "id": "skills.read",
+      "match": {
+        "kind": "cli",
+        "command": "skills read"
+      },
+      "module": "业务语料",
+      "page": "语料正文",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "模式",
+        "切片清单",
+        "正文",
+        "检索命中"
+      ],
+      "summary": "读一束语料：先看切片清单，再按切片号读判据原文（自动分片，可续读）",
+      "workflowReason": "平台运维 · 环境与账号；随包语料是各阶段判据的来源，本身是平台资产",
+      "internal": true,
+      "mcpTool": "daniel_skills_read",
+      "inferred": false,
+      "fieldEvidence": {
+        "模式": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_skills.py:93 `模式`",
+        "切片清单": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_skills.py:100 `切片清单`",
+        "正文": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_skills.py:123 `正文`",
+        "检索命中": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_skills.py:111 `命中`"
+      }
+    },
+    {
+      "id": "playbook.list",
+      "match": {
+        "kind": "cli",
+        "command": "playbook list"
+      },
+      "module": "工序契约",
+      "page": "契约清单",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "契约编号",
+        "名称",
+        "是否示例",
+        "是否含写步骤"
+      ],
+      "summary": "列出契约目录里的全部契约（含示例与退化样本）",
+      "workflowReason": "平台运维 · 自检与出包；工序契约引擎是平台执行器",
+      "internal": true,
+      "mcpTool": "daniel_playbook_list",
+      "inferred": false,
+      "fieldEvidence": {
+        "契约编号": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.list 返回说明「契约编号」",
+        "名称": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_playbook.py:95 `名称`",
+        "是否示例": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.list 返回说明「是否示例」",
+        "是否含写步骤": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.list 返回说明「是否含写步骤」"
+      }
+    },
+    {
+      "id": "playbook.show",
+      "match": {
+        "kind": "cli",
+        "command": "playbook show"
+      },
+      "module": "工序契约",
+      "page": "契约详情",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "契约全文",
+        "落点路径",
+        "校验结论"
+      ],
+      "summary": "看一份契约的完整内容与校验结论（字段同 03 号草案口径）",
+      "workflowReason": "平台运维 · 自检与出包；工序契约引擎是平台执行器",
+      "internal": true,
+      "mcpTool": "daniel_playbook_show",
+      "inferred": false,
+      "fieldEvidence": {
+        "契约全文": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_playbook.py:62 `契约`",
+        "落点路径": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_playbook.py:73 `路径`",
+        "校验结论": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_playbook.py:76 `校验`"
+      }
+    },
+    {
+      "id": "playbook.validate",
+      "match": {
+        "kind": "cli",
+        "command": "playbook validate"
+      },
+      "module": "工序契约",
+      "page": "契约校验",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "检查结论",
+        "问题明细"
+      ],
+      "summary": "校验契约：字段齐备、步骤只引用已声明的命令与参数、门禁五道齐备",
+      "workflowReason": "平台运维 · 自检与出包；工序契约引擎是平台执行器",
+      "internal": true,
+      "mcpTool": "daniel_playbook_validate",
+      "inferred": false,
+      "fieldEvidence": {
+        "检查结论": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.validate 返回说明「检查结论」",
+        "问题明细": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_playbook.py:77 `问题`"
+      }
+    },
+    {
+      "id": "playbook.run",
+      "match": {
+        "kind": "cli",
+        "command": "playbook run"
+      },
+      "module": "工序契约",
+      "page": "契约执行",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "模式",
+        "步骤明细",
+        "门禁",
+        "自检",
+        "交付件落点"
+      ],
+      "summary": "跑一份契约：判据与门禁变成可执行断言，跑完出自检报告（含计数自洽）",
+      "workflowReason": "平台运维 · 自检与出包；工序契约引擎是平台执行器",
+      "writeStage": "sandbox",
+      "internal": true,
+      "mcpTool": "daniel_playbook_run",
+      "inferred": false,
+      "fieldEvidence": {
+        "模式": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.run 返回说明「模式」",
+        "步骤明细": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/_common.py:294 `步骤`",
+        "门禁": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.run 返回说明「门禁」",
+        "自检": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_playbook.py:204 `自检`",
+        "交付件落点": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.run 返回说明「交付件落点」"
+      }
+    },
+    {
+      "id": "playbook.deliver",
+      "match": {
+        "kind": "cli",
+        "command": "playbook deliver"
+      },
+      "module": "工序契约",
+      "page": "出件",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "交付物落点",
+        "行数",
+        "sha256",
+        "出件自检"
+      ],
+      "summary": "出件：按契约里声明的出件模板产出交付物并落到本地目录（出件前自动跑五条自检）",
+      "workflowReason": "平台运维 · 自检与出包；工序契约引擎是平台执行器",
+      "internal": true,
+      "mcpTool": "daniel_playbook_deliver",
+      "inferred": false,
+      "fieldEvidence": {
+        "交付物落点": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.deliver 返回说明「交付物落点」",
+        "行数": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_playbook.py:202 `行数`",
+        "sha256": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_playbook.py:201 `sha256`",
+        "出件自检": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_playbook.py:204 `出件自检`"
+      }
+    },
+    {
+      "id": "playbook.selfcheck",
+      "match": {
+        "kind": "cli",
+        "command": "playbook selfcheck"
+      },
+      "module": "工序契约",
+      "page": "契约引擎自证",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "期望结果",
+        "实际结果",
+        "不变量"
+      ],
+      "summary": "契约引擎自证：把目录里每份契约按它声明的期望各跑一遍（含退化样本）",
+      "workflowReason": "平台运维 · 自检与出包；工序契约引擎是平台执行器",
+      "internal": true,
+      "mcpTool": "daniel_playbook_selfcheck",
+      "inferred": false,
+      "fieldEvidence": {
+        "期望结果": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.selfcheck 返回说明「期望」",
+        "实际结果": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.selfcheck 返回说明「实际」",
+        "不变量": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py playbook.selfcheck 返回说明「不变量」"
+      }
+    },
+    {
+      "id": "sched.run",
+      "match": {
+        "kind": "cli",
+        "command": "sched run"
+      },
+      "module": "调度",
+      "page": "任务续跑",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "任务状态",
+        "进度",
+        "逐步明细",
+        "结果指纹"
+      ],
+      "summary": "跑一个任务：有检查点就从检查点**续跑**（已完成的步骤不重复取数），没有就按全新任务跑（不报错）",
+      "workflowReason": "平台运维 · 自检与出包；调度是平台执行器",
+      "internal": true,
+      "mcpTool": "daniel_sched_run",
+      "inferred": false,
+      "fieldEvidence": {
+        "任务状态": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_sched.py:74 `状态`",
+        "进度": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sched.run 返回说明「进度」",
+        "逐步明细": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sched.run 返回说明「逐步明细」",
+        "结果指纹": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sched.run 返回说明「结果指纹」"
+      }
+    },
+    {
+      "id": "sched.retry",
+      "match": {
+        "kind": "cli",
+        "command": "sched retry"
+      },
+      "module": "调度",
+      "page": "失败重试",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "本次跳过",
+        "结果指纹",
+        "步骤条数"
+      ],
+      "summary": "重试未成功的步骤：已成功且结果指纹一致的步骤一律不动（**幂等** —— 重试不会产生重复记录、也不会改变结果指纹）",
+      "workflowReason": "平台运维 · 自检与出包；调度是平台执行器",
+      "internal": true,
+      "mcpTool": "daniel_sched_retry",
+      "inferred": false,
+      "fieldEvidence": {
+        "本次跳过": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sched.retry 返回说明「本次跳过」",
+        "结果指纹": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sched.retry 返回说明「结果指纹」",
+        "步骤条数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sched.retry 返回说明「步骤条数」"
+      }
+    },
+    {
+      "id": "sched.status",
+      "match": {
+        "kind": "cli",
+        "command": "sched status"
+      },
+      "module": "调度",
+      "page": "任务状态",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "任务列表",
+        "状态计数",
+        "逐步明细"
+      ],
+      "summary": "看任务与进度：进行中／已完成／失败／超时／配额耗尽（给任务编号则看逐步明细）",
+      "workflowReason": "平台运维 · 自检与出包；调度是平台执行器",
+      "internal": true,
+      "mcpTool": "daniel_sched_status",
+      "inferred": false,
+      "fieldEvidence": {
+        "任务列表": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sched.status 返回说明「任务列表」",
+        "状态计数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sched.status 返回说明「状态计数」",
+        "逐步明细": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sched.status 返回说明「逐步明细」"
+      }
+    },
+    {
+      "id": "sched.queue",
+      "match": {
+        "kind": "cli",
+        "command": "sched queue"
+      },
+      "module": "调度",
+      "page": "统一队列",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "并发上限",
+        "上限来源",
+        "队列条目",
+        "受管清单"
+      ],
+      "summary": "看统一队列：并发上限（含来源）、受管触发类命令、逐条入队记录、受管清单自证",
+      "workflowReason": "平台运维 · 自检与出包；调度是平台执行器",
+      "internal": true,
+      "mcpTool": "daniel_sched_queue",
+      "inferred": false,
+      "fieldEvidence": {
+        "并发上限": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_sched.py:109 `并发上限`",
+        "上限来源": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_sched.py:110 `上限来源`",
+        "队列条目": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py sched.queue 返回说明「队列条目」",
+        "受管清单": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_sched.py:114 `受管清单自证`"
+      }
+    },
+    {
+      "id": "connect.list",
+      "match": {
+        "kind": "cli",
+        "command": "connect list"
+      },
+      "module": "宿主接入",
+      "page": "宿主状态",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 2
+      },
+      "fields": [
+        "现算路径",
+        "宿主",
+        "配置文件",
+        "本产品条目数"
+      ],
+      "summary": "看本机支持哪些宿主、各自接没接上（配置文件、本产品条目数、路径是否指向当前包）",
+      "workflowReason": "平台运维 · 安装与接入；宿主接入属于安装动作",
+      "internal": true,
+      "mcpTool": "daniel_connect_list",
+      "inferred": false,
+      "fieldEvidence": {
+        "现算路径": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_connect.py:99 `现算路径`",
+        "宿主": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_connect.py:91 `宿主`",
+        "配置文件": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_connect.py:65 `配置文件`",
+        "本产品条目数": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_connect.py:95 `本产品条目数`"
+      }
+    },
+    {
+      "id": "connect.print",
+      "match": {
+        "kind": "cli",
+        "command": "connect print"
+      },
+      "module": "宿主接入",
+      "page": "配置片段",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 2
+      },
+      "fields": [
+        "宿主",
+        "配置片段",
+        "片段sha256"
+      ],
+      "summary": "只打印该宿主应写入的完整片段（不改任何文件），供审阅或手工粘贴；与你手工抄不同，这一份的路径是本机现算的",
+      "workflowReason": "平台运维 · 安装与接入；宿主接入属于安装动作",
+      "internal": true,
+      "mcpTool": "daniel_connect_print",
+      "inferred": false,
+      "fieldEvidence": {
+        "宿主": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_connect.py:91 `宿主`",
+        "配置片段": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_connect.py:118 `片段`",
+        "片段sha256": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_connect.py:119 `片段sha256`"
+      }
+    },
+    {
+      "id": "connect.apply",
+      "match": {
+        "kind": "cli",
+        "command": "connect apply"
+      },
+      "module": "宿主接入",
+      "page": "接入宿主",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 2
+      },
+      "fields": [
+        "diff 明细",
+        "快照落点",
+        "回读对账"
+      ],
+      "summary": "把本产品接入该宿主：自己算路径并**幂等合并**进宿主配置（保留其它 server、其它表与注释），写前落快照、写后回读对账",
+      "workflowReason": "平台运维 · 安装与接入；宿主接入属于安装动作",
+      "writeStage": "live",
+      "internal": true,
+      "mcpTool": "daniel_connect_apply",
+      "inferred": false,
+      "fieldEvidence": {
+        "diff 明细": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py connect.apply 返回说明「diff」",
+        "快照落点": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_connect.py:197 `快照`",
+        "回读对账": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py connect.apply 返回说明「回读对账」"
+      }
+    },
+    {
+      "id": "connect.uninstall",
+      "match": {
+        "kind": "cli",
+        "command": "connect uninstall"
+      },
+      "module": "宿主接入",
+      "page": "移除接入",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 2
+      },
+      "fields": [
+        "将删片段",
+        "diff 明细",
+        "快照落点"
+      ],
+      "summary": "把本产品那一条从该宿主配置里删掉（其它 server、其它表与注释逐字节不动；可逆 —— 写前同样落快照）",
+      "workflowReason": "平台运维 · 安装与接入；宿主接入属于安装动作",
+      "writeStage": "live",
+      "internal": true,
+      "mcpTool": "daniel_connect_uninstall",
+      "inferred": false,
+      "fieldEvidence": {
+        "将删片段": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_connect.py:118 `片段`",
+        "diff 明细": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py connect.uninstall 返回说明「diff」",
+        "快照落点": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_connect.py:197 `快照`"
+      }
+    },
+    {
+      "id": "connect.doctor",
+      "match": {
+        "kind": "cli",
+        "command": "connect doctor"
+      },
+      "module": "宿主接入",
+      "page": "接入自检",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 2
+      },
+      "fields": [
+        "逐项结论",
+        "证据",
+        "修法",
+        "总结论"
+      ],
+      "summary": "端到端断言「这套接入通不通」：包完整性 → MCP server 起得来（复用既有仪器）→ 工具数 == schema 声明数 → 真跑一条只读命令取到真实数据 → 每个宿主：配置存在、本产品条目恰好一条、路径指向当前包",
+      "workflowReason": "平台运维 · 安装与接入；宿主接入属于安装动作",
+      "internal": true,
+      "mcpTool": "daniel_connect_doctor",
+      "inferred": false,
+      "fieldEvidence": {
+        "逐项结论": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py connect.doctor 返回说明「逐项结论」",
+        "证据": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py connect.doctor 返回说明「证据」",
+        "修法": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py connect.doctor 返回说明「修法」",
+        "总结论": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py connect.doctor 返回说明「总结论」"
+      }
+    },
+    {
+      "id": "pack.out",
+      "match": {
+        "kind": "cli",
+        "command": "pack out"
+      },
+      "module": "出包",
+      "page": "出包",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "计数",
+        "规则表",
+        "包根",
+        "出包清单",
+        "回读对账"
+      ],
+      "summary": "出一条可交付的能力包：按声明式源清单规则逐文件复制源目录里的「必须包含」集，并对结果做回读对账",
+      "workflowReason": "平台运维 · 自检与出包；出包属于分发动作",
+      "writeStage": "live",
+      "internal": true,
+      "mcpTool": "daniel_pack_out",
+      "inferred": false,
+      "fieldEvidence": {
+        "计数": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_pack.py:67 `计数`",
+        "规则表": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py pack.out 返回说明「规则表」",
+        "包根": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_pack.py:73 `包根`",
+        "出包清单": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_pack.py:74 `出包清单`",
+        "回读对账": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py pack.out 返回说明「回读对账」"
+      }
+    },
+    {
+      "id": "pack.check",
+      "match": {
+        "kind": "cli",
+        "command": "pack check"
+      },
+      "module": "出包",
+      "page": "包自检",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 3
+      },
+      "fields": [
+        "五条断言",
+        "判据",
+        "通过与否",
+        "证据"
+      ],
+      "summary": "只读自检一份包：五条断言（① 包内可跑 ② 包内接入可用 ③ 干净 ④ 无写死绝对路径 ⑤ 差集对账）逐条给结论与证据（不产出任何东西）",
+      "workflowReason": "平台运维 · 自检与出包；出包属于分发动作",
+      "internal": true,
+      "mcpTool": "daniel_pack_check",
+      "inferred": false,
+      "fieldEvidence": {
+        "五条断言": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py pack.check 返回说明「五条断言」",
+        "判据": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py pack.check 返回说明「判据」",
+        "通过与否": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py pack.check 返回说明「通过与否」",
+        "证据": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_pack.py:110 `证据`"
+      }
+    },
+    {
+      "id": "install.run",
+      "match": {
+        "kind": "cli",
+        "command": "install run"
+      },
+      "module": "安装向导",
+      "page": "安装",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 2
+      },
+      "fields": [
+        "入口与 PATH",
+        "能力束",
+        "宿主接入",
+        "登录",
+        "回读对账"
+      ],
+      "summary": "一条命令做完四步：装 CLI（入口进 PATH）＋ 装能力束（8 束软链）＋ 写宿主接入（复用 connect）＋ 起登录（浏览器授权路）",
+      "workflowReason": "平台运维 · 安装与接入；安装向导属于安装动作",
+      "writeStage": "live",
+      "internal": true,
+      "mcpTool": "daniel_install_run",
+      "inferred": false,
+      "fieldEvidence": {
+        "入口与 PATH": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.run 返回说明「入口与 PATH」",
+        "能力束": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.run 返回说明「能力束」",
+        "宿主接入": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.run 返回说明「宿主接入」",
+        "登录": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.run 返回说明「登录」",
+        "回读对账": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.run 返回说明「回读对账」"
+      }
+    },
+    {
+      "id": "install.check",
+      "match": {
+        "kind": "cli",
+        "command": "install check"
+      },
+      "module": "安装向导",
+      "page": "安装自检",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 2
+      },
+      "fields": [
+        "四项判据",
+        "证据",
+        "总结论",
+        "修法"
+      ],
+      "summary": "装完自检：① 入口能跑 ② 8 束软链完整且与包内逐字一致 ③ 接入（复用 `connect --doctor`）④ 登录态（`auth status` 三档）⇒ 全绿退出码 0，任一不过给一行修法",
+      "workflowReason": "平台运维 · 安装与接入；安装向导属于安装动作",
+      "internal": true,
+      "mcpTool": "daniel_install_check",
+      "inferred": false,
+      "fieldEvidence": {
+        "四项判据": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.check 返回说明「判据」",
+        "证据": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.check 返回说明「证据」",
+        "总结论": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_install.py:59 `结论`",
+        "修法": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.check 返回说明「修法」"
+      }
+    },
+    {
+      "id": "install.upgrade",
+      "match": {
+        "kind": "cli",
+        "command": "install upgrade"
+      },
+      "module": "安装向导",
+      "page": "升级",
+      "action": "write",
+      "workflow": {
+        "id": "ops",
+        "step": 2
+      },
+      "fields": [
+        "改指条目",
+        "自检结论",
+        "快照落点"
+      ],
+      "summary": "就地升级：把本机安装改指到另一份包（入口与 8 束软链改指、宿主配置经 `connect` 刷新），随后**自动重跑 `install --check`** 并把它的结论作为本次结果",
+      "workflowReason": "平台运维 · 安装与接入；安装向导属于安装动作",
+      "writeStage": "live",
+      "internal": true,
+      "mcpTool": "daniel_install_upgrade",
+      "inferred": false,
+      "fieldEvidence": {
+        "改指条目": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.upgrade 返回说明「改指」",
+        "自检结论": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.upgrade 返回说明「自检」",
+        "快照落点": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py install.upgrade 返回说明「快照落点」"
+      }
+    },
+    {
+      "id": "intake.route",
+      "match": {
+        "kind": "cli",
+        "command": "intake route"
+      },
+      "module": "需求入口",
+      "page": "需求路由",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 0
+      },
+      "fields": [
+        "候选工序",
+        "前置条件",
+        "缺件清单",
+        "可执行",
+        "置信度"
+      ],
+      "summary": "一句话需求 → 候选工序（排序＋理由＋置信度）＋ 前置条件清单（逐项带状态）＋ 缺件清单",
+      "workflowReason": "平台运维 · 需求路由；需求路由是平台入口",
+      "internal": true,
+      "mcpTool": "daniel_intake_route",
+      "inferred": false,
+      "fieldEvidence": {
+        "候选工序": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intake.route 返回说明「候选工序」",
+        "前置条件": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:232 `前置条件`",
+        "缺件清单": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:108 `缺件清单`",
+        "可执行": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:130 `可执行`",
+        "置信度": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:95 `置信度`"
+      }
+    },
+    {
+      "id": "intake.draft",
+      "match": {
+        "kind": "cli",
+        "command": "intake draft"
+      },
+      "module": "需求入口",
+      "page": "契约草稿",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 0
+      },
+      "fields": [
+        "草稿落点",
+        "校验结论",
+        "取数步骤数",
+        "待确认清单"
+      ],
+      "summary": "一句话需求 → 生成本次任务的**工序契约草稿**（输入／步骤／判据／门禁／交付件／自检），并就地用引擎校验器校验（只写这一份草稿）",
+      "workflowReason": "平台运维 · 需求路由；需求路由是平台入口",
+      "internal": true,
+      "mcpTool": "daniel_intake_draft",
+      "inferred": false,
+      "fieldEvidence": {
+        "草稿落点": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:145 `草稿落点`",
+        "校验结论": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:148 `校验`",
+        "取数步骤数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intake.draft 返回说明「取数步骤数」",
+        "待确认清单": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:153 `待你确认或补充`"
+      }
+    },
+    {
+      "id": "intake.parity",
+      "match": {
+        "kind": "cli",
+        "command": "intake parity"
+      },
+      "module": "需求入口",
+      "page": "模式对等",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 0
+      },
+      "fields": [
+        "四组断言",
+        "键比对",
+        "未落地项"
+      ],
+      "summary": "模式对等断言：CLI 模式与 MCP 模式暴露的**能力集合／技能集合／语料版本**键比对",
+      "workflowReason": "平台运维 · 需求路由；需求路由是平台入口",
+      "internal": true,
+      "mcpTool": "daniel_intake_parity",
+      "inferred": false,
+      "fieldEvidence": {
+        "四组断言": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intake.parity 返回说明「四组断言」",
+        "键比对": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:175 `键比对`",
+        "未落地项": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py intake.parity 返回说明「未落地项」"
+      }
+    },
+    {
+      "id": "intake.catalog",
+      "match": {
+        "kind": "cli",
+        "command": "intake catalog"
+      },
+      "module": "需求入口",
+      "page": "工序目录",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 0
+      },
+      "fields": [
+        "能力域",
+        "工序",
+        "前置条件",
+        "依据"
+      ],
+      "summary": "看工序与前置条件表本身：8 个能力域各有哪些工序、每个工序要哪些前置条件",
+      "workflowReason": "平台运维 · 需求路由；需求路由是平台入口",
+      "internal": true,
+      "mcpTool": "daniel_intake_catalog",
+      "inferred": false,
+      "fieldEvidence": {
+        "能力域": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:225 `能力域`",
+        "工序": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:95 `工序`",
+        "前置条件": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:232 `前置条件`",
+        "依据": "code: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/commands/mod_intake.py:236 `依据`"
+      }
+    },
+    {
+      "id": "schema.show",
+      "match": {
+        "kind": "cli",
+        "command": "schema show"
+      },
+      "module": "命令清单",
+      "page": "命令清单",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "模块",
+        "命令",
+        "参数",
+        "是否写操作",
+        "退出码"
+      ],
+      "summary": "打印全部子命令与参数的机器可读清单（单一真源）",
+      "workflowReason": "平台运维 · 环境与账号；命令清单是平台元数据",
+      "internal": true,
+      "mcpTool": "daniel_schema_show",
+      "inferred": false,
+      "fieldEvidence": {
+        "模块": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.show 返回说明「模块」",
+        "命令": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.show 返回说明「命令」",
+        "参数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.show 返回说明「参数」",
+        "是否写操作": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.show 返回说明「是否写操作」",
+        "退出码": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.show 返回说明「退出码」"
+      }
+    },
+    {
+      "id": "schema.mcp",
+      "match": {
+        "kind": "cli",
+        "command": "schema mcp"
+      },
+      "module": "命令清单",
+      "page": "MCP 工具清单",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "工具名",
+        "描述",
+        "入参结构"
+      ],
+      "summary": "打印 MCP tool list（{name, description, inputSchema}）",
+      "workflowReason": "平台运维 · 环境与账号；命令清单是平台元数据",
+      "internal": true,
+      "mcpTool": "daniel_schema_mcp",
+      "inferred": false,
+      "fieldEvidence": {
+        "工具名": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.mcp 返回说明「name」",
+        "描述": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.mcp 返回说明「description」",
+        "入参结构": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.mcp 返回说明「inputSchema」"
+      }
+    },
+    {
+      "id": "schema.dsh-tools",
+      "match": {
+        "kind": "cli",
+        "command": "schema dsh-tools"
+      },
+      "module": "命令清单",
+      "page": "DSH 工具定义",
+      "action": "read",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "工具名",
+        "描述",
+        "参数"
+      ],
+      "summary": "打印 DSH defineTool 工具定义草稿（{name, description, parameters}）",
+      "workflowReason": "平台运维 · 环境与账号；命令清单是平台元数据",
+      "internal": true,
+      "mcpTool": "daniel_schema_dsh_tools",
+      "inferred": false,
+      "fieldEvidence": {
+        "工具名": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.dsh-tools 返回说明「name」",
+        "描述": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.dsh-tools 返回说明「description」",
+        "参数": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.dsh-tools 返回说明「parameters」"
+      }
+    },
+    {
+      "id": "schema.check",
+      "match": {
+        "kind": "cli",
+        "command": "schema check"
+      },
+      "module": "命令清单",
+      "page": "清单自证",
+      "action": "compute",
+      "workflow": {
+        "id": "ops",
+        "step": 1
+      },
+      "fields": [
+        "差异清单",
+        "结论"
+      ],
+      "summary": "自证：CLI 实际注册的子命令集合 ≡ 本清单声明的集合（并核对实现是否齐备）",
+      "workflowReason": "平台运维 · 环境与账号；命令清单是平台元数据",
+      "internal": true,
+      "mcpTool": "daniel_schema_check",
+      "inferred": false,
+      "fieldEvidence": {
+        "差异清单": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.check 返回说明「差异清单」",
+        "结论": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py schema.check 返回说明「结论」"
+      }
+    },
+    {
+      "id": "clarify.plan",
+      "match": {
+        "kind": "cli",
+        "command": "clarify plan"
+      },
+      "module": "澄清",
+      "page": "参数缺口清单",
+      "action": "compute",
+      "workflow": {
+        "id": "discovery",
+        "step": 0
+      },
+      "fields": [
+        "缺项",
+        "为什么问",
+        "默认值",
+        "优先补",
+        "下一步"
+      ],
+      "summary": "列参数缺口清单，并给出找红人的五类方向（选择面）",
+      "workflowReason": "找红人的参数缺口清单（不取数），属阶段 1 的入口澄清",
+      "mcpTool": "daniel_clarify_plan",
+      "inferred": false,
+      "fieldEvidence": {
+        "缺项": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py clarify.plan 返回说明「缺项」",
+        "为什么问": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py clarify.plan 返回说明「为什么问」",
+        "默认值": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py clarify.plan 返回说明「默认值」",
+        "优先补": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py clarify.plan 返回说明「优先补」",
+        "下一步": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py clarify.plan 返回说明「下一步」"
+      }
+    },
+    {
+      "id": "clarify.ask",
+      "match": {
+        "kind": "cli",
+        "command": "clarify ask"
+      },
+      "module": "澄清",
+      "page": "五类选择面追问",
+      "action": "compute",
+      "workflow": {
+        "id": "discovery",
+        "step": 0
+      },
+      "fields": [
+        "选择面",
+        "模式",
+        "缺口",
+        "追问",
+        "未确认项"
+      ],
+      "summary": "找红人专用：先出五类选择面，再按回答动态追问（最多 2 轮）",
+      "workflowReason": "找红人的五类选择面与动态追问（不取数），属阶段 1 的入口澄清",
+      "mcpTool": "daniel_clarify_ask",
+      "inferred": false,
+      "fieldEvidence": {
+        "选择面": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py clarify.ask 返回说明「选择面」",
+        "模式": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py clarify.ask 返回说明「模式」",
+        "缺口": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py clarify.ask 返回说明「缺口」",
+        "追问": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py clarify.ask 返回说明「追问」",
+        "未确认项": "schema: daniel-bot/packages/0.11.0/vendor/data/daniel-cli/daniel_cli/schema.py clarify.ask 返回说明「未确认项」"
+      }
+    }
+  ]
+}

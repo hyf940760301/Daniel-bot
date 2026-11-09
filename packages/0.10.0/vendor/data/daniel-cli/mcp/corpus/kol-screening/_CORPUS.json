@@ -1,0 +1,15 @@
+{
+ "skill": "kol-screening",
+ "corpus_version": "0.9.205",
+ "source": "docs/marketing/skills/kol-intelligence.md",
+ "source_sha256": "54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d",
+ "source_lines": 6972,
+ "slices": [
+  {
+   "file": "references/20-due-diligence.md",
+   "start": 1455,
+   "end": 1493,
+   "title": "§3 阶段 2 · 深度背调与造假检测"
+  }
+ ]
+}

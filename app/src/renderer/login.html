@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:">
+  <meta name="color-scheme" content="dark">
+  <title>登录 · Daniel Bot</title>
+  <link rel="stylesheet" href="shell.css">
+</head>
+<body class="login">
+  <div class="dragbar"></div>
+  <main class="login-wrap">
+    <section class="card">
+      <h1>登录 Daniel</h1>
+      <p class="sub">使用你的 Daniel 账号。登录后由本机服务加载 Daniel 能力。</p>
+
+      <form id="login-form" novalidate>
+        <div id="login-error" class="error-banner" role="alert">
+          <span id="login-error-text"></span>
+          <span class="hint" id="login-error-hint" hidden></span>
+        </div>
+
+        <div class="field">
+          <label for="email">邮箱</label>
+          <input id="email" name="email" type="email" autocomplete="username" spellcheck="false"
+                 placeholder="you@example.com" autofocus>
+        </div>
+
+        <div class="field">
+          <label for="password">密码</label>
+          <input id="password" name="password" type="password" autocomplete="current-password"
+                 placeholder="••••••••">
+        </div>
+
+        <button id="submit" class="btn primary block" type="submit">登录</button>
+        <p id="form-status" class="form-status" role="status"></p>
+      </form>
+
+      <p class="foot">密码只用于本次换取会话：不写入磁盘、不进日志、不传给任何子进程。<br>本机只保存 Daniel 会话凭据（0600）。</p>
+    </section>
+  </main>
+  <script src="login.js"></script>
+</body>
+</html>

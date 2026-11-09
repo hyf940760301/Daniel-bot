@@ -1,0 +1,30 @@
+{"id": "n01", "need": "你在这个子代理上来跑第一份垂直类的 KOL 清单吧，门槛和产品要求匹配且均播大于 1k，粉丝大于 10k，不要 1M 体量以上的 kol", "topic": null, "reply": null, "round": null, "topic_expected": "kol_search", "source": "tickets/TICKET-013-boulies-vertical-kol-list-batch1.md#L13", "source_kind": "real"}
+{"id": "n02", "need": "我给你一个 KOL，这个 KOL 是品牌方比较喜欢并且比较中意的，但是因为报价比较高所以此次应该不会推进了，但是我的目的在于我想看看你能不能结合 halliday 的产品，帮我找一批跟这个 KOL 风格相近并且可以作为 halliday 候选的 KOL 清单", "topic": null, "reply": null, "round": null, "topic_expected": "kol_search", "source": "tickets/TICKET-034-halliday-mcgeee-lookalike-kol-list.md#L17", "source_kind": "real"}
+{"id": "n03", "need": "完全重新跑 halliday 的非科技类第 2 批 KOL 清单，之前中断的或者已经获取到的一些数据也不要了避免干扰，当成一次完全新的任务执行，筛选门槛和跟之前的名单去重依旧需要作为标准门控", "topic": null, "reply": null, "round": null, "topic_expected": "list_ops", "source": "tickets/TICKET-011-halliday-g2-nontech-batch2v2-kol-list.md#L13", "source_kind": "real"}
+{"id": "n04", "need": "多个 tag 词合并的检索效果会比较差，最多 5 个词组合吧，如果是 tag 形式的话，长句或者长尾词就是单个一句话就好", "topic": null, "reply": "上手测评 均播 30 万 竞品", "round": 1, "topic_expected": "list_ops", "source": "tickets/TICKET-032-halliday-vertical-batch1-keywords-and-list.md#L107", "source_kind": "real"}
+{"id": "n05", "need": "第一批＋第二批三名单合并去重、剔除 Follow up 后新建名单", "topic": null, "reply": null, "round": null, "topic_expected": "list_ops", "source": "tickets/TICKET-120-halliday-daniel-merge-lists.md#L1", "source_kind": "real"}
+{"id": "n06", "need": "关于去重部分，这里要是指明的话，就按照指定的 list 进行去重，如果没有指明，你可以顺带给到建议，比如目前 saved list 中有哪些 list 是否要考虑作为去重 list，给到用户选择，目前第十批需要对应的去重就是之前指定的那几个 ＋ 最新的第七、八、九批次", "topic": null, "reply": "上手测评 美国 竞品", "round": 1, "topic_expected": "list_ops", "source": "tickets/TICKET-116-halliday-batch10-rules.md#L103", "source_kind": "real"}
+{"id": "n07", "need": "那就把目前已经通过的输出作为结果吧，这个任务可以结束了，不需要再继续跑了", "topic": null, "reply": " ", "round": null, "topic_expected": "generic", "source": "tickets/TICKET-011-halliday-g2-nontech-batch2v2-kol-list.md#L150", "source_kind": "real"}
+{"id": "n08", "need": "帮我找一批红人，美国，1万到10万粉", "topic": null, "reply": "　", "round": null, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n09", "need": "   ", "topic": null, "reply": "美国", "round": null, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n10", "need": "帮我找 US 市场 1 万到 10 万粉的 YouTube 长视频测评红人，要 20 位，交付 Excel 表格，本周五前给我，按近 30 天表现看，名单内排重，受众数据有则用无则标注缺失", "topic": null, "reply": "上手测评 美国 均播 30 万", "round": 1, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n11", "need": "帮我找一批红人，美国，1万到10万粉，20位", "topic": null, "reply": "上手测评 美国 竞品", "round": 1, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n12", "need": "帮我找一批红人，美国，1万到10万粉，Excel 表格", "topic": null, "reply": "上手测评 美国 排除已合作", "round": null, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n13", "need": "帮我找一批红人，受众数据必须有，近30天", "topic": null, "reply": "上手测评 均播 30 万 竞品", "round": 1, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n14", "need": "帮我找一批红人，排重，本周五前", "topic": null, "reply": "美国 均播 30 万 排除已合作", "round": 1, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n15", "need": "帮我找一批红人，长视频，20位，Excel 表格", "topic": null, "reply": "美国 竞品 排除已合作", "round": 1, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n16", "need": "帮我找一批红人，美国，1万到10万粉，受众数据必须有，排重", "topic": null, "reply": "上手测评 美国 均播 30 万 竞品 排除已合作", "round": 1, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n17", "need": "﻿帮我找一批红人", "topic": null, "reply": "随便你定", "round": 1, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n18", "need": "帮我找一批红人，美国，近30天", "topic": null, "reply": "上手测评", "round": 0, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n19", "need": "把两份名单合并一下", "topic": "list_ops", "reply": "美国", "round": 1, "topic_expected": "list_ops", "source": "constructed", "source_kind": "constructed"}
+{"id": "n20", "need": "帮我建一个品牌库", "topic": "brand_setup", "reply": "均播 30 万", "round": 1, "topic_expected": "brand_setup", "source": "constructed", "source_kind": "constructed"}
+{"id": "n21", "need": "帮我为 Halliday 品牌找一批测评红人", "topic": null, "reply": "竞品", "round": 1, "topic_expected": "brand_setup", "source": "constructed", "source_kind": "constructed"}
+{"id": "n22", "need": "？？？ 美国", "topic": null, "reply": "排除已合作", "round": 1, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n23", "need": "不要美国市场，找点测评红人", "topic": null, "reply": "上手测评 美国", "round": 1, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n24", "need": "帮我找一批红人，20位，本周五前", "topic": null, "reply": "上手测评 均播 30 万", "round": 1, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n25", "need": "帮我找一批红人，美国，1万到10万粉，长视频，要２０位", "topic": null, "reply": "随便你定", "round": 2, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n26", "need": "帮我找一批红人，Excel 表格，近30天", "topic": null, "reply": "上手测评", "round": 2, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n27", "need": "帮我找一批红人，美国，本周五前", "topic": null, "reply": "美国", "round": 2, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n28", "need": "帮我找一批红人，美国，长视频", "topic": null, "reply": "均播 30 万", "round": 2, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n29", "need": "帮我找一批红人，1万到10万粉", "topic": null, "reply": "竞品", "round": 2, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}
+{"id": "n30", "need": "帮我找一批红人，受众数据必须有", "topic": null, "reply": "排除已合作", "round": 99, "topic_expected": "kol_search", "source": "constructed", "source_kind": "constructed"}

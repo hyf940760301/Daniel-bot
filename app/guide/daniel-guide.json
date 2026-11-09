@@ -1,0 +1,109 @@
+{
+  "schema": "daniel.guide.v1",
+  "purpose": "Daniel 全景地图弹窗的内容源：模块 → 功能 → 示例话术（只读说明，可预填不执行）",
+  "modules": [
+    {
+      "id": "account",
+      "name": "账号与盘点",
+      "nameEn": "Account",
+      "summary": "你登录的是谁、能看哪些工作区、数据存在哪",
+      "functions": [
+        { "name": "看当前账号", "detail": "确认现在用的是哪个账号、凭据从哪来", "example": "我现在登录的是哪个账号？" },
+        { "name": "看有哪些工作区", "detail": "列出你能访问的工作区与编号", "example": "我这个账号下有几个工作区？" },
+        { "name": "切换工作区", "detail": "换到另一个工作区后，后续数据都跟着换", "example": "切换到 90002 这个工作区" }
+      ]
+    },
+    {
+      "id": "brands",
+      "name": "品牌档案",
+      "nameEn": "Brand Profile",
+      "summary": "品牌清单、品牌档案、竞品与市场定位",
+      "functions": [
+        { "name": "看品牌清单", "detail": "列出账号可见的全部品牌", "example": "把我的品牌都列出来" },
+        { "name": "看品牌档案", "detail": "简介、目标市场、频道、售价区间", "example": "Halliday 这个品牌是做什么的？" },
+        { "name": "看竞品", "detail": "查看登记在案的竞品与品类关键词", "example": "Halliday 的竞品有哪些？" },
+        { "name": "新建或克隆品牌", "detail": "参考已有品牌快速建一个新的", "example": "照 Halliday 的结构新建一个品牌" }
+      ]
+    },
+    {
+      "id": "discovery",
+      "name": "红人检索",
+      "nameEn": "Creator Search",
+      "summary": "按品类、地区、粉丝量找 YouTube 红人",
+      "functions": [
+        { "name": "发起检索", "detail": "按条件找候选人，返回一批红人", "example": "找 20 个做智能眼镜测评的 YouTube 红人，粉丝 5 万到 50 万" },
+        { "name": "看检索进度", "detail": "大范围检索会跑一会儿，可以查进度", "example": "刚才那个检索跑到哪了？" },
+        { "name": "看检索历史", "detail": "回看之前用过的关键词和结果", "example": "我上次找智能眼镜红人用的是什么条件？" }
+      ]
+    },
+    {
+      "id": "lists",
+      "name": "红人名单",
+      "nameEn": "Saved Lists",
+      "summary": "把候选人收进名单、去重、看名单里的人",
+      "functions": [
+        { "name": "看名单", "detail": "某个品牌下有哪些名单", "example": "Halliday 现在有几个名单？" },
+        { "name": "看名单里的人", "detail": "频道、订阅数、评分", "example": "第一个名单里都有谁？" },
+        { "name": "去重前查已保存", "detail": "避免把老联系人重复加进来", "example": "这 30 个人里哪些已经在名单里了？" },
+        { "name": "新建名单", "detail": "给这批人建一个新名单", "example": "把刚找到的人放进一个新名单" }
+      ]
+    },
+    {
+      "id": "authenticity",
+      "name": "真实性核验",
+      "nameEn": "Authenticity",
+      "summary": "判断一个号是不是刷的、值不值得投",
+      "functions": [
+        { "name": "频道真实性评分", "detail": "综合信号给出可信度判断", "example": "这个号 20 万粉但条均播放 5000，帮我看看是不是刷的" },
+        { "name": "看评分口径", "detail": "这个分数是怎么算出来的", "example": "真实性评分主要看哪几个信号？" }
+      ]
+    },
+    {
+      "id": "tracking",
+      "name": "合作追踪",
+      "nameEn": "Campaigns",
+      "summary": "合作活动的订单、达人、视频关联与表现",
+      "functions": [
+        { "name": "看合作活动", "detail": "某个品牌登记了哪些合作", "example": "Halliday 现在有几个合作活动？" },
+        { "name": "看活动统计", "detail": "订单数、达人数、应有与已关联视频数", "example": "这波合作一共发了多少条视频，有多少条挂上了？" },
+        { "name": "看订单与视频明细", "detail": "每个达人的合作单与视频表现", "example": "把这次合作里每个人的视频播放量列出来" },
+        { "name": "解析频道", "detail": "把 @handle 或链接转成频道编号", "example": "帮我把这个 YouTube 链接转成频道编号" }
+      ]
+    },
+    {
+      "id": "mentions",
+      "name": "品牌提及",
+      "nameEn": "Brand Mentions",
+      "summary": "有多少视频提到你的品牌、说了什么",
+      "functions": [
+        { "name": "发起提及分析", "detail": "跑一次品牌提及采集", "example": "看看最近 30 天有多少视频提到 Halliday" },
+        { "name": "看分析进度", "detail": "采集和评分需要时间", "example": "刚才那个提及分析跑完了吗？" },
+        { "name": "看提及结果", "detail": "视频级评分与清单", "example": "把提到我们的视频按播放量排一下" }
+      ]
+    },
+    {
+      "id": "intel",
+      "name": "内容情报",
+      "nameEn": "Intelligence",
+      "summary": "下一步该拍什么、哪些选题值得跟",
+      "functions": [
+        { "name": "看待办动作", "detail": "系统建议你接下来做什么，附依据", "example": "现在有哪些内容值得我拍？" },
+        { "name": "看追踪关键词", "detail": "你的品牌正在盯哪些词", "example": "我们品牌现在追踪了哪些关键词？" },
+        { "name": "看选题", "detail": "按关键词归好的选题方向", "example": "这周有哪些选题可以跟？" },
+        { "name": "看审核单", "detail": "待你确认的内容清单", "example": "有哪些内容等我审核？" }
+      ]
+    },
+    {
+      "id": "sov",
+      "name": "声量份额",
+      "nameEn": "Share of Voice",
+      "summary": "你和竞品在 YouTube 上的曝光占比",
+      "functions": [
+        { "name": "看声量总览", "detail": "品牌与竞品的份额对比", "example": "上个月我们和三个竞品的声量占比各是多少？" },
+        { "name": "看品类档案", "detail": "品类词与竞争集", "example": "我们所在的品类都盯着哪些词？" },
+        { "name": "看品牌视频明细", "detail": "被收录的视频逐条列出", "example": "把提到我们的视频明细导出来" },
+        { "name": "发起曝光采集", "detail": "跑一次新的曝光数据", "example": "重新采集一次这个月的曝光数据" }
+      ]
+    }
+  ]
+}

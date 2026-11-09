@@ -1,0 +1,307 @@
+{
+ "registerVersion": "2.0",
+ "generatedBy": "TICKET-159（差异显式登记）＋ TICKET-161（写链＝确认单通道）",
+ "purpose": "**写链暴露口径的显式登记表**。它把「某条命令在 MCP 侧到底能不能执行」从「没人知道为什么」变成「逐条登记、断言守门」。TICKET-161 之前，本表登记的是「CLI 有、MCP 没有」的**差异**；161 落地后写链在能力面上已全量可见、差集归零，于是本表登记的东西换成了**每一条写命令的执行语义** —— 语义只有三个取值，且**双向断言**守门：差集里出现「未注册」之外的条目＝红（有人偷偷把能力藏了或漏注册）；登记为「未注册」却真的注册了＝红（陈旧登记／不实登记）；登记了 CLI 已不存在的命令＝红；取值越界＝红；登记为「确认单不执行」却没真注册、或工具描述没写「不会执行」＝红。本文件**随包分发**，改动它必须与产品实际口径同步。",
+ "scope_note": "口径（TICKET-161 起）：`执行语义=未注册` 的登记条目集合 **≡** 差集（＝CLI 声明的全部子命令 ⊖ MCP server 实际注册的工具）。差集已归零，因此 `未注册` 集合也必须为空。MCP 侧「实际注册」的口径有**四类**：只读命令（`annotations.readOnlyHint is True`，直接执行）／沙箱工序引擎（`readOnly==contract-dependent` 且 `writeStage==sandbox`，可执行但写只落本次运行沙箱）／**本机出件**（`annotations.readOnlyHint is False` 且 `_meta.exposure == local-output`：**可执行**、调用一次会真在本机出件落点产出交付物，但**不写 Daniel 远端** —— 现存一条 `playbook deliver`，`TICKET-202`·`Q14` 新增档位）／**确认单工具**（其余全部写链命令，注册但**永不执行**）。",
+ "执行语义取值集合": [
+  "执行",
+  "确认单不执行",
+  "未注册"
+ ],
+ "执行语义说明": {
+  "执行": "该命令在 MCP 侧**真的会执行**：读链直接执行；`playbook run` 是**沙箱执行**（写动作只落本次运行的沙箱目录，且 server 永不转发 `--confirm`）；`playbook deliver` 是**本机出件执行**（调用一次真在本机出件落点产出交付物，`_meta.exposure=local-output`、`readOnlyHint=false` ⇒ 它**不是**纯只读，但**可直接执行**）。",
+  "确认单不执行": "该命令在 MCP 侧以「**确认单**」形态可见但**永不执行**（TICKET-161 口径）：调用它只返回一份确认单（将执行的确切命令／动作类型／影响面／不可逆性／所需前置／替代路径），不产生任何副作用，影响面只来自只读预查，退出码语义 3＝需确认。",
+  "未注册": "该命令**没有注册进 MCP**，宿主看不到它，也不接受它的写参数。**TICKET-161 之后本集合必须为空**（差集已归零）；若某条又变回这个值，说明能力面退化，断言会红。"
+ },
+ "模式对等不变量": "新的模式对等不变量＝「能力面：两模式集合完全相等（差集 0）；差异只体现在 执行语义（执行／确认单不执行），且该字段双向断言」。（TICKET-159 原先的不变量是「差集恰好等于写链未注册部分」；TICKET-161 把写链注册为确认单后差集归零，因此不变量改写为上面这句。）",
+ "五类动作覆盖情况": {
+  "闭合枚举": [
+   "同步飞书",
+   "写 Daniel 记录",
+   "对外发信",
+   "删除类",
+   "触发采集",
+   "其他（本机副作用）"
+  ],
+  "需求稿五类": [
+   "同步飞书",
+   "写 Daniel 记录",
+   "对外发信",
+   "删除类",
+   "触发采集"
+  ],
+  "今日有命令的三类": [
+   "写 Daniel 记录",
+   "删除类",
+   "触发采集"
+  ],
+  "今日无命令的两类": [
+   "同步飞书",
+   "对外发信"
+  ],
+  "不属于五类的一档": [
+   "其他（本机副作用）"
+  ],
+  "说明": "如实标注：当前 20 条写命令里，「同步飞书」与「对外发信」**还没有任何对应命令**（飞书写链整体后置，账号配额里虽有「每月邮件」一栏，但 CLI 侧没有对外发信命令）。确认单通道为这两类**留位**，但不假装已覆盖五类。`account login`／`account switch`／`account credentials-set` 与 `connect apply`／`connect uninstall`／`pack out` 只写**本机**文件（会话文件、钥匙串、宿主配置、交付目录），归入「其他（本机副作用）」，**不属于五类**。"
+ },
+ "entries": [
+  {
+   "命令": "brands create",
+   "工具名": "daniel_brands_create",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "写 Daniel 记录",
+   "属于需求稿五类": true,
+   "不可逆性": "低 —— 新建对象；建错了可以再删（删除另需一次确认），但会留下写审计痕迹",
+   "替代路径": "只读替代 `daniel brands list`（看已有哪些品牌）；真执行到终端跑 `daniel brands create --name <名称> --confirm`",
+   "说明": "writeStage=live。MCP 侧注册但永不执行；server 永不转发 --confirm，影响面（工作区、现有品牌数）只来自只读预查。"
+  },
+  {
+   "命令": "brands update",
+   "工具名": "daniel_brands_update",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "写 Daniel 记录",
+   "属于需求稿五类": true,
+   "不可逆性": "中 —— 被改字段的原值不会被本 CLI 留底，改完不能自动还原",
+   "替代路径": "只读替代 `daniel brands show --brand <品牌>`（先看清改前是什么）；真执行 `daniel brands update --brand <品牌> … --confirm`",
+   "说明": "writeStage=live。"
+  },
+  {
+   "命令": "brands delete",
+   "工具名": "daniel_brands_delete",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "删除类",
+   "属于需求稿五类": true,
+   "不可逆性": "高（不可逆）—— 品牌删除后本 CLI 没有任何撤回手段；命令还额外要求 --delete-token（把品牌名原样再写一遍）",
+   "替代路径": "只读替代 `daniel brands show --brand <品牌>` ＋ `daniel lists by-brand --brand <品牌>`（看会牵连多少名单）；真执行 `daniel brands delete --brand <品牌> --confirm --delete-token \"<品牌名>\"`",
+   "说明": "writeStage=live，两道闸（--confirm ＋ --delete-token）都依赖交互式确认；确认单会替人把品牌名从只读预查里认出来，但 --delete-token 不代填。"
+  },
+  {
+   "命令": "lists create",
+   "工具名": "daniel_lists_create",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "写 Daniel 记录",
+   "属于需求稿五类": true,
+   "不可逆性": "低 —— 新建对象；建错了可以再删（删除另需一次确认）",
+   "替代路径": "只读替代 `daniel lists by-brand --brand <品牌>`（看该品牌现有名单，作为建前基线）；真执行 `daniel lists create --brand <品牌> --name <名称> --confirm`",
+   "说明": "writeStage=live。**TICKET-152 曾在此处出过意外真写（缺陷类 CLS-78）**，TICKET-161 把「调用后不得新建出名单」列为第一验收项：调用前后用 `daniel lists by-brand` 回读条数，必须不变。"
+  },
+  {
+   "命令": "lists rename",
+   "工具名": "daniel_lists_rename",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "写 Daniel 记录",
+   "属于需求稿五类": true,
+   "不可逆性": "低 —— 名字可以再改回去，但旧名不会自动留底",
+   "替代路径": "只读替代 `daniel lists by-brand --brand <品牌>`（确认目标名单编号与当前名字）；真执行 `daniel lists rename --list-id <编号> --brand <品牌> --name <新名> --confirm`",
+   "说明": "writeStage=live。"
+  },
+  {
+   "命令": "lists delete",
+   "工具名": "daniel_lists_delete",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "删除类",
+   "属于需求稿五类": true,
+   "不可逆性": "高（不可逆）—— 名单删除后本 CLI 没有任何撤回手段；另需 --delete-token（把名单名原样再写一遍）",
+   "替代路径": "只读替代 `daniel lists by-brand --brand <品牌>`（看清要删的是哪个名单、里面有多少人）；真执行 `daniel lists delete --list-id <编号> --brand <品牌> --confirm --delete-token \"<名单名>\"`",
+   "说明": "writeStage=live，两道闸。"
+  },
+  {
+   "命令": "search submit",
+   "工具名": "daniel_search_submit",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "触发采集",
+   "属于需求稿五类": true,
+   "不可逆性": "高 —— 检索任务一经提交即消耗当月检索额度，且没有撤回命令",
+   "替代路径": "只读替代 `daniel search history`（确认这条检索还没提过）；真执行 `daniel search submit --brand <品牌> --query <检索式> --confirm`；检索记录与任务状态仍可在宿主内只读查（daniel_search_history／daniel_search_job_status）",
+   "说明": "writeStage=live（TICKET-188 · A1 起真实执行已接通）。**TICKET-161 要解决的核心问题就是这条**：161 之前它在 MCP 能力面上完全看不见，模型既不知道有这条能力、也无法把它排进计划。"
+  },
+  {
+   "命令": "mentions run",
+   "工具名": "daniel_mentions_run",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "触发采集",
+   "属于需求稿五类": true,
+   "不可逆性": "高 —— 会真的抓取并入库，采集用量随之产生，没有撤回命令",
+   "替代路径": "只读替代 `daniel mentions jobs --brand <品牌>`／`daniel mentions results --brand <品牌>`；真执行 `daniel mentions run --brand <品牌> --days <天数> --confirm`；结果查看仍只读可用（daniel_mentions_jobs／status／results）",
+   "说明": "writeStage=live（TICKET-188 · A1 起真实执行已接通）。"
+  },
+  {
+   "命令": "sov run-exposure",
+   "工具名": "daniel_sov_run_exposure",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "触发采集",
+   "属于需求稿五类": true,
+   "不可逆性": "高 —— 会真的触发曝光采集并入库，没有撤回命令",
+   "替代路径": "只读替代 `daniel sov overview --brand <品牌>`（取采集前声量基线）；真执行 `daniel sov run-exposure --brand <品牌> --country <市场> --confirm`；声量总览仍只读可用（daniel_sov_overview／categories／brand-videos）",
+   "说明": "writeStage=live（TICKET-188 · A1 起真实执行已接通）。"
+  },
+  {
+   "命令": "ct create-campaign",
+   "工具名": "daniel_ct_create_campaign",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "写 Daniel 记录",
+   "属于需求稿五类": true,
+   "不可逆性": "中 —— 活动名称建后不可改（只能再建一个），删除也没有对应命令",
+   "替代路径": "只读替代 `daniel ct campaigns --brand <品牌>`（看已有活动，确认不是重复建）；真执行 `daniel ct create-campaign --brand <品牌> --title <标题> --start <日期> --confirm`",
+   "说明": "writeStage=live（TICKET-188 · A1 起真实执行已接通）。这是 intake 需求路由里最常命中的写动作（「合作追踪-建链」的最后一跳）。"
+  },
+  {
+   "命令": "route sweep",
+   "工具名": "daniel_route_sweep",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "触发采集",
+   "属于需求稿五类": true,
+   "不可逆性": "低 —— 不改任何业务数据；但含一次非只读探测，会留下调用痕迹",
+   "替代路径": "只读替代 `daniel route catalog`（离线列出可探测通路）／`daniel route probe`（只读探测单条通路）；真执行 `daniel route sweep --confirm`",
+   "说明": "writeStage=live（TICKET-188 · A1 起真实执行已接通）。它被登记为写操作的原因是「逐条发包探测」；A1 起探测**一律用只读 GET**，写语义通路以 405 判定存在性、不执行任何写动作。是否计入配额没有只读判据，确认单里如实写「未知（无只读判据）」，不下结论。"
+  },
+  {
+   "命令": "takeover check-writes",
+   "工具名": "daniel_takeover_check_writes",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "写 Daniel 记录",
+   "属于需求稿五类": true,
+   "不可逆性": "中 —— 这是含写链的接管验收：它会真的执行写链检查（否则验不出写能力），因此会留下写痕迹",
+   "替代路径": "只读替代 `daniel takeover check --brand <品牌>`（只读接管验收，覆盖品牌／提及／情报／声量／真实性五块）；真执行 `daniel takeover check-writes --brand <品牌> --confirm`",
+   "说明": "writeStage=live（TICKET-188 · A1 起真实执行已接通）。"
+  },
+  {
+   "命令": "account login",
+   "工具名": "daniel_account_login",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "其他（本机副作用）",
+   "属于需求稿五类": false,
+   "不可逆性": "低 —— 只写本机会话文件（刷新凭据落地），重新登录即可；不写任何 Daniel 数据、不对外发信",
+   "替代路径": "只读替代 `daniel account whoami`（先看当前会话是否还有效 —— 有效就不必登录）；真执行 `daniel account login --confirm`",
+   "说明": "writeStage=live。**不属于需求稿五类**：它的副作用只落在本机会话文件，既不写 Daniel 数据也不对外发信。如实标注，不硬塞进五类。"
+  },
+  {
+   "命令": "account credentials-set",
+   "工具名": "daniel_account_credentials_set",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "其他（本机副作用）",
+   "属于需求稿五类": false,
+   "不可逆性": "低 —— 只写本机系统钥匙串（同一账号可再次写入覆盖），不写任何 Daniel 数据、不对外发信",
+   "替代路径": "只读替代 `daniel account credentials`（看凭据从哪来：钥匙串／环境变量／明文文件，只回掩码邮箱）；真执行 `daniel account credentials-set --from-env --confirm`",
+   "说明": "writeStage=live。TICKET-170 新增的写命令，动作事实由 TICKET-161 按总监 2026-10-15 裁决补齐（mcp/** 归 161），**只写该命令自己能自证的事实**（取自它的 schema `writeNote`／`returns`）：凭据来源二选一（`--from-env` 或 `--email`／`--password`，两者同时给会被拒绝）、**任何输出都不回显密码**（只给掩码邮箱）、**钥匙串写失败不会静默降级为明文**（非零退出并给指引，不写任何明文凭据文件）、写后回读确认来源＝钥匙串并留审计。**不属于需求稿五类**：副作用只落本机钥匙串。"
+  },
+  {
+   "命令": "playbook run",
+   "工具名": "daniel_playbook_run",
+   "执行语义": "执行",
+   "暴露形态": "已注册（沙箱只读口径：可执行，但写动作只落本次运行沙箱，且永不转发 --confirm）",
+   "动作类型": "其他（本机副作用）",
+   "属于需求稿五类": false,
+   "不可逆性": "低 —— 写步骤只落本次运行的沙箱目录（默认跑完即清理），不碰任何 Daniel 写路由",
+   "替代路径": "不适用：它本身就是可执行的工序引擎（只读性取决于契约；契约里若含写步骤，不带 --confirm 时只会拿到退出码 3）",
+   "说明": "**必须与上面 13 条区分开**：这条**真的会执行**，所以它的执行语义是「执行」而不是「确认单不执行」——把它写成后者就是假话（它只是把写动作关在沙箱里）。写动作只落本次运行沙箱，退出码 0 是契约跑通而不是「写成功」。"
+  },
+  {
+   "命令": "playbook deliver",
+   "工具名": "daniel_playbook_deliver",
+   "执行语义": "执行",
+   "暴露形态": "已注册（**本机出件**口径：可执行，调用一次真在本机出件落点产出交付物；不是确认单工具、也不是纯只读）",
+   "动作类型": "其他（本机副作用）",
+   "属于需求稿五类": false,
+   "不可逆性": "低 —— 只往**本机出件落点**（`$DANIEL_HOME/output/<契约id>/`，可被 `--out` 覆盖）写交付物，内容由契约与夹具决定、可复算；不改任何 Daniel 数据、不触发采集、不对外发信；出件自检不过时非零退出且**落点上不产出任何文件**（重跑会用新件覆盖同落点的旧件）",
+   "替代路径": "不适用：它本身就是可执行的出件通道（「CLI ＋ MCP 接入即交付物」里 MCP 侧那一半）；只想看不想写用 `daniel playbook list`／`daniel playbook show <契约>`／`daniel playbook validate <契约>`",
+   "说明": "**TICKET-202（`Q14`）新增条目 —— 本条也是那条判据的由头**：它此前被登记成**纯只读**（`readOnlyHint=true`／`exposure=read-only`），而它**会往本机出件落点写文件** ⇒ 两个载荷都没有任何机器可读的注记。现在档位＝**`local-output`**（**可直接执行** —— 改成写链 MCP 侧就永远出不了件）＋ `readOnlyNote` 写明「会写本机出件落点、不写 Daniel 远端」；两个载荷（协议面 `tools/list` 的 `annotations.readOnlyHint=false` ＋ `_meta.daniel.exposure／localOutput／readOnlyNote`，自省载荷 `daniel schema --mcp --json` 的 `annotations.exposure／readOnlyHint／readOnlyNote`）都带上，并由 `client_check.py` 的 `exposure_mismatches()` 守「两载荷口径一致」。"
+  },
+  {
+   "命令": "ct delete-campaign",
+   "工具名": "daniel_ct_delete_campaign",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "删除类",
+   "属于需求稿五类": true,
+   "不可逆性": "高（不可逆）—— 活动删除后本 CLI 没有任何撤回手段；另需 --delete-token（把活动标题原样再写一遍）",
+   "替代路径": "只读替代 `daniel ct campaigns --brand <品牌>`（看清要删的是哪个活动、什么状态、建了多久）；真执行 `daniel ct delete-campaign --brand <品牌> --campaign <编号> --confirm --delete-token \"<活动标题>\"`",
+   "说明": "writeStage=live，两道闸（--confirm ＋ --delete-token）。A1（TICKET-188）新增：它是 `ct create-campaign` 的**逆操作** —— 验收 / 建错时靠它回滚，删除前先只读回读活动清单把标题认出来，--delete-token 不代填。"
+  },
+  {
+   "命令": "account switch",
+   "工具名": "daniel_account_switch",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "其他（本机副作用）",
+   "属于需求稿五类": false,
+   "不可逆性": "低 —— 只切本机数据分区（会话／缓存／产出／调度按账号分目录），不写任何 Daniel 数据、不删任何文件；`daniel account switch --clear --confirm` 即可回到根落点",
+   "替代路径": "只读替代 `daniel account list`（先看当前账号与本机已存账号）；真执行 `daniel account switch <邮箱> --confirm`",
+   "说明": "writeStage=live。**不属于需求稿五类**：副作用只落在本机数据分区。补登记原因：A6 断言（每条写命令都要有登记条目）自 TICKET-188 之前就红着一条 —— 本条目是那条缺口的补齐，不是新能力。"
+  },
+  {
+   "命令": "connect apply",
+   "工具名": "daniel_connect_apply",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "其他（本机副作用）",
+   "属于需求稿五类": false,
+   "不可逆性": "低 —— 只改写**本机**宿主配置文件里本产品那一条；写前落原文快照（含 sha256）、写后回读对账，且可用 `--uninstall` 撤销",
+   "替代路径": "只读替代 `daniel connect --list`（看各宿主当前的接入状态）／`daniel connect --host <宿主> --print`（先看清要写进去的那一段）；真执行到终端跑 `daniel connect --host <宿主> --apply --confirm`",
+   "说明": "writeStage=live。**本机副作用**：写的是宿主配置（~/.cursor/mcp.json ／ ~/.codex/config.toml），不是 Daniel 数据，因此没有 Daniel 账号权限这一轴可判（登记进 schema.LOCAL_WRITE_MODULES，S6 显式豁免）。MCP 侧注册但永不执行；server 永不转发 --confirm。"
+  },
+  {
+   "命令": "connect uninstall",
+   "工具名": "daniel_connect_uninstall",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "其他（本机副作用）",
+   "属于需求稿五类": false,
+   "不可逆性": "低 —— 只删**本机**宿主配置文件里本产品那一条（其它 server／表／注释逐字节不动）；写前同样落原文快照",
+   "替代路径": "只读替代 `daniel connect --list`（看清现在接的是哪一条）；真执行到终端跑 `daniel connect --host <宿主> --uninstall --confirm`",
+   "说明": "writeStage=live。同上：本机副作用，不碰 Daniel 数据；MCP 侧注册但永不执行。"
+  },
+  {
+   "命令": "pack out",
+   "工具名": "daniel_pack_out",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "其他（本机副作用）",
+   "属于需求稿五类": false,
+   "不可逆性": "低 —— 只往**本机**一个空目录里写一份拷贝（`<目录>/daniel-copilot`，实测 163 个文件／约 4.1 MB）；不碰 Daniel 数据、不改任何既有文件，撤掉就是删掉那个目录",
+   "替代路径": "只读替代 `daniel pack --check <包目录>`（先看现有包干不干净／完不完整）；真执行到终端跑 `daniel pack --out <目录> --confirm`",
+   "说明": "writeStage=live。**本机副作用**：写的是本机的一个交付目录，不是 Daniel 数据，因此没有 Daniel 账号权限这一轴可判（登记进 schema.LOCAL_WRITE_MODULES，S6 显式豁免）。包目录非空或落在工作区之内一律拒绝；出包即自证（回读对账五条）。MCP 侧注册但永不执行；server 永不转发 --confirm。"
+  },
+  {
+   "命令": "install run",
+   "工具名": "daniel_install_run",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "其他（本机副作用）",
+   "属于需求稿五类": false,
+   "不可逆性": "低 —— 只动**本机**三处安装落点：`~/.local/bin/daniel` 一条软链 ＋ shell 配置里一行 PATH、宿主技能目录下 8 条 `kol-*` 软链、宿主配置里本产品那一条（后者只经 `connect` 写）；写前把原文落进 `<数据落点>/install/snapshots/<时间戳>/`，每一步都能按输出里的回滚说明撤掉，不改任何 Daniel 数据",
+   "替代路径": "只读替代 `daniel install --check`（先看现在装成什么样、还差哪一步）；真执行到终端跑 `daniel install --confirm`",
+   "说明": "writeStage=live。**本机副作用**：写的是本机安装落点（入口／能力束／宿主接入），不是 Daniel 数据，因此没有 Daniel 账号权限这一轴可判（登记进 schema.LOCAL_WRITE_MODULES，S6 显式豁免）。四步都是幂等的（已是目标状态就不改文件）；第 ④ 步是**登录本身**（浏览器授权路，绝不索要账号密码）。MCP 侧注册但永不执行；server 永不转发 --confirm。"
+  },
+  {
+   "命令": "install upgrade",
+   "工具名": "daniel_install_upgrade",
+   "执行语义": "确认单不执行",
+   "暴露形态": "已注册为确认单工具（能力面可见；调用只返回确认单，永不执行）",
+   "动作类型": "其他（本机副作用）",
+   "属于需求稿五类": false,
+   "不可逆性": "低 —— 只把本机那几处软链与宿主配置**改指**到另一份包（写前同样落快照），升回旧包即还原；不改任何 Daniel 数据",
+   "替代路径": "只读替代 `daniel install --check`（升级前后都用它复核）；真执行到终端跑 `daniel install --upgrade --from <包目录> --confirm`",
+   "说明": "writeStage=live。与 `install run` 同一套四步，只是「包从哪来」换成 `--from` 那一份；升级后**自动重跑 `install --check`**，自检不过即非零退出。MCP 侧注册但永不执行；server 永不转发 --confirm。"
+  }
+ ],
+ "assertions": {
+  "双向断言口径": "A2 漏登记：差集 ⊆ 「执行语义=未注册」的登记条目（差集里出现登记表之外的条目＝红）；A3 陈旧登记：「执行语义=未注册」的登记条目 ⊆ 差集（登记为未注册却真的注册了＝红）；A4 陈旧登记：登记的命令必须仍在 CLI 声明里，且「命令」与「工具名」自洽（不是手抄的第二份名字）；A5 不实登记：登记为「确认单不执行」的每条，必须在 MCP 侧真注册、且 `_meta.exposure == confirm-ticket`、且工具 description 里写明「不会执行」（否则说明它要么根本没暴露、要么悄悄会执行＝红）；A6 登记不全：CLI 声明的每一条写命令都必须在本表里有登记条目＝红。",
+  "取值越界": "「执行语义」只能取 `执行` / `确认单不执行` / `未注册` 三个值，越界＝红（client_check.py A1 逐条断言）。",
+  "谁来跑": "`python3 data/daniel-cli/mcp/client_check.py --self-test` 第 3 组；`daniel intake route` 侧的一致性互校在 `daniel_cli/intake/modes.py` 的 `read_exposure_register()`。"
+ }
+}

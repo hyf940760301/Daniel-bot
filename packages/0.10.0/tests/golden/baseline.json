@@ -1,0 +1,2424 @@
+{
+  "schemaVersion": 1,
+  "registeredCount": 15,
+  "toolMeta": {
+    "daniel_status": {
+      "params": []
+    },
+    "daniel_login": {
+      "params": [
+        {
+          "n": "session_file",
+          "t": "string",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "session_value",
+          "t": "string",
+          "req": false,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_brands_list": {
+      "params": [
+        {
+          "n": "limit",
+          "t": "number",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "workspace",
+          "t": "number",
+          "req": false,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_brand_view": {
+      "params": [
+        {
+          "n": "brand",
+          "t": "string",
+          "req": true,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_brand_count": {
+      "params": [
+        {
+          "n": "workspace",
+          "t": "number",
+          "req": true,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_skills_list": {
+      "params": []
+    },
+    "daniel_skills_read": {
+      "params": [
+        {
+          "n": "section",
+          "t": "number",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "skill",
+          "t": "string",
+          "req": true,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_run": {
+      "params": [
+        {
+          "n": "argv",
+          "t": "array",
+          "req": true,
+          "items": "string"
+        },
+        {
+          "n": "user_approved_refresh",
+          "t": "boolean",
+          "req": false,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_kol_profile": {
+      "params": [
+        {
+          "n": "handle",
+          "t": "string",
+          "req": true,
+          "items": ""
+        },
+        {
+          "n": "videos",
+          "t": "number",
+          "req": false,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_roster_search": {
+      "params": [
+        {
+          "n": "category",
+          "t": "string",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "country",
+          "t": "string",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "limit",
+          "t": "number",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "max_subscribers",
+          "t": "number",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "min_subscribers",
+          "t": "number",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "page",
+          "t": "number",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "query",
+          "t": "string",
+          "req": true,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_batch": {
+      "params": [
+        {
+          "n": "calls",
+          "t": "array",
+          "req": true,
+          "items": "array"
+        }
+      ]
+    },
+    "daniel_clarify": {
+      "params": [
+        {
+          "n": "need",
+          "t": "string",
+          "req": true,
+          "items": ""
+        },
+        {
+          "n": "topic",
+          "t": "string",
+          "req": false,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_screen_ask": {
+      "params": [
+        {
+          "n": "need",
+          "t": "string",
+          "req": true,
+          "items": ""
+        },
+        {
+          "n": "reply",
+          "t": "string",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "round",
+          "t": "number",
+          "req": false,
+          "items": ""
+        }
+      ]
+    },
+    "daniel_write_plan": {
+      "params": [
+        {
+          "n": "argv",
+          "t": "array",
+          "req": true,
+          "items": "string"
+        }
+      ]
+    },
+    "daniel_write_commit": {
+      "params": [
+        {
+          "n": "delete_token",
+          "t": "string",
+          "req": false,
+          "items": ""
+        },
+        {
+          "n": "plan_id",
+          "t": "string",
+          "req": true,
+          "items": ""
+        }
+      ]
+    }
+  },
+  "cases": {
+    "status_default": {
+      "tool": "daniel_status",
+      "args": {},
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "已登录": {
+                "t": "boolean"
+              },
+              "状态说明": {
+                "t": "string"
+              },
+              "角色": {
+                "t": "string"
+              },
+              "账号": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "6b98cdba7770dec09b53aae22f0c44712b2c60a871772f5e3f811f37f7b8c2d4"
+    },
+    "login_no_args": {
+      "tool": "daniel_login",
+      "args": {},
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "usage"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "7cb0efed08ebe766511280488c61bf0ef01d7e474477808b698437e8a8b56777"
+    },
+    "login_file_not_found": {
+      "tool": "daniel_login",
+      "args": {
+        "session_file": "__golden__/no-such-session.txt"
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "session_file_not_found"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "3df992537e05640ecf248b6f9a883822f7303a58f4762725ae514a6652308b1d"
+    },
+    "skills_list": {
+      "tool": "daniel_skills_list",
+      "args": {},
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "切片总数": {
+                "t": "number"
+              },
+              "完整性": {
+                "t": "string"
+              },
+              "能力域": {
+                "t": "array",
+                "len": 8,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "主题": {
+                      "t": "string"
+                    },
+                    "切片数": {
+                      "t": "number"
+                    },
+                    "名称": {
+                      "t": "string"
+                    },
+                    "摘要": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "能力域数": {
+                "t": "number"
+              },
+              "语料版本": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "ed1e79acdd9818e4c798b13a8ac2b00338480dbd7a95c8ee1841d271dade899d"
+    },
+    "skills_read_index": {
+      "tool": "daniel_skills_read",
+      "args": {
+        "skill": "kol-screening"
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "切片清单": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "切片号": {
+                      "t": "number"
+                    },
+                    "字节数": {
+                      "t": "number"
+                    },
+                    "存在": {
+                      "t": "boolean"
+                    },
+                    "文件": {
+                      "t": "string"
+                    },
+                    "源节标题": {
+                      "t": "string"
+                    },
+                    "源行区间": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "完整性": {
+                "t": "string"
+              },
+              "能力": {
+                "t": "string"
+              },
+              "能力域": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "5216a9c540471afdb0451f62891e8ec911f82935e184217dbda589b6106d7d03"
+    },
+    "skills_read_section": {
+      "tool": "daniel_skills_read",
+      "args": {
+        "skill": "kol-screening",
+        "section": 1
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "切片号": {
+                "t": "number"
+              },
+              "完整性": {
+                "t": "string"
+              },
+              "是否还有更多": {
+                "t": "boolean"
+              },
+              "本次字节": {
+                "t": "number"
+              },
+              "正文": {
+                "t": "string"
+              },
+              "章节": {
+                "t": "string"
+              },
+              "能力": {
+                "t": "string"
+              },
+              "能力域": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "64200302853a6ae4e2c093f12fd63f15c0e72648f0b390242cca156c77475739"
+    },
+    "run_empty": {
+      "tool": "daniel_run",
+      "args": {
+        "argv": []
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "usage"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "964b32a758e492691cf3bc7100401e30a9e0fe19d711949beea2a94cd3f9bfee"
+    },
+    "run_refresh_needs_consent": {
+      "tool": "daniel_run",
+      "args": {
+        "argv": [
+          "brands",
+          "list",
+          "--refresh"
+        ]
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "refresh_needs_user_consent"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "6aff114ea6a80a0d4b80f559f8ef6aae6ca469f7e9bacda414cc7c5a3324b829"
+    },
+    "run_skills_list": {
+      "tool": "daniel_run",
+      "args": {
+        "argv": [
+          "skills",
+          "list"
+        ]
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "完整性": {
+                "t": "string"
+              },
+              "定位方式": {
+                "t": "string"
+              },
+              "总量": {
+                "t": "object",
+                "props": {
+                  "切片数": {
+                    "t": "number"
+                  },
+                  "字节数": {
+                    "t": "number"
+                  },
+                  "文件数": {
+                    "t": "number"
+                  }
+                }
+              },
+              "源文件": {
+                "t": "string"
+              },
+              "源文件sha256": {
+                "t": "string"
+              },
+              "源文件行数": {
+                "t": "number"
+              },
+              "版本集合": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "string"
+                }
+              },
+              "能力域": {
+                "t": "array",
+                "len": 8,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "SKILL.md字节数": {
+                      "t": "number"
+                    },
+                    "切片": {
+                      "t": "array",
+                      "len": 13,
+                      "item": {
+                        "t": "object",
+                        "props": {
+                          "切片号": {
+                            "t": "number"
+                          },
+                          "字节数": {
+                            "t": "number"
+                          },
+                          "存在": {
+                            "t": "boolean"
+                          },
+                          "文件": {
+                            "t": "string"
+                          },
+                          "源节标题": {
+                            "t": "string"
+                          },
+                          "源行区间": {
+                            "t": "string"
+                          }
+                        }
+                      }
+                    },
+                    "切片数": {
+                      "t": "number"
+                    },
+                    "前置条件": {
+                      "t": "string"
+                    },
+                    "名称": {
+                      "t": "string"
+                    },
+                    "域": {
+                      "t": "string"
+                    },
+                    "字节数": {
+                      "t": "number"
+                    },
+                    "完整性": {
+                      "t": "string"
+                    },
+                    "实测整束sha256": {
+                      "t": "string"
+                    },
+                    "实测文件数": {
+                      "t": "number"
+                    },
+                    "摘要": {
+                      "t": "string"
+                    },
+                    "整束sha256": {
+                      "t": "string"
+                    },
+                    "文件数": {
+                      "t": "number"
+                    },
+                    "文件清单": {
+                      "t": "array",
+                      "len": 15,
+                      "item": {
+                        "t": "object",
+                        "props": {
+                          "sha256": {
+                            "t": "string"
+                          },
+                          "字节数": {
+                            "t": "number"
+                          },
+                          "文件": {
+                            "t": "string"
+                          }
+                        }
+                      }
+                    },
+                    "源文件": {
+                      "t": "string"
+                    },
+                    "源文件sha256": {
+                      "t": "string"
+                    },
+                    "源文件行数": {
+                      "t": "number"
+                    },
+                    "版本": {
+                      "t": "string"
+                    },
+                    "能力域": {
+                      "t": "string"
+                    },
+                    "读法": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "能力域数": {
+                "t": "number"
+              },
+              "语料根": {
+                "t": "string"
+              },
+              "语料版本": {
+                "t": "string"
+              },
+              "读法": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "d64c6a3bb3c88ae16c2c0b4f2f46b3dbc06135d3e2fa654c4b6c9ab3cd1bb3cf"
+    },
+    "batch_empty": {
+      "tool": "daniel_batch",
+      "args": {
+        "calls": []
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "usage"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "5be9a9306ebde0a95761663a5b510a9147acf55c0203516a3a65920cc5d81cfb"
+    },
+    "batch_too_many": {
+      "tool": "daniel_batch",
+      "args": {
+        "calls": [
+          [
+            "skills",
+            "list"
+          ],
+          [
+            "skills",
+            "list"
+          ],
+          [
+            "skills",
+            "list"
+          ],
+          [
+            "skills",
+            "list"
+          ],
+          [
+            "skills",
+            "list"
+          ],
+          [
+            "skills",
+            "list"
+          ],
+          [
+            "skills",
+            "list"
+          ]
+        ]
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "usage"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "e612669f778cc89810347f1a89b00a60ec199ead66989c6223becba33d03cc41"
+    },
+    "batch_skills_list": {
+      "tool": "daniel_batch",
+      "args": {
+        "calls": [
+          [
+            "skills",
+            "list"
+          ]
+        ]
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "results": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "command": {
+                      "t": "string"
+                    },
+                    "data": {
+                      "t": "object",
+                      "props": {
+                        "完整性": {
+                          "t": "string"
+                        },
+                        "总量": {
+                          "t": "object",
+                          "props": {
+                            "切片数": {
+                              "t": "number"
+                            },
+                            "字节数": {
+                              "t": "number"
+                            },
+                            "文件数": {
+                              "t": "number"
+                            }
+                          }
+                        },
+                        "版本集合": {
+                          "t": "array",
+                          "len": 1,
+                          "item": {
+                            "t": "string"
+                          }
+                        },
+                        "能力域": {
+                          "t": "array",
+                          "len": 8,
+                          "item": {
+                            "t": "object",
+                            "props": {
+                              "SKILL.md字节数": {
+                                "t": "number"
+                              },
+                              "切片": {
+                                "t": "array",
+                                "len": 13,
+                                "item": {
+                                  "t": "object",
+                                  "props": {
+                                    "切片号": {
+                                      "t": "number"
+                                    },
+                                    "字节数": {
+                                      "t": "number"
+                                    },
+                                    "存在": {
+                                      "t": "boolean"
+                                    },
+                                    "文件": {
+                                      "t": "string"
+                                    },
+                                    "源节标题": {
+                                      "t": "string"
+                                    },
+                                    "源行区间": {
+                                      "t": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "切片数": {
+                                "t": "number"
+                              },
+                              "前置条件": {
+                                "t": "string"
+                              },
+                              "名称": {
+                                "t": "string"
+                              },
+                              "域": {
+                                "t": "string"
+                              },
+                              "字节数": {
+                                "t": "number"
+                              },
+                              "完整性": {
+                                "t": "string"
+                              },
+                              "实测整束sha256": {
+                                "t": "string"
+                              },
+                              "实测文件数": {
+                                "t": "number"
+                              },
+                              "摘要": {
+                                "t": "string"
+                              },
+                              "整束sha256": {
+                                "t": "string"
+                              },
+                              "文件数": {
+                                "t": "number"
+                              },
+                              "文件清单": {
+                                "t": "array",
+                                "len": 15,
+                                "item": {
+                                  "t": "object",
+                                  "props": {
+                                    "sha256": {
+                                      "t": "string"
+                                    },
+                                    "字节数": {
+                                      "t": "number"
+                                    },
+                                    "文件": {
+                                      "t": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "版本": {
+                                "t": "string"
+                              },
+                              "能力域": {
+                                "t": "string"
+                              }
+                            }
+                          }
+                        },
+                        "能力域数": {
+                          "t": "number"
+                        },
+                        "语料版本": {
+                          "t": "string"
+                        }
+                      }
+                    },
+                    "exitCode": {
+                      "t": "number",
+                      "v": 0
+                    },
+                    "ok": {
+                      "t": "boolean",
+                      "v": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "9caeca544f3579015bc96e334e6795d7cc30b63ab8230d1d729403003a051691"
+    },
+    "write_plan_empty": {
+      "tool": "daniel_write_plan",
+      "args": {
+        "argv": []
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "usage"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "7ee4505a52a76f9d9635565dfc7b138f92d0bcdf1b30bbaab800a104c5316339"
+    },
+    "write_commit_unknown_plan": {
+      "tool": "daniel_write_commit",
+      "args": {
+        "plan_id": "__golden__-no-such-plan"
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "unknown_plan"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "129fe4669303a796e2b609ab7cc9b6df86cb37a6db6d1d2429c776d539d5c1b8"
+    },
+    "run_auth_status": {
+      "tool": "daniel_run",
+      "args": {
+        "argv": [
+          "auth",
+          "status"
+        ]
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "authenticated": {
+                "t": "boolean"
+              },
+              "exitCode": {
+                "t": "number",
+                "v": 0
+              },
+              "local": {
+                "t": "object",
+                "props": {
+                  "会话来自旧位置": {
+                    "t": "boolean"
+                  },
+                  "会话落盘在 DANIEL_HOME 之内": {
+                    "t": "boolean"
+                  },
+                  "本机会话文件": {
+                    "t": "string"
+                  },
+                  "本机有没有会话": {
+                    "t": "boolean"
+                  }
+                }
+              },
+              "next": {
+                "t": "string"
+              },
+              "reason": {
+                "t": "string"
+              },
+              "server": {
+                "t": "object",
+                "props": {
+                  "stage": {
+                    "t": "string"
+                  },
+                  "系统角色": {
+                    "t": "string"
+                  },
+                  "账号(掩码)": {
+                    "t": "string"
+                  },
+                  "账号状态": {
+                    "t": "string"
+                  }
+                }
+              },
+              "state": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "add108f565a82aea461cb3cedb7e61c8a05d463fddd8de282aaabb33110d7796"
+    },
+    "batch_auth_status": {
+      "tool": "daniel_batch",
+      "args": {
+        "calls": [
+          [
+            "auth",
+            "status"
+          ]
+        ]
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "results": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "command": {
+                      "t": "string"
+                    },
+                    "data": {
+                      "t": "object",
+                      "props": {
+                        "authenticated": {
+                          "t": "boolean"
+                        },
+                        "exitCode": {
+                          "t": "number",
+                          "v": 0
+                        },
+                        "local": {
+                          "t": "object",
+                          "props": {
+                            "会话来自旧位置": {
+                              "t": "boolean"
+                            },
+                            "会话落盘在 DANIEL_HOME 之内": {
+                              "t": "boolean"
+                            },
+                            "本机会话文件": {
+                              "t": "string"
+                            },
+                            "本机有没有会话": {
+                              "t": "boolean"
+                            }
+                          }
+                        },
+                        "next": {
+                          "t": "string"
+                        },
+                        "reason": {
+                          "t": "string"
+                        },
+                        "server": {
+                          "t": "object",
+                          "props": {
+                            "stage": {
+                              "t": "string"
+                            },
+                            "系统角色": {
+                              "t": "string"
+                            },
+                            "账号(掩码)": {
+                              "t": "string"
+                            },
+                            "账号状态": {
+                              "t": "string"
+                            }
+                          }
+                        },
+                        "state": {
+                          "t": "string"
+                        }
+                      }
+                    },
+                    "exitCode": {
+                      "t": "number",
+                      "v": 0
+                    },
+                    "ok": {
+                      "t": "boolean",
+                      "v": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "eec93b8bf35b3b258d4d15b3743de2d03ad6404bf72610cf0a1378aad8637ceb"
+    },
+    "batch_local_fail": {
+      "tool": "daniel_batch",
+      "args": {
+        "calls": [
+          [
+            "brands",
+            "show"
+          ]
+        ]
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "results": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "command": {
+                      "t": "string"
+                    },
+                    "data": {
+                      "t": "string"
+                    },
+                    "error": {
+                      "t": "object",
+                      "props": {
+                        "kind": {
+                          "t": "string",
+                          "v": "usage"
+                        },
+                        "message": {
+                          "t": "string"
+                        }
+                      }
+                    },
+                    "exitCode": {
+                      "t": "number",
+                      "v": 2
+                    },
+                    "ok": {
+                      "t": "boolean",
+                      "v": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "95147685fbaa5302d86c7860989967c876820c1d351040fe359b4fdf413df01a"
+    },
+    "clarify_ambiguous": {
+      "tool": "daniel_clarify",
+      "args": {
+        "need": "帮我找一批测评红人"
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "优先补": {
+                "t": "array",
+                "len": 3,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "为什么先补": {
+                      "t": "string"
+                    },
+                    "项名": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "其余按默认口径执行": {
+                "t": "string"
+              },
+              "口径类": {
+                "t": "array",
+                "len": 3,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "影响": {
+                      "t": "string"
+                    },
+                    "项名": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "场景": {
+                "t": "string"
+              },
+              "场景依据": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "缺项": {
+                "t": "array",
+                "len": 8,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不答的默认值": {
+                      "t": "string"
+                    },
+                    "为什么问": {
+                      "t": "string"
+                    },
+                    "项名": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "ff5d28ca8c5a4dbf4cd36cbdac6aba42e9c61625d4acabc4d34808a2730e7c2b"
+    },
+    "clarify_explicit": {
+      "tool": "daniel_clarify",
+      "args": {
+        "need": "帮我找 US 市场 1 万到 10 万粉的 YouTube 长视频测评红人，要 20 位，交付 Excel 表格，本周五前给我，按近 30 天表现看，名单内排重，受众数据有则用无则标注缺失"
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "优先补": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "口径类": {
+                "t": "array",
+                "len": 3,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "影响": {
+                      "t": "string"
+                    },
+                    "项名": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "场景": {
+                "t": "string"
+              },
+              "场景依据": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 9,
+                "item": {
+                  "t": "string"
+                }
+              },
+              "结论": {
+                "t": "string"
+              },
+              "缺项": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "9392ba457f623cec56645c354c07abc08ebd6eb2661f8f9f4950bf07280a421c"
+    },
+    "clarify_list_ops": {
+      "tool": "daniel_clarify",
+      "args": {
+        "need": "把两份名单合并一下",
+        "topic": "list_ops"
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "优先补": {
+                "t": "array",
+                "len": 3,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "为什么先补": {
+                      "t": "string"
+                    },
+                    "项名": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "口径类": {
+                "t": "array",
+                "len": 2,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "影响": {
+                      "t": "string"
+                    },
+                    "项名": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "场景": {
+                "t": "string"
+              },
+              "场景依据": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "缺项": {
+                "t": "array",
+                "len": 7,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不答的默认值": {
+                      "t": "string"
+                    },
+                    "为什么问": {
+                      "t": "string"
+                    },
+                    "项名": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "54196f77221b0584c634faf7655a7d0003e51220a28320433160b6570af84e62"
+    },
+    "clarify_empty_need": {
+      "tool": "daniel_clarify",
+      "args": {
+        "need": "   "
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "usage"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "ba001ce73cdbf8be8b926fe1068e7714c25171459abf73aee5a5214ffe09bb39"
+    },
+    "screen_ask_guide": {
+      "tool": "daniel_screen_ask",
+      "args": {
+        "need": "帮我找 20 个做智能眼镜测评的红人"
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "场景": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "模式": {
+                "t": "string"
+              },
+              "说明": {
+                "t": "string"
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "c20e3ddb609faae879a53b4e97e321ed85c5cc4bc86b32064c664ed00c642a4f"
+    },
+    "screen_ask_confirm": {
+      "tool": "daniel_screen_ask",
+      "args": {
+        "need": "帮我找 20 个做智能眼镜测评的红人",
+        "reply": "美国、长视频均播 30 万、排除已合作",
+        "round": 1
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "场景": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 4,
+                "item": {
+                  "t": "string"
+                }
+              },
+              "未确认项": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "按默认": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "模式": {
+                "t": "string"
+              },
+              "结论": {
+                "t": "string"
+              },
+              "缺口": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "追问": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "52bbba6dd46ba44423c9f279a48b23cefa29144ce2e5841559c33ead959b5e64"
+    },
+    "screen_ask_followup": {
+      "tool": "daniel_screen_ask",
+      "args": {
+        "need": "帮我找 20 个做智能眼镜测评的红人",
+        "reply": "找点做测评的",
+        "round": 1
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "其余按默认": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "按默认": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "场景": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "string"
+                }
+              },
+              "模式": {
+                "t": "string"
+              },
+              "缺口": {
+                "t": "array",
+                "len": 4,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "权重": {
+                      "t": "string"
+                    },
+                    "示例": {
+                      "t": "string"
+                    },
+                    "组": {
+                      "t": "string"
+                    },
+                    "默认": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "轮次": {
+                "t": "number"
+              },
+              "追问": {
+                "t": "array",
+                "len": 3,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    },
+                    "问": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "4a8f5ac49130e3ce1531c18a2e0550f1d45cd90b66d8b559e5a23ad392864bda"
+    },
+    "screen_ask_round_limit": {
+      "tool": "daniel_screen_ask",
+      "args": {
+        "need": "帮我找 20 个做智能眼镜测评的红人",
+        "reply": "美国",
+        "round": 2
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "data": {
+            "t": "object",
+            "props": {
+              "下一步": {
+                "t": "string"
+              },
+              "场景": {
+                "t": "string"
+              },
+              "已识别项": {
+                "t": "array",
+                "len": 1,
+                "item": {
+                  "t": "string"
+                }
+              },
+              "未确认项": {
+                "t": "array",
+                "len": 4,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "按默认": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "模式": {
+                "t": "string"
+              },
+              "结论": {
+                "t": "string"
+              },
+              "缺口": {
+                "t": "array",
+                "len": 4,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "权重": {
+                      "t": "string"
+                    },
+                    "示例": {
+                      "t": "string"
+                    },
+                    "组": {
+                      "t": "string"
+                    },
+                    "默认": {
+                      "t": "string"
+                    }
+                  }
+                }
+              },
+              "追问": {
+                "t": "array",
+                "len": 0,
+                "item": {
+                  "t": "none"
+                }
+              },
+              "选择面": {
+                "t": "array",
+                "len": 5,
+                "item": {
+                  "t": "object",
+                  "props": {
+                    "不给就按": {
+                      "t": "string"
+                    },
+                    "举例": {
+                      "t": "string"
+                    },
+                    "方向": {
+                      "t": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 0
+          },
+          "ok": {
+            "t": "boolean",
+            "v": true
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "c290a0da3b4f0008d91f0db411393159e6d8124d24003c6fd362ede6fc9dfc1f"
+    },
+    "screen_ask_empty_need": {
+      "tool": "daniel_screen_ask",
+      "args": {
+        "need": "  "
+      },
+      "offline": true,
+      "shape": {
+        "t": "object",
+        "props": {
+          "command": {
+            "t": "string"
+          },
+          "error": {
+            "t": "object",
+            "props": {
+              "kind": {
+                "t": "string",
+                "v": "usage"
+              },
+              "message": {
+                "t": "string"
+              }
+            }
+          },
+          "exitCode": {
+            "t": "number",
+            "v": 2
+          },
+          "ok": {
+            "t": "boolean",
+            "v": false
+          },
+          "回答纪律": {
+            "t": "string"
+          }
+        }
+      },
+      "sha256": "5e239a91101ae4682ae771e7ac28067f65f29fc323b632fe954b64e1fce08849"
+    }
+  },
+  "skipped": {
+    "daniel_brands_list": {
+      "reason": "需网络/需登录",
+      "detail": "实测 25s 超时（依赖账号品牌索引与平台接口）"
+    },
+    "daniel_brand_view": {
+      "reason": "需网络/需登录",
+      "detail": "实测可用但依赖在线业务数据，值会随账号变化，不入基线"
+    },
+    "daniel_brand_count": {
+      "reason": "需网络/需登录",
+      "detail": "实时口径需常驻 worker 直连平台接口"
+    },
+    "daniel_kol_profile": {
+      "reason": "需网络/需登录",
+      "detail": "频道档案／受众／近 28 天表现均为在线数据"
+    },
+    "daniel_roster_search": {
+      "reason": "需网络/需登录",
+      "detail": "YouTube 官方库检索，需登录且属长任务接口"
+    }
+  },
+  "coverage": {
+    "called": 26,
+    "skipped": 5,
+    "tools": 15
+  },
+  "baselineUpdates": [
+    {
+      "at": "2026-10-20T10:16:20.369Z",
+      "tools": [
+        "daniel_run",
+        "daniel_batch"
+      ],
+      "reason": "TICKET-220 缺陷修复：daniel_run/daniel_batch 出口过 prune()，缺失数据改用文字表达（未取到／不适用）",
+      "changedCases": [
+        "run_auth_status",
+        "batch_auth_status",
+        "batch_local_fail"
+      ]
+    },
+    {
+      "at": "2026-10-21T05:04:19.831Z",
+      "tools": [
+        "daniel_brand_view",
+        "daniel_brands_list",
+        "daniel_brand_count"
+      ],
+      "reason": "TICKET-221：clean() 统一兜底 prune；受影响三个工具（brand_view/brands_list/brand_count）不在离线基线内，本次确认其余用例逐字节不变",
+      "changedCases": []
+    },
+    {
+      "at": "2026-10-21T09:16:53.976Z",
+      "tools": [
+        "daniel_clarify"
+      ],
+      "reason": "TICKET-218：新增第 14 个工具 daniel_clarify（追问闸·参数级），只重采该工具的 4 条离线用例",
+      "changedCases": [
+        "clarify_ambiguous",
+        "clarify_explicit",
+        "clarify_list_ops",
+        "clarify_empty_need"
+      ],
+      "signature": {
+        "registeredCount": [
+          13,
+          14
+        ],
+        "acceptedNewTools": [
+          "daniel_clarify"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-29T09:21:46.574Z",
+      "tools": [
+        "skills_list",
+        "run_skills_list",
+        "batch_skills_list"
+      ],
+      "reason": "语义登记表：kol-intelligence 新增第 13 片（附录 B），skills 清单长度 12→13、文件 14→15",
+      "changedCases": []
+    },
+    {
+      "at": "2026-10-29T09:22:17.887Z",
+      "tools": [
+        "daniel_skills_list",
+        "daniel_run",
+        "daniel_batch"
+      ],
+      "reason": "语义登记表：kol-intelligence 新增第 13 片（附录 B），skills 清单长度 12→13、文件 14→15",
+      "changedCases": [
+        "skills_list",
+        "run_skills_list",
+        "batch_skills_list"
+      ]
+    },
+    {
+      "at": "2026-10-29T09:38:22.387Z",
+      "tools": [
+        "daniel_clarify"
+      ],
+      "reason": "语义登记表：首次调用增加「选择面」（无签名变更）",
+      "changedCases": [
+        "clarify_ambiguous",
+        "clarify_explicit",
+        "clarify_list_ops"
+      ]
+    },
+    {
+      "at": "2026-10-30T01:31:45.105Z",
+      "tools": [
+        "daniel_screen_ask"
+      ],
+      "reason": "语义登记表 0.10.0：新增找红人专用工具（一次给全＋动态追问），与 daniel_clarify 职责分离",
+      "changedCases": [
+        "screen_ask_guide",
+        "screen_ask_confirm",
+        "screen_ask_followup",
+        "screen_ask_round_limit",
+        "screen_ask_empty_need"
+      ],
+      "signature": {
+        "registeredCount": [
+          14,
+          15
+        ],
+        "acceptedNewTools": [
+          "daniel_screen_ask"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-30T02:33:43.047Z",
+      "tools": [
+        "daniel_skills_list",
+        "daniel_run",
+        "daniel_batch"
+      ],
+      "reason": "语料升版 0.9.204→0.9.205（附录 B），skills 清单返回的版本号随之变化",
+      "changedCases": [
+        "skills_list",
+        "run_skills_list",
+        "batch_skills_list"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+ "skill": "kol-contract",
+ "corpus_version": "0.9.205",
+ "source": "docs/marketing/skills/kol-intelligence.md",
+ "source_sha256": "54adc91c62b09c92e86597343fc0859a8665066603555cf1cec1d617233da57d",
+ "source_lines": 6972,
+ "slices": [
+  {
+   "file": "references/50-contract.md",
+   "start": 4342,
+   "end": 5007,
+   "title": "§14 合同出具（母版保真）"
+  }
+ ]
+}

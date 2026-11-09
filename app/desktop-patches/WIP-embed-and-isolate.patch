@@ -1,0 +1,950 @@
+diff --git a/.gitignore b/.gitignore
+index 4d52487a..ea65a025 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -32,6 +32,8 @@ mise.toml
+ dist-exe/
+ /dist/
+ apps/desktop/.desktop-build/
++# Extracted by `pnpm -C apps/desktop sync:daniel-plugin`; the tarball stays the source of truth.
++apps/desktop/resources/vendor/
+ python/sdk-runtime/src/deepseek_harness_runtime/runtime/
+ python/**/__pycache__/
+ python/**/.pytest_cache/
+diff --git a/apps/desktop/package.json b/apps/desktop/package.json
+index 40bdfefe..617a3ff1 100644
+--- a/apps/desktop/package.json
++++ b/apps/desktop/package.json
+@@ -13,6 +13,7 @@
+     "test:installer": "node scripts/test-windows-installer.mjs",
+     "build": "tsc -b && pnpm run bundle",
+     "bundle": "tsdown --config-loader native",
++    "sync:daniel-plugin": "node scripts/sync-daniel-plugin.mjs",
+     "dev": "tsx scripts/dev.ts",
+     "start": "tsx scripts/dev.ts --skip-build",
+     "test:updates:local": "pnpm run build && node scripts/test-local-updater.mjs",
+diff --git a/apps/desktop/scripts/electron-builder-config.mjs b/apps/desktop/scripts/electron-builder-config.mjs
+index cf0c19e8..4ea00813 100644
+--- a/apps/desktop/scripts/electron-builder-config.mjs
++++ b/apps/desktop/scripts/electron-builder-config.mjs
+@@ -157,6 +157,9 @@ export function createElectronBuilderConfig(
+     asarUnpack: unpack,
+     extraResources: [
+       { from: buildPaths.runtime, to: 'runtime' },
++      // The embedded Daniel plugin ships as a real directory (never inside the asar),
++      // so the shell can copy it into the profile and no package manager runs.
++      { from: fileURLToPath(new URL('../resources/vendor/daniel-dsh-plugin', import.meta.url)), to: 'vendor/daniel-dsh-plugin' },
+       { from: fileURLToPath(new URL('../resources/icon-windows.png', import.meta.url)), to: 'icon.png' },
+       // Windows tray bitmaps; macOS keeps the Dock and ships no menu bar icon.
+       ...(packagesWindows ? [{ from: fileURLToPath(new URL('../resources/tray-windows.ico', import.meta.url)), to: 'tray.ico' }] : []),
+diff --git a/apps/desktop/scripts/sync-daniel-plugin.mjs b/apps/desktop/scripts/sync-daniel-plugin.mjs
+new file mode 100644
+index 00000000..6740c2cf
+--- /dev/null
++++ b/apps/desktop/scripts/sync-daniel-plugin.mjs
+@@ -0,0 +1,143 @@
++#!/usr/bin/env node
++/**
++ * Stage the Daniel plugin package into `apps/desktop/resources/vendor/daniel-dsh-plugin`,
++ * which `electron-builder` ships as `<App>.app/Contents/Resources/vendor/daniel-dsh-plugin`.
++ *
++ * The tarball stays the source of truth: the extracted directory is generated and ignored by
++ * git, so `pnpm -C apps/desktop package:*` needs this step once after each plugin release.
++ *
++ * Usage:
++ *   node scripts/sync-daniel-plugin.mjs --from ../releases/daniel-dsh-plugin-0.11.0.tgz
++ *   DANIEL_PLUGIN_TGZ=/path/to/plugin.tgz node scripts/sync-daniel-plugin.mjs
++ *   node scripts/sync-daniel-plugin.mjs --from /path/to/extracted/package
++ *
++ * Idempotent: an extracted copy whose file inventory digest matches the input is left untouched.
++ */
++
++import { createHash } from 'node:crypto'
++import { spawnSync } from 'node:child_process'
++import {
++  cpSync,
++  existsSync,
++  mkdirSync,
++  readdirSync,
++  readFileSync,
++  renameSync,
++  rmSync,
++  statSync,
++} from 'node:fs'
++import { join, relative, sep } from 'node:path'
++import { fileURLToPath } from 'node:url'
++import { parseArgs } from 'node:util'
++
++const APP_ROOT = fileURLToPath(new URL('..', import.meta.url))
++const VENDOR_ROOT = join(APP_ROOT, 'resources', 'vendor')
++const TARGET = join(VENDOR_ROOT, 'daniel-dsh-plugin')
++const PACKAGE_NAME = 'daniel-dsh-plugin'
++/** Directories that never ship: development-only notes, dependencies, and version control. */
++const EXCLUDED = new Set(['specs', 'node_modules', '.git'])
++
++function log(message) {
++  process.stdout.write(`${message}\n`)
++}
++
++function fail(message) {
++  try {
++    if (typeof VENDOR_ROOT !== 'undefined') {
++      for (const name of readdirSync(VENDOR_ROOT)) {
++        if (name.startsWith('.staging-')) rmSync(join(VENDOR_ROOT, name), { recursive: true, force: true })
++      }
++    }
++  } catch {}
++  process.stderr.write(`sync-daniel-plugin: ${message}\n`)
++  process.exit(1)
++}
++
++/** List every regular file below a directory with its digest, in byte order of relative path. */
++function inventory(root) {
++  if (!existsSync(join(root, 'package.json'))) fail(`${root} 不是插件包目录（缺 package.json）`)
++  const files = []
++  const visit = (directory) => {
++    for (const entry of readdirSync(directory, { withFileTypes: true })) {
++      if (EXCLUDED.has(entry.name)) continue
++      const path = join(directory, entry.name)
++      const name = relative(root, path).split(sep).join('/')
++      if (entry.isDirectory()) visit(path)
++      else if (entry.isFile()) {
++        const body = readFileSync(path)
++        files.push({ path: name, bytes: body.byteLength, sha256: createHash('sha256').update(body).digest('hex') })
++      } else fail(`不支持的目录项：${name}`)
++    }
++  }
++  visit(root)
++  return files.sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0))
++}
++
++function digest(files) {
++  const hash = createHash('sha256')
++  for (const file of files) hash.update(`${file.path}\0${String(file.bytes)}\0${file.sha256}\n`)
++  return hash.digest('hex')
++}
++
++const { values } = parseArgs({
++  options: {
++    from: { type: 'string' },
++    help: { type: 'boolean', short: 'h' },
++  },
++})
++
++if (values.help === true) {
++  log('用法：node scripts/sync-daniel-plugin.mjs --from <插件 .tgz 或已解包目录>')
++  process.exit(0)
++}
++
++const source = values.from ?? process.env.DANIEL_PLUGIN_TGZ
++if (source === undefined || source === '') fail('缺少输入：传 --from <插件 .tgz 或已解包目录>，或设 DANIEL_PLUGIN_TGZ')
++if (!existsSync(source)) fail(`输入不存在：${source}`)
++
++mkdirSync(VENDOR_ROOT, { recursive: true })
++const staging = join(VENDOR_ROOT, `.staging-${String(process.pid)}`)
++rmSync(staging, { recursive: true, force: true })
++mkdirSync(staging, { recursive: true })
++
++try {
++  const extracted = join(staging, 'package')
++  if (statSync(source).isDirectory()) {
++    cpSync(source, extracted, {
++      recursive: true,
++      dereference: true,
++      filter: (path) => !EXCLUDED.has(path.split(sep).pop() ?? ''),
++    })
++  } else {
++    const tar = spawnSync('tar', ['-xzf', source, '-C', staging], { stdio: ['ignore', 'ignore', 'inherit'] })
++    if (tar.error !== undefined) fail(`无法运行 tar：${tar.error.message}`)
++    if (tar.status !== 0) fail(`解包失败（exit ${String(tar.status)}）：${source}`)
++  }
++  if (!existsSync(join(extracted, 'package.json'))) fail(`压缩包内没有 package/package.json：${source}`)
++
++  const manifest = JSON.parse(readFileSync(join(extracted, 'package.json'), 'utf8'))
++  if (manifest.name !== PACKAGE_NAME) fail(`包名不符：期望 ${PACKAGE_NAME}，实际 ${String(manifest.name)}`)
++  if (manifest.dsh?.bundle?.patch === undefined) fail('插件包没有声明 dsh.bundle.patch，Host 不会把它当作 bundle 加载')
++
++  const expected = inventory(extracted)
++  const expectedDigest = digest(expected)
++  if (existsSync(join(TARGET, 'package.json'))) {
++    try {
++      if (digest(inventory(TARGET)) === expectedDigest) {
++        log(`✓ 未变化，保留现有副本：${TARGET}`)
++        log(`  ${PACKAGE_NAME}@${String(manifest.version)} · ${String(expected.length)} 个文件 · ${expectedDigest.slice(0, 12)}`)
++        rmSync(staging, { recursive: true, force: true })
++        process.exit(0)
++      }
++    } catch {
++      // A damaged copy is replaced below.
++    }
++  }
++
++  rmSync(TARGET, { recursive: true, force: true })
++  renameSync(extracted, TARGET)
++  log(`✓ 已写入 ${TARGET}`)
++  log(`  ${PACKAGE_NAME}@${String(manifest.version)} · ${String(expected.length)} 个文件 · ${expectedDigest.slice(0, 12)}`)
++} finally {
++  rmSync(staging, { recursive: true, force: true })
++}
+diff --git a/apps/desktop/src/daniel-home.ts b/apps/desktop/src/daniel-home.ts
+new file mode 100644
+index 00000000..44c09580
+--- /dev/null
++++ b/apps/desktop/src/daniel-home.ts
+@@ -0,0 +1,116 @@
++/** Daniel Bot's private data roots, separated from the shared `~/.dsh` installation. */
++
++import { chmodSync, mkdirSync } from 'node:fs'
++import { homedir } from 'node:os'
++import { join } from 'node:path'
++
++/** Data-root directory name that owns every Daniel Bot file on this machine. */
++export const DANIEL_BOT_DIRECTORY = 'Daniel Bot'
++
++/** Harness home override; unset resolves to `~/Library/Application Support/Daniel Bot/dsh-home`. */
++export const DSH_HOME_ENV = 'DSH_HOME'
++
++/** Daniel data home override; unset resolves to `~/Library/Application Support/Daniel Bot/daniel-home`. */
++export const DANIEL_HOME_ENV = 'DANIEL_HOME'
++
++/** The two roots one Daniel Bot launch owns. */
++export interface DanielHomes {
++  /** Harness home holding `profiles/desktop` and the Host's runtime state. */
++  readonly dshHome: string
++  /** Daniel data home holding sessions, the app overlay, and audit records. */
++  readonly danielHome: string
++}
++
++function configured(env: NodeJS.ProcessEnv, name: string): string | undefined {
++  const value = env[name]?.trim()
++  return value === undefined || value === '' ? undefined : value
++}
++
++/**
++ * Resolve the platform data root that holds Daniel Bot's own directories.
++ * The default never depends on `$DSH_HOME`, so an inherited environment cannot
++ * move the product's directory tree.
++ * @param platform - Operating system naming the data root; defaults to this process's.
++ * @param home - OS home directory; defaults to {@link homedir}.
++ * @param env - Environment supplying `APPDATA` and `XDG_DATA_HOME`; defaults to this process's.
++ * @returns Absolute directory, whether or not it exists.
++ */
++export function danielDataRoot(
++  platform: NodeJS.Platform = process.platform,
++  home: string = homedir(),
++  env: NodeJS.ProcessEnv = process.env,
++): string {
++  if (platform === 'darwin') return join(home, 'Library', 'Application Support', DANIEL_BOT_DIRECTORY)
++  if (platform === 'win32') return join(env.APPDATA ?? join(home, 'AppData', 'Roaming'), DANIEL_BOT_DIRECTORY)
++  return join(env.XDG_DATA_HOME ?? join(home, '.local', 'share'), DANIEL_BOT_DIRECTORY)
++}
++
++/**
++ * Resolve the Harness home: `$DSH_HOME`, else Daniel Bot's private `dsh-home`.
++ * A blank or whitespace-only override counts as unset, as in `@deepseek-ai/dsh-home-paths`.
++ * @param env - Environment supplying `$DSH_HOME`; defaults to this process's.
++ * @param platform - Operating system naming the default root; defaults to this process's.
++ * @param home - OS home directory; defaults to {@link homedir}.
++ * @returns Absolute Harness home path.
++ */
++export function resolveDanielDshHome(
++  env: NodeJS.ProcessEnv = process.env,
++  platform: NodeJS.Platform = process.platform,
++  home: string = homedir(),
++): string {
++  return configured(env, DSH_HOME_ENV) ?? join(danielDataRoot(platform, home, env), 'dsh-home')
++}
++
++/**
++ * Resolve Daniel's data home: `$DANIEL_HOME`, else Daniel Bot's private `daniel-home`.
++ * @param env - Environment supplying `$DANIEL_HOME`; defaults to this process's.
++ * @param platform - Operating system naming the default root; defaults to this process's.
++ * @param home - OS home directory; defaults to {@link homedir}.
++ * @returns Absolute Daniel data home path.
++ */
++export function resolveDanielHome(
++  env: NodeJS.ProcessEnv = process.env,
++  platform: NodeJS.Platform = process.platform,
++  home: string = homedir(),
++): string {
++  return configured(env, DANIEL_HOME_ENV) ?? join(danielDataRoot(platform, home, env), 'daniel-home')
++}
++
++/**
++ * Create one product-owned directory and enforce owner-only access.
++ * The recursive mode applies to new directories only, so the final directory is
++ * also chmod'ed to 0700 when an earlier launch (or a restore) left it wider.
++ * @param directory - Absolute directory to create.
++ * @throws When the directory cannot be created or its mode cannot be set.
++ */
++export function ensurePrivateDirectory(directory: string): void {
++  mkdirSync(directory, { recursive: true, mode: 0o700 })
++  chmodSync(directory, 0o700)
++}
++
++/**
++ * Create both data roots and publish them to the process environment, so the
++ * Host child process and every later resolution in this launch agree.
++ * Must run before the first `resolveDesktopPaths()` and before the Host spawns.
++ * Existing `~/.dsh` content is deliberately left alone: this product starts from
++ * a fresh profile and imports nothing (D-019).
++ * @param env - Environment to write `$DSH_HOME` and `$DANIEL_HOME` into; defaults to this process's.
++ * @param platform - Operating system naming the default roots; defaults to this process's.
++ * @param home - OS home directory; defaults to {@link homedir}.
++ * @returns The resolved absolute roots.
++ */
++export function installDanielHomes(
++  env: NodeJS.ProcessEnv = process.env,
++  platform: NodeJS.Platform = process.platform,
++  home: string = homedir(),
++): DanielHomes {
++  const homes: DanielHomes = {
++    dshHome: resolveDanielDshHome(env, platform, home),
++    danielHome: resolveDanielHome(env, platform, home),
++  }
++  ensurePrivateDirectory(homes.dshHome)
++  ensurePrivateDirectory(homes.danielHome)
++  env[DSH_HOME_ENV] = homes.dshHome
++  env[DANIEL_HOME_ENV] = homes.danielHome
++  return homes
++}
+diff --git a/apps/desktop/src/daniel-plugin.ts b/apps/desktop/src/daniel-plugin.ts
+new file mode 100644
+index 00000000..5f5a751d
+--- /dev/null
++++ b/apps/desktop/src/daniel-plugin.ts
+@@ -0,0 +1,238 @@
++/** The embedded Daniel plugin: its profile copy, activation, and five-key configuration. */
++
++import { createHash } from 'node:crypto'
++import {
++  chmodSync,
++  copyFileSync,
++  existsSync,
++  lstatSync,
++  mkdirSync,
++  readdirSync,
++  readFileSync,
++  renameSync,
++  rmSync,
++  writeFileSync,
++} from 'node:fs'
++import { join, relative, sep } from 'node:path'
++import { readProfileManifest, writeProfileBundles } from '@deepseek-ai/dsh-app-boot'
++
++/** Package name the profile resolves and the Host mounts. */
++export const DANIEL_PLUGIN_NAME = 'daniel-dsh-plugin'
++
++/** Profile user layer; the official Host has no `--patch` channel, so the runtime config lives here. */
++export const PROFILE_PATCH_FILENAME = 'cordis.patch.yml'
++
++/** Daniel data home file the Daniel application reads for the same settings. */
++export const APP_OVERLAY_FILENAME = 'app-overlay.yml'
++
++/** Version of the five-key configuration written below; bump when a key's meaning changes. */
++const CONFIG_SCHEMA_VERSION = 1
++/** Interpreter that runs the vendored Daniel CLI; the bundled Python is a later work group (S2 §2.6). */
++const DANIEL_PYTHON = 'python3'
++/** Per-call deadline handed to the plugin. */
++const DANIEL_TIMEOUT_MS = 180_000
++/** Output-trace tier of the plugin (`off` | `summary` | `full`). */
++const DANIEL_TRACE_MODE = 'summary'
++
++/** Where the packaged plugin lives and where its data goes. */
++export interface DanielPluginEmbeds {
++  /** Directory shipped in the application's resources that holds the plugin package. */
++  readonly pluginSource: string
++  /** Absolute Daniel data home recorded in the plugin configuration. */
++  readonly danielHome: string
++}
++
++/** Outcome of one embedding attempt. */
++export interface DanielPluginInstallation {
++  /** Whether the profile holds a loadable plugin copy after this launch. */
++  readonly installed: boolean
++  /** Whether this launch replaced that copy. */
++  readonly copied: boolean
++}
++
++interface InventoryFile {
++  readonly path: string
++  readonly bytes: number
++  /** Hex SHA-256 of the file body. */
++  readonly sha256: string
++}
++
++/**
++ * List every regular file below a directory with its digest.
++ * @param root - Existing package directory.
++ * @returns Files in byte order of their slash-separated relative paths.
++ * @throws When the directory is not a package or holds an entry that is neither file nor directory.
++ */
++function inventory(root: string): InventoryFile[] {
++  if (!existsSync(join(root, 'package.json'))) throw new Error(`daniel plugin: ${root} is not a package directory`)
++  const files: InventoryFile[] = []
++  const visit = (directory: string): void => {
++    for (const entry of readdirSync(directory, { withFileTypes: true })) {
++      const path = join(directory, entry.name)
++      const name = relative(root, path).split(sep).join('/')
++      if (entry.isDirectory()) visit(path)
++      else if (entry.isFile()) {
++        const body = readFileSync(path)
++        files.push({ path: name, bytes: body.byteLength, sha256: createHash('sha256').update(body).digest('hex') })
++      } else throw new Error(`daniel plugin: unsupported filesystem entry ${name}`)
++    }
++  }
++  visit(root)
++  return files.sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0))
++}
++
++/**
++ * Fold a file inventory into one digest that changes with any path, size, or content.
++ * @param files - Inventory from {@link inventory}.
++ * @returns Hex SHA-256 of the framed inventory.
++ */
++function inventoryDigest(files: readonly InventoryFile[]): string {
++  const hash = createHash('sha256')
++  for (const file of files) hash.update(`${file.path}\0${String(file.bytes)}\0${file.sha256}\n`)
++  return hash.digest('hex')
++}
++
++/** Copy one directory tree, preserving the executable bits the vendored CLI needs. */
++function copyTree(source: string, destination: string): void {
++  mkdirSync(destination, { recursive: true, mode: 0o700 })
++  for (const entry of readdirSync(source, { withFileTypes: true })) {
++    const from = join(source, entry.name)
++    const to = join(destination, entry.name)
++    if (entry.isDirectory()) { copyTree(from, to); continue }
++    if (!entry.isFile()) throw new Error(`daniel plugin: unsupported filesystem entry ${from}`)
++    copyFileSync(from, to)
++    chmodSync(to, lstatSync(from).mode & 0o777)
++  }
++}
++
++/**
++ * Materialize the packaged plugin as a real directory inside the profile.
++ * A copy whose inventory digest already matches the packaged one is kept untouched,
++ * so a relaunch neither rewrites files nor changes their timestamps.
++ * @param source - Packaged plugin directory, normally `<Resources>/vendor/daniel-dsh-plugin`.
++ * @param profileDir - Desktop profile whose `node_modules` receives the copy.
++ * @returns Whether the profile now holds the plugin and whether it was rewritten.
++ */
++export function embedDanielPlugin(source: string, profileDir: string): DanielPluginInstallation {
++  const target = join(profileDir, 'node_modules', DANIEL_PLUGIN_NAME)
++  const installed = existsSync(join(target, 'package.json'))
++  if (!existsSync(join(source, 'package.json'))) return { installed, copied: false }
++  const expected = inventoryDigest(inventory(source))
++  if (installed) {
++    try {
++      if (inventoryDigest(inventory(target)) === expected) return { installed: true, copied: false }
++    } catch {
++      // A damaged copy is replaced rather than repaired in place.
++    }
++  }
++  const staging = `${target}.staging-${String(process.pid)}`
++  rmSync(staging, { recursive: true, force: true })
++  mkdirSync(join(profileDir, 'node_modules'), { recursive: true, mode: 0o700 })
++  copyTree(source, staging)
++  rmSync(target, { recursive: true, force: true })
++  renameSync(staging, target)
++  return { installed: true, copied: true }
++}
++
++/**
++ * Append the plugin to the profile's ordered bundle list.
++ * @param profileDir - Desktop profile directory holding `package.json`.
++ * @returns Whether the manifest changed.
++ */
++export function activateDanielPlugin(profileDir: string): boolean {
++  const manifest = readProfileManifest('desktop', profileDir)
++  const bundles = manifest.dsh?.profile?.bundles ?? []
++  if (bundles.includes(DANIEL_PLUGIN_NAME)) return false
++  writeProfileBundles(profileDir, manifest, [...bundles, DANIEL_PLUGIN_NAME])
++  return true
++}
++
++/** Whether the profile carries a plugin copy, independent of its inventory. */
++export function danielPluginPresent(profileDir: string): boolean {
++  return existsSync(join(profileDir, 'node_modules', DANIEL_PLUGIN_NAME, 'package.json'))
++}
++
++/** Quote a scalar as a JSON string, which is also a valid YAML double-quoted scalar. */
++function yamlString(value: string): string {
++  return JSON.stringify(value)
++}
++
++/**
++ * Render the plugin row.
++ * Every key the plugin's `Config` declares is written, because a non-insert patch
++ * replaces the targeted row's whole `config`, so an omitted key would delete it.
++ * The row id matches the plugin's own bundle patch, so this user layer overrides it
++ * in place instead of inserting a second instance.
++ */
++function pluginRow(embeds: DanielPluginEmbeds, profileDir: string): string[] {
++  const entry = join(profileDir, 'node_modules', DANIEL_PLUGIN_NAME, 'vendor', 'data', 'daniel-cli', 'bin', 'daniel')
++  return [
++    `# schema: ${String(CONFIG_SCHEMA_VERSION)}`,
++    '- id: daniel',
++    '  config:',
++    `    entry: ${yamlString(entry)}`,
++    `    python: ${yamlString(DANIEL_PYTHON)}`,
++    `    danielHome: ${yamlString(embeds.danielHome)}`,
++    `    timeoutMs: ${String(DANIEL_TIMEOUT_MS)}`,
++    `    trace: ${DANIEL_TRACE_MODE}`,
++    '',
++  ]
++}
++
++/** Whether an existing patch file is template-generated and therefore safe to replace without a backup. */
++function disposablePatch(body: string): boolean {
++  if (body.trim() === '') return true
++  const meaningful = body.split('\n').map(line => line.trim()).filter(line => line !== '' && !line.startsWith('#'))
++  return meaningful.length === 0 || (meaningful.length === 1 && meaningful[0] === '[]')
++}
++
++/** Write a file only when its content differs, keeping a rolling backup of foreign content. */
++function writeIfChanged(path: string, body: string, backup: boolean): boolean {
++  const current = existsSync(path) ? readFileSync(path, 'utf8') : undefined
++  if (current === body) return false
++  if (backup && current !== undefined && !disposablePatch(current)) {
++    writeFileSync(`${path}.bak-daniel`, current, { mode: 0o600 })
++  }
++  writeFileSync(path, body, { mode: 0o600 })
++  return true
++}
++
++/**
++ * Pin the plugin's five-key configuration in the profile user layer.
++ * Rewritten every launch because crash recovery backs that layer up and empties it.
++ * @param embeds - Plugin location inputs.
++ * @param profileDir - Desktop profile directory.
++ * @returns Whether the file changed.
++ */
++export function writeDanielProfilePatch(embeds: DanielPluginEmbeds, profileDir: string): boolean {
++  const body = [
++    '# Daniel Bot · 应用层配置，由桌面端在每次启动时重写；手工修改会在下次启动被覆盖。',
++    '# 官方 Host 调用 runProfile 时 patchFiles 为空（apps/desktop-host/src/index.ts），没有启动期 --patch 通道，',
++    '# 因此插件运行所需的 5 个键写进 profile 的用户层；行 id 与插件自带 bundle patch 相同，原地覆盖 config。',
++    ...pluginRow(embeds, profileDir),
++  ].join('\n')
++  return writeIfChanged(join(profileDir, PROFILE_PATCH_FILENAME), body, true)
++}
++
++/**
++ * Record the same five-key configuration for the Daniel application layer.
++ * The official Host does not read this file yet; it keeps the Daniel application and
++ * the plugin configuration from drifting apart.
++ * @param embeds - Plugin location inputs, including the Daniel data home.
++ * @param profileDir - Desktop profile directory the plugin was copied into.
++ * @returns Whether the file changed.
++ */
++export function writeDanielAppOverlay(embeds: DanielPluginEmbeds, profileDir: string): boolean {
++  ensureDanielHome(embeds.danielHome)
++  const body = [
++    '# Daniel Bot · 应用层配置，由桌面端在每次启动时重写；手工修改会在下次启动被覆盖。',
++    '# 与 profile 的 cordis.patch.yml 保持同一份 5 键配置（entry/python/danielHome/timeoutMs/trace）。',
++    ...pluginRow(embeds, profileDir),
++  ].join('\n')
++  return writeIfChanged(join(embeds.danielHome, APP_OVERLAY_FILENAME), body, false)
++}
++
++/** Create the Daniel data home before writing into it. */
++function ensureDanielHome(danielHome: string): void {
++  mkdirSync(danielHome, { recursive: true, mode: 0o700 })
++}
+diff --git a/apps/desktop/src/main.ts b/apps/desktop/src/main.ts
+index d8d0e30c..999c14b6 100644
+--- a/apps/desktop/src/main.ts
++++ b/apps/desktop/src/main.ts
+@@ -25,6 +25,7 @@ import {
+ } from 'electron'
+ import { resolveDesktopPaths } from './paths.ts'
+ import { DesktopProjectManager } from './project-manager.ts'
++import { installDanielHomes, resolveDanielHome } from './daniel-home.ts'
+ import { DesktopHostFatalError, DesktopHostProcess, DesktopHostUncleanExitError } from './host-process.ts'
+ import { DesktopPlatformView, PLATFORM_IPC, platformBounds } from './platform-view.ts'
+ import { installDesktopFileDrag } from './file-drag.ts'
+@@ -103,7 +104,10 @@ const recovery = new DesktopFatalRecovery({
+   show: options => dialog.showMessageBox(options),
+   stop: () => { shuttingDown = true; return stopForRecovery() },
+   disablePlugins: async () => {
+-    const manager = new DesktopProjectManager(resolveDesktopPaths(), runtimeResources())
++    const manager = new DesktopProjectManager(resolveDesktopPaths(), runtimeResources(), {
++      pluginSource: danielPluginSource(),
++      danielHome: resolveDanielHome(),
++    })
+     const backupPath = await manager.disableAllPlugins()
+     console.info('Desktop profile recovery completed:', { profilePatchBackup: backupPath ?? null, homePatch: 'unchanged' })
+   },
+@@ -213,6 +217,16 @@ function runtimeResources(): RuntimeResources {
+   return { node, nodeBin, pnpm, dsh }
+ }
+ 
++/**
++ * Vendored Daniel plugin, shipped as a real directory outside the asar archive.
++ * An unpackaged launch reads it from the checkout's own resources.
++ */
++function danielPluginSource(): string {
++  return app.isPackaged
++    ? join(process.resourcesPath, 'vendor', 'daniel-dsh-plugin')
++    : join(app.getAppPath(), 'resources', 'vendor', 'daniel-dsh-plugin')
++}
++
+ function developmentPrimaryRuntime(): string {
+   const directory = process.env.DSH_DESKTOP_PRIMARY_RUNTIME_DIR
+   if (directory === undefined || directory === '') {
+@@ -366,6 +380,8 @@ function createWindow(preload: string, show = false, primary = false): BrowserWi
+ }
+ 
+ async function main(): Promise<void> {
++  // Own both data roots before anything resolves ~/.dsh or copies the environment to the Host.
++  const danielHomes = installDanielHomes()
+   const desktopSettings = readDesktopSettings(app.getPath('userData'))
+   void pruneCrashReports(app.getPath('logs'))
+   const journalDirectory = process.env.DSH_DESKTOP_UPDATE_JOURNAL_DIR
+@@ -377,7 +393,10 @@ async function main(): Promise<void> {
+     ? developmentPrimaryRuntime()
+     : join(process.resourcesPath, 'runtime', 'primary-runtime')
+   const activeProject = paths.profile
+-  const manager = new DesktopProjectManager(paths, resources)
++  const manager = new DesktopProjectManager(paths, resources, {
++    pluginSource: danielPluginSource(),
++    danielHome: danielHomes.danielHome,
++  })
+   // Dock and Finder launches inherit only launchd's environment; every Host shares one login-shell read.
+   const loginShellRead = new AbortController()
+   // The probe runs in its own process group, which outlives Desktop unless the read is aborted.
+diff --git a/apps/desktop/src/project-manager.ts b/apps/desktop/src/project-manager.ts
+index 9e96b912..ee5db2bd 100644
+--- a/apps/desktop/src/project-manager.ts
++++ b/apps/desktop/src/project-manager.ts
+@@ -24,6 +24,15 @@ import type { DesktopRelease } from './release.ts'
+ import { readDesktopRuntime } from './runtime-tree.ts'
+ import { initProfile, removeLinkProjections, sanitizeProfile } from '@deepseek-ai/dsh-app-boot'
+ import { PROFILE_TEMPLATES, type ProfileTemplate } from '@deepseek-ai/dsh-official-bundles'
++import {
++  activateDanielPlugin,
++  DANIEL_PLUGIN_NAME,
++  danielPluginPresent,
++  embedDanielPlugin,
++  writeDanielAppOverlay,
++  writeDanielProfilePatch,
++  type DanielPluginEmbeds,
++} from './daniel-plugin.ts'
+ 
+ const PROJECT_NAME = '@deepseek-ai/dsh-desktop-runtime'
+ const DSH_PACKAGE = '@deepseek-ai/dsh'
+@@ -61,19 +70,33 @@ export class DesktopProjectManager {
+   /**
+    * @param paths - Electron-owned package state and reserved desktop profile paths.
+    * @param runtime - location of the bundled application runtime.
++   * @param daniel - embedded Daniel plugin settings; omitted by callers that only manage the official profile.
+    */
+   constructor(
+     readonly paths: DesktopPaths,
+     readonly runtime: { readonly dsh: string },
++    readonly daniel: DanielPluginEmbeds | undefined = undefined,
+   ) {}
+ 
+   /**
+    * Back up the profile patch and disable third-party bundles without loading application resources.
++   * The embedded Daniel plugin stays enabled: it is first-party here, and the Host cannot start
++   * without it on a product build. Its user layer is rewritten immediately, because recovery moved
++   * the previous one aside.
+    * The caller must stop the Host first.
+    * @returns Backup path after the locked profile write, or undefined if the patch was absent.
+    */
+   async disableAllPlugins(): Promise<string | undefined> {
+-    return this.withLock(() => sanitizeProfile('dsh', this.paths.profile, WEB_PROFILE.bundles))
++    return this.withLock(() => {
++      const embedded = this.daniel !== undefined && danielPluginPresent(this.paths.profile)
++      const bundles = embedded ? [...WEB_PROFILE.bundles, DANIEL_PLUGIN_NAME] : [...WEB_PROFILE.bundles]
++      const backupPath = sanitizeProfile('dsh', this.paths.profile, bundles)
++      if (embedded && this.daniel !== undefined) {
++        writeDanielProfilePatch(this.daniel, this.paths.profile)
++        writeDanielAppOverlay(this.daniel, this.paths.profile)
++      }
++      return backupPath
++    })
+   }
+ 
+   /**
+@@ -86,9 +109,28 @@ export class DesktopProjectManager {
+       migrateProfileSettings(this.paths.profile)
+       createPluginProfile(this.paths.profile)
+       removeLinkProjections(this.paths.profile)
++      this.installDanielPlugin()
+     })
+   }
+ 
++  /**
++   * Copy the packaged plugin into the profile, activate it, and pin its configuration.
++   * Runs inside the profile lock: the Host has not started, so no reader sees the copy move.
++   * A build without the vendor directory keeps the shell usable and leaves any earlier copy alone.
++   */
++  private installDanielPlugin(): void {
++    const daniel = this.daniel
++    if (daniel === undefined) return
++    const installation = embedDanielPlugin(daniel.pluginSource, this.paths.profile)
++    if (!installation.installed) {
++      console.warn(`desktop: Daniel plugin missing at ${daniel.pluginSource}; Daniel abilities stay unavailable in this build`)
++      return
++    }
++    activateDanielPlugin(this.paths.profile)
++    writeDanielProfilePatch(daniel, this.paths.profile)
++    writeDanielAppOverlay(daniel, this.paths.profile)
++  }
++
+   private async withLock<T>(operation: () => T | Promise<T>): Promise<T> {
+     mkdirSync(this.paths.profile, { recursive: true, mode: 0o700 })
+     const lockPath = join(realpathSync(this.paths.profile), 'lock')
+diff --git a/apps/desktop/tests/daniel-plugin.spec.ts b/apps/desktop/tests/daniel-plugin.spec.ts
+new file mode 100644
+index 00000000..33d9a6de
+--- /dev/null
++++ b/apps/desktop/tests/daniel-plugin.spec.ts
+@@ -0,0 +1,156 @@
++/** Embedded Daniel plugin: profile copy, bundle activation, and its five-key configuration. */
++
++import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
++import { tmpdir } from 'node:os'
++import { join } from 'node:path'
++import { afterEach, describe, expect, it } from 'vitest'
++import { resolveDesktopPaths } from '../src/paths.ts'
++import { DesktopProjectManager } from '../src/project-manager.ts'
++import {
++  activateDanielPlugin,
++  DANIEL_PLUGIN_NAME,
++  embedDanielPlugin,
++  writeDanielAppOverlay,
++  writeDanielProfilePatch,
++} from '../src/daniel-plugin.ts'
++import { runtimeFixture } from './runtime-fixture.ts'
++
++const roots: string[] = []
++function temporaryRoot(): string {
++  const root = mkdtempSync(join(tmpdir(), 'dsh-desktop-daniel-'))
++  roots.push(root)
++  return root
++}
++afterEach(() => {
++  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true })
++})
++
++/** Packaged plugin shape: a manifest declaring a bundle patch, a patch file, and an executable CLI entry. */
++function pluginFixture(root: string): string {
++  const source = join(root, 'resources', 'vendor', DANIEL_PLUGIN_NAME)
++  const entry = join(source, 'vendor', 'data', 'daniel-cli', 'bin', 'daniel')
++  mkdirSync(join(entry, '..'), { recursive: true })
++  writeFileSync(join(source, 'package.json'), JSON.stringify({
++    name: DANIEL_PLUGIN_NAME,
++    version: '0.11.0',
++    type: 'module',
++    dsh: { bundle: { patch: './cordis.patch.yml' } },
++  }))
++  writeFileSync(join(source, 'cordis.patch.yml'), '- insert:\n    - id: daniel\n      name: daniel-dsh-plugin\n      config:\n        python: python3\n        timeoutMs: 180000\n')
++  writeFileSync(join(source, 'lib.js'), 'export const identity = {}\n')
++  writeFileSync(entry, '#!/usr/bin/env python3\n')
++  chmodSync(entry, 0o755)
++  return source
++}
++
++function profileFixture(root: string): string {
++  const profile = join(root, 'dsh-home', 'profiles', 'desktop')
++  mkdirSync(profile, { recursive: true, mode: 0o700 })
++  writeFileSync(join(profile, 'package.json'), JSON.stringify({
++    name: 'dsh-profile-desktop',
++    private: true,
++    dependencies: {},
++    dsh: { profile: { bundles: ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app'] } },
++  }))
++  return profile
++}
++
++function bundles(profile: string): string[] {
++  return (JSON.parse(readFileSync(join(profile, 'package.json'), 'utf8')) as {
++    dsh: { profile: { bundles: string[] } }
++  }).dsh.profile.bundles
++}
++
++describe('embedded Daniel plugin', () => {
++  it('copies the packaged plugin once and keeps an identical copy untouched', () => {
++    const root = temporaryRoot()
++    const source = pluginFixture(root)
++    const profile = profileFixture(root)
++    const target = join(profile, 'node_modules', DANIEL_PLUGIN_NAME)
++
++    expect(embedDanielPlugin(source, profile)).toEqual({ installed: true, copied: true })
++    expect(statSync(join(target, 'vendor', 'data', 'daniel-cli', 'bin', 'daniel')).mode & 0o111).not.toBe(0)
++    const before = readFileSync(join(target, 'lib.js'), 'utf8')
++
++    expect(embedDanielPlugin(source, profile)).toEqual({ installed: true, copied: false })
++    expect(readFileSync(join(target, 'lib.js'), 'utf8')).toBe(before)
++  })
++
++  it('replaces a damaged copy with the packaged one', () => {
++    const root = temporaryRoot()
++    const source = pluginFixture(root)
++    const profile = profileFixture(root)
++    embedDanielPlugin(source, profile)
++    writeFileSync(join(profile, 'node_modules', DANIEL_PLUGIN_NAME, 'lib.js'), 'broken\n')
++
++    expect(embedDanielPlugin(source, profile)).toEqual({ installed: true, copied: true })
++    expect(readFileSync(join(profile, 'node_modules', DANIEL_PLUGIN_NAME, 'lib.js'), 'utf8')).toBe('export const identity = {}\n')
++  })
++
++  it('activates the bundle once and writes all five configuration keys', () => {
++    const root = temporaryRoot()
++    const source = pluginFixture(root)
++    const profile = profileFixture(root)
++    embedDanielPlugin(source, profile)
++    const embeds = { pluginSource: source, danielHome: join(root, 'daniel-home') }
++
++    expect(activateDanielPlugin(profile)).toBe(true)
++    expect(activateDanielPlugin(profile)).toBe(false)
++    expect(bundles(profile)).toEqual(['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app', DANIEL_PLUGIN_NAME])
++
++    expect(writeDanielProfilePatch(embeds, profile)).toBe(true)
++    expect(writeDanielProfilePatch(embeds, profile)).toBe(false)
++    const patch = readFileSync(join(profile, 'cordis.patch.yml'), 'utf8')
++    expect(patch.match(/^- id: daniel$/gmu)).toHaveLength(1)
++    for (const key of ['entry', 'python', 'danielHome', 'timeoutMs', 'trace']) {
++      expect(patch).toContain(`    ${key}:`)
++    }
++
++    expect(writeDanielAppOverlay(embeds, profile)).toBe(true)
++    expect(writeDanielAppOverlay(embeds, profile)).toBe(false)
++    const overlay = readFileSync(join(embeds.danielHome, 'app-overlay.yml'), 'utf8')
++    expect(overlay.match(/^- id: daniel$/gmu)).toHaveLength(1)
++    for (const key of ['entry', 'python', 'danielHome', 'timeoutMs', 'trace']) {
++      expect(overlay).toContain(`    ${key}:`)
++    }
++  })
++
++  it('keeps the plugin activated and configured across crash recovery', async () => {
++    const root = temporaryRoot()
++    const dsh = join(root, 'resources', 'dsh')
++    runtimeFixture(dsh)
++    const source = pluginFixture(root)
++    const danielHome = join(root, 'daniel-home')
++    const manager = new DesktopProjectManager(resolveDesktopPaths(join(root, 'dsh-home')), { dsh }, {
++      pluginSource: source,
++      danielHome,
++    })
++
++    await manager.applyRelease()
++    expect(bundles(manager.paths.profile)).toContain(DANIEL_PLUGIN_NAME)
++    expect(readFileSync(join(manager.paths.profile, 'cordis.patch.yml'), 'utf8')).toContain('    danielHome:')
++
++    await manager.disableAllPlugins()
++    expect(bundles(manager.paths.profile)).toContain(DANIEL_PLUGIN_NAME)
++    expect(bundles(manager.paths.profile)).toContain('@deepseek-ai/dsh-web-app')
++    expect(readFileSync(join(manager.paths.profile, 'cordis.patch.yml'), 'utf8')).toContain('    entry:')
++    expect(existsSync(join(danielHome, 'app-overlay.yml'))).toBe(true)
++
++    await manager.applyRelease()
++    expect(bundles(manager.paths.profile).filter(name => name === DANIEL_PLUGIN_NAME)).toHaveLength(1)
++  })
++
++  it('keeps the shell usable when the packaged plugin is absent', async () => {
++    const root = temporaryRoot()
++    const dsh = join(root, 'resources', 'dsh')
++    runtimeFixture(dsh)
++    const manager = new DesktopProjectManager(resolveDesktopPaths(join(root, 'dsh-home')), { dsh }, {
++      pluginSource: join(root, 'resources', 'vendor', DANIEL_PLUGIN_NAME),
++      danielHome: join(root, 'daniel-home'),
++    })
++
++    await expect(manager.applyRelease()).resolves.toBeUndefined()
++    expect(bundles(manager.paths.profile)).toEqual(['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app'])
++    expect(existsSync(join(manager.paths.profile, 'node_modules', DANIEL_PLUGIN_NAME))).toBe(false)
++  })
++})
+diff --git a/packages/bundle/web-app/cordis.patch.yml b/packages/bundle/web-app/cordis.patch.yml
+index d751fcc4..323acefe 100644
+--- a/packages/bundle/web-app/cordis.patch.yml
++++ b/packages/bundle/web-app/cordis.patch.yml
+@@ -308,16 +308,12 @@
+     - id: ui-settings-models
+       name: '@deepseek-ai/dsh-client-ui-settings-models'
+ 
+-    # Plugin management: the sidebar Plugins page installs, enables, disables,
+-    # and removes the profile's bundles through the `pluginManager` Remote.
+-    # Without a profile-backed Host it reports itself unavailable.
+-    - id: ui-plugin-manager
+-      name: '@deepseek-ai/dsh-client-ui-plugin-manager'
+-
+-    # Read-only Plugin list tab in the Settings Plugins section; the built-in
+-    # bundles the sidebar page leaves out are inspected here.
+-    - id: ui-settings-plugin-inventory
+-      name: '@deepseek-ai/dsh-client-ui-settings-plugin-inventory'
++    # Plugin management is intentionally absent from this surface: the product ships
++    # one embedded bundle and must not expose installing, enabling, disabling, or
++    # removing bundles. The `ui-plugin-manager` page and the
++    # `ui-settings-plugin-inventory` tab are removed here, not disabled, and their
++    # packages stay in the dependency graph until the next packaging change.
++    # Restoring either row brings the Plugins UI back.
+ 
+     - id: ui-conversation
+       name: '@deepseek-ai/dsh-client-ui-conversation'
+@@ -481,8 +477,10 @@
+ # exists, so there is no agent to key by. Behind a preset realm those variables
+ # would never reach the model's shell at all.
+ 
+-- id: tool-plugin-manager
+-  disabled: true
++# The agent-facing `plugin_manager` tool is disabled at the base layer and its
++# preset rows are removed, so no session can enable, disable, or remove the
++# product's embedded bundle. Deleting this disable instead would leave the row
++# enabled wherever a preset does not restate it.
+ 
+ - id: tool-bash
+   disabled: true
+diff --git a/packages/bundle/web-app/presets/cordis.patch.yml b/packages/bundle/web-app/presets/cordis.patch.yml
+index 4494bb15..76ce31d9 100644
+--- a/packages/bundle/web-app/presets/cordis.patch.yml
++++ b/packages/bundle/web-app/presets/cordis.patch.yml
+@@ -130,9 +130,8 @@
+             name: '@deepseek-ai/dsh-tool-skill'
+           - id: present
+             name: '@deepseek-ai/dsh-tool-present'
+-          - id: tool-plugin-manager
+-            name: '@deepseek-ai/dsh-plugin-manager/tools'
+-            disabled: !!js "!ctx.get('profileContext')"
++          # plugin_manager is intentionally absent: sessions must not manage the
++          # product's embedded bundle.
+           - id: tool-plugin-market
+             name: '@deepseek-ai/dsh-plugin-market/tools'
+             disabled: !!js "!ctx.get('profileContext')"
+diff --git a/packages/bundle/web-app/presets/ptc.patch.yml b/packages/bundle/web-app/presets/ptc.patch.yml
+index 67869207..bfd4aeb4 100644
+--- a/packages/bundle/web-app/presets/ptc.patch.yml
++++ b/packages/bundle/web-app/presets/ptc.patch.yml
+@@ -126,9 +126,8 @@
+             name: '@deepseek-ai/dsh-tool-executor-ptc'
+           - id: present
+             name: '@deepseek-ai/dsh-tool-present'
+-          - id: tool-plugin-manager
+-            name: '@deepseek-ai/dsh-plugin-manager/tools'
+-            disabled: true
++          # plugin_manager is intentionally absent: sessions must not manage the
++          # product's embedded bundle.
+           - id: tool-plugin-market
+             name: '@deepseek-ai/dsh-plugin-market/tools'
+             disabled: true
+diff --git a/packages/bundle/web-app/presets/standard.patch.yml b/packages/bundle/web-app/presets/standard.patch.yml
+index 554c2c9d..824c13b4 100644
+--- a/packages/bundle/web-app/presets/standard.patch.yml
++++ b/packages/bundle/web-app/presets/standard.patch.yml
+@@ -122,9 +122,8 @@
+               searchTimeoutMs: 60000
+           - id: present
+             name: '@deepseek-ai/dsh-tool-present'
+-          - id: tool-plugin-manager
+-            name: '@deepseek-ai/dsh-plugin-manager/tools'
+-            disabled: !!js "!ctx.get('profileContext')"
++          # plugin_manager is intentionally absent: sessions must not manage the
++          # product's embedded bundle.
+           - id: tool-plugin-market
+             name: '@deepseek-ai/dsh-plugin-market/tools'
+             disabled: true

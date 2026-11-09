@@ -1,0 +1,87 @@
+{
+ "skill": "kol-intelligence",
+ "corpus_version": "0.9.206",
+ "source": "docs/marketing/skills/kol-intelligence.md",
+ "source_sha256": "20a42e61e38033ed25208f41d6be2bbbcc0d16b6af7f6902423ec1215ab79a31",
+ "source_lines": 7164,
+ "slices": [
+  {
+   "file": "references/00-header.md",
+   "start": 1,
+   "end": 45,
+   "title": "头部元信息与读取规则"
+  },
+  {
+   "file": "references/01-user-first-principle.md",
+   "start": 46,
+   "end": 67,
+   "title": "§0 交付内容第一性原则（面向用户视角）"
+  },
+  {
+   "file": "references/02-capability-map.md",
+   "start": 68,
+   "end": 82,
+   "title": "§1 能力地图（7 阶段总览）"
+  },
+  {
+   "file": "references/03-data-redlines.md",
+   "start": 3982,
+   "end": 3991,
+   "title": "§9 数据红线"
+  },
+  {
+   "file": "references/04-preflight-checklist.md",
+   "start": 3992,
+   "end": 4038,
+   "title": "§10 交付前自查清单"
+  },
+  {
+   "file": "references/05-retro-archive.md",
+   "start": 4039,
+   "end": 4063,
+   "title": "§11 复盘记录（历史留痕 · 已归档）"
+  },
+  {
+   "file": "references/06-editing-discipline.md",
+   "start": 4064,
+   "end": 4092,
+   "title": "§12 文档编辑纪律"
+  },
+  {
+   "file": "references/07-routing.md",
+   "start": 6377,
+   "end": 6487,
+   "title": "§18 能力路由：能力地图 ＋ 路由器 ＋ 登记纪律"
+  },
+  {
+   "file": "references/08-hygiene.md",
+   "start": 6488,
+   "end": 6625,
+   "title": "§19 维护与检索卫生"
+  },
+  {
+   "file": "references/09-outward-quality.md",
+   "start": 6626,
+   "end": 6722,
+   "title": "§20 对外事实与话术质量层"
+  },
+  {
+   "file": "references/10-count-consistency.md",
+   "start": 6723,
+   "end": 6766,
+   "title": "§21 对外汇报文档的计数自洽"
+  },
+  {
+   "file": "references/11-appendix-a.md",
+   "start": 6767,
+   "end": 6894,
+   "title": "附录 A 成熟平台基准对照（参照非接入）"
+  },
+  {
+   "file": "references/12-ontology-registry.md",
+   "start": 6895,
+   "end": 7164,
+   "title": "附录 B 语义登记（指标／判据／表达的口径登记）"
+  }
+ ]
+}

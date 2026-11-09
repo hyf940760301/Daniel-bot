@@ -1,0 +1,19 @@
+# daniel-dsh-plugin · npm 打包排除清单
+#
+# 目的：让 **npm tarball** 与 `daniel pack` 的排除规则（`daniel_cli/pack/spec.py` 的 X02／X03／X26）
+# 保持一致。这三条规则本来就是「必须排除」，只是此前只有 `daniel pack` 这条路在守，
+# npm 打包这条路没人守，于是 0.9.7 的 tgz 里混进了 4 个 .pyc 与 2 个含本机路径的夹具。
+#
+# 判据出处：`vendor/data/daniel-cli/daniel_cli/pack/spec.py`
+#   X02 `*__pycache__*`          字节码缓存目录，.pyc 头里写着本机绝对路径
+#   X03 `*.pyc`                  散落字节码，同上
+#   X26 `data/daniel-cli/mcp/_fixtures/cross-host/*.json`
+#                                compare_hosts.py 的正控回归对，**刻意含 12 处本机绝对路径**
+#                                （规范原文：干净优先 ⇒ 排除；代价是该 self-test 缺正控夹具，已登记为已知边界）
+#
+# 注意：这里**只**排除上面三类。`contracts/_fixtures/` 是随包分发的离线夹具（出件契约要用），
+# 与 `mcp/_fixtures/cross-host/` 不是一回事，**不得**一起排掉。
+
+**/__pycache__/
+**/*.pyc
+vendor/data/daniel-cli/mcp/_fixtures/cross-host/

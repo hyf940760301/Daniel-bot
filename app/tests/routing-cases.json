@@ -1,0 +1,17 @@
+{
+  "schema": "daniel.routing-cases.v1",
+  "purpose": "S6.3 路由抽检：一句话 → 期望进入的能力阶段（7 阶段口径）",
+  "pass_threshold": "≥9/10",
+  "cases": [
+    { "id": "R01", "utterance": "帮我找几个做智能眼镜测评的 YouTube 红人，订阅 5 万到 50 万", "stage": "discovery", "why": "明确要候选名单" },
+    { "id": "R02", "utterance": "这个号 20 万粉，条均播放才 5000，是不是刷的", "stage": "screening", "why": "真实性/造假判断" },
+    { "id": "R03", "utterance": "给这批人写第一封邮件，先讲产品别堆形容词", "stage": "outreach", "why": "首封 Pitch" },
+    { "id": "R04", "utterance": "他说要 800 美金一条，这个价贵不贵", "stage": "negotiation", "why": "报价合理性（CPM）" },
+    { "id": "R05", "utterance": "帮我把合同条款改成只授权 6 个月", "stage": "contract", "why": "合同条款适配" },
+    { "id": "R06", "utterance": "视频发出来了，帮我审一下有没有把参数说错", "stage": "execution", "why": "审稿" },
+    { "id": "R07", "utterance": "这波投放里我们和三个竞品的声量占比各是多少", "stage": "sov", "why": "SOV 份额" },
+    { "id": "R08", "utterance": "最近这个品类有什么新热点值得跟", "stage": "sov", "why": "热点/趋势（SOV 阶段）" },
+    { "id": "R09", "utterance": "把产品说明整理成能直接发给 KOL 的版本", "stage": "stage0-product", "why": "产品说明/Key Feature" },
+    { "id": "R10", "utterance": "我这个账号下有哪些品牌，各自做什么品类", "stage": "data", "why": "数据层读取（品牌清单）" }
+  ]
+}
