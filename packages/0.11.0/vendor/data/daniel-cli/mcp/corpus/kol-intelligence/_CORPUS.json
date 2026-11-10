@@ -1,9 +1,9 @@
 {
  "skill": "kol-intelligence",
- "corpus_version": "0.9.206",
+ "corpus_version": "0.9.207",
  "source": "docs/marketing/skills/kol-intelligence.md",
- "source_sha256": "20a42e61e38033ed25208f41d6be2bbbcc0d16b6af7f6902423ec1215ab79a31",
- "source_lines": 7164,
+ "source_sha256": "f324d21ee3655f9c476d573b8fe9385964d107672f8454d212598141e3bdd005",
+ "source_lines": 7524,
  "slices": [
   {
    "file": "references/00-header.md",
@@ -80,8 +80,8 @@
   {
    "file": "references/12-ontology-registry.md",
    "start": 6895,
-   "end": 7164,
-   "title": "附录 B 语义登记（指标／判据／表达的口径登记）"
+   "end": 7524,
+   "title": "附录 B 语义登记（概念／指标／判据／表达的口径登记）"
   }
  ]
 }

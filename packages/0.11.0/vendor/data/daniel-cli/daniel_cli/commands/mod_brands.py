@@ -70,6 +70,19 @@ def _quota_check(ctx, workspace_id, count, auth):
 def cmd_list(ctx):
     """列品牌：走跨工作区索引（**不依赖当前所在工作区**）。"""
     d = _client(ctx)
+    ws = ctx.get("workspace")
+    if ws is not None:
+        # 给了工作区就**直取该工作区**，不碰跨工作区索引：索引要把 122 个工作区
+        # 各扫一遍（实测 >90s），而直取约 1s。索引只在没有指定工作区时才用。
+        ctx.progress("正在读取该工作区的品牌")
+        route, data = d.brands(int(ws))
+        rows = [r for r in (data if isinstance(data, list) else []) if isinstance(r, dict)]
+        limit = int(ctx.get("limit") or 200)
+        rows = sorted(rows, key=lambda r: str(r.get("name") or "").lower())[:limit]
+        ctx.emit(data={"count": len(rows), "workspaceFilter": int(ws),
+                       "source": route, "brands": rows},
+                 route=route)
+        return EXIT_OK
     ctx.progress("正在读取品牌索引（跨全部工作区）")
     try:
         idx = d.brand_index(refresh=bool(ctx.get("refresh")))
@@ -77,9 +90,6 @@ def cmd_list(ctx):
         raise CliError("品牌索引无法写入落点：%s" % e, code=EXIT_INTERNAL,
                        hint="用 DANIEL_HOME 指定可写的数据落点，或先执行 daniel account paths 查看落点")
     rows = list(idx.get("brands") or [])
-    ws = ctx.get("workspace")
-    if ws is not None:
-        rows = [r for r in rows if r.get("workspaceId") == int(ws)]
     limit = ctx.get("limit") or 200
     rows = sorted(rows, key=lambda r: str(r.get("name") or "").lower())[:int(limit)]
     ctx.emit(data={"count": len(rows), "workspaceFilter": ws,

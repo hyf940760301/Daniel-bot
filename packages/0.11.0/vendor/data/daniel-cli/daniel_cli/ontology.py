@@ -31,6 +31,14 @@ _STATUS_RX = re.compile(r"^status:\s*(.+?)\s*$", re.M)
 _STAGE_RX = re.compile(r"^stage:\s*(.+?)\s*$", re.M)
 _AVAIL_RX = re.compile(r"availability:\s*([A-Za-z_]+)")
 _IDREF_RX = re.compile(r"\b((?:metric|criterion|expr|concept|constraint)\.[A-Za-z0-9_.\-]+)")
+#: 顶层「对外唯一口径」：面键六值之一，或 `none`（该条不进对外交付件）。
+_EXTERNAL_RX = re.compile(r"^external_only:\s*(\S+)\s*$", re.M)
+#: 顶层 `data_status` 三值（reliable／unreliable／unknown）。**行首锚定**：面级那几处有缩进，不会被误抓。
+_DSTATUS_RX = re.compile(r"^data_status:\s*(\S+)\s*$", re.M)
+#: `surfaces.<面键>` 下允许的七个子字段（`PHASE0-ONTOLOGY-FINAL.md` §3.2 surface 子字段表）。
+_SURF_FIELDS = ("kind", "window", "sample_rule", "min_sample", "data_status", "unit", "source")
+#: 索引结构版本：1（隐式，4 条老条目）→ **2**（带 `surfaces`／`external_only`／`data_status`）。
+SCHEMA_VERSION = 2
 
 
 def corpus_dir():
@@ -151,6 +159,44 @@ def _parse_groups(block):
     return out
 
 
+def _parse_surfaces(block):
+    """解析 `surfaces → <面键> → 子字段`（零依赖、只认本仓的固定缩进）。
+
+    为什么要抽：登记表把「取值面」表达成 `surfaces` 的**键**（六值面键），不另设 `取值面` 字段；
+    索引层要能机读这一步，否则消费方只能读 `raw` 文本（`PHASE0-ONTOLOGY-FINAL.md` §3.2／§3.3）。
+    面键**不设白名单**：白名单属门禁（C19-g，实施项 I-4），不由解析器承担 —— 解析器只如实抽取，
+    这样"自造面键"才会被门禁看见，而不是被解析器静默丢掉。
+    """
+    lines = block.split("\n")
+    start = None
+    for idx, line in enumerate(lines):
+        if line.rstrip() == "surfaces:":
+            start = idx
+            break
+    if start is None:
+        return {}
+    out, cur = {}, None
+    for raw in lines[start + 1:]:
+        if not raw.strip():
+            continue
+        indent = len(raw) - len(raw.lstrip(" "))
+        if indent == 0:
+            break
+        s = raw.strip()
+        if indent == 2 and s.endswith(":") and not s.startswith("- "):
+            cur = s[:-1].strip()
+            out[cur] = {}
+        elif indent == 4 and cur is not None and ":" in s:
+            k, v = s.split(":", 1)
+            k = k.strip()
+            if k in _SURF_FIELDS:
+                val = _unquote(v)
+                if k == "min_sample" and re.match(r"^\d+$", val):
+                    val = int(val)
+                out[cur][k] = val
+    return out
+
+
 def parse_entries(md):
     """从登记切片正文解析登记项（只抽可索引字段，原文整块保留）。"""
     entries = []
@@ -174,6 +220,16 @@ def parse_entries(md):
             "availability": avail,
             "raw": block,
         }
+        # schema_version 2 的三个新增可索引字段：没有就不写键（老条目照旧，不凭空造值）。
+        surfaces = _parse_surfaces(block)
+        if surfaces:
+            entry["surfaces"] = surfaces
+        ext = _EXTERNAL_RX.search(block)
+        if ext:
+            entry["external_only"] = ext.group(1)
+        dst = _DSTATUS_RX.search(block)
+        if dst:
+            entry["data_status"] = dst.group(1)
         scenarios = _parse_scenarios(block)
         if scenarios:
             entry["scenarios"] = scenarios
@@ -197,6 +253,7 @@ def build(slices, corpus_version=""):
             entries.append(e)
     return {
         "kind": "daniel.ontology.v1",
+        "schema_version": SCHEMA_VERSION,
         "corpus_version": corpus_version,
         "entry_count": len(entries),
         "entries": entries,

@@ -1,9 +1,9 @@
 {
  "skill": "kol-daniel-api",
- "corpus_version": "0.9.206",
+ "corpus_version": "0.9.207",
  "source": "docs/marketing/skills/kol-intelligence.md",
- "source_sha256": "20a42e61e38033ed25208f41d6be2bbbcc0d16b6af7f6902423ec1215ab79a31",
- "source_lines": 7164,
+ "source_sha256": "f324d21ee3655f9c476d573b8fe9385964d107672f8454d212598141e3bdd005",
+ "source_lines": 7524,
  "slices": [
   {
    "file": "references/60-data-layer.md",

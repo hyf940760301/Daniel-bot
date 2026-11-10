@@ -23,9 +23,9 @@
  * 4. 拼串：每条 path\0bytes\0sha256\n（\0 = NUL，\n = 换行），按序喂给同一个 SHA-256。
  * 5. 结果：64 位小写 hex 即 root hash。不含时间戳/权限/属主；软链不计入（出现即告警）。
  *
- * 0.11.0 基线：218 个文件 / cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486
- *   （P1-READ 重打包：新增 5 条只读命令 ＋ 1 个测试文件与 1 个假客户端增补；旧基线 216 /
- *   5b9cf918c4481edd26c36392e2e41a4ffd80bc1fa46edcbdf43edefe09b0a121）
+ * 0.11.0 基线：218 个文件 / 8bf188561936b1ab9777410ecd41bb3df0974a41410058ddfa814508c84fba98
+ *   （2026-11-09 改母本附录 B.4 一句措辞 → 重切语料，18 个文件内容变、文件数不变；上一基线 218 /
+ *   268cec49c55d8f948cc78f5591852cf642678f8fbbd6b4649bbd8030825b056c）
  */
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
@@ -46,7 +46,7 @@ const MIN_FILES = 100
 /** 壳随包的 Node 版本（build/toolchain/node24），用于 engines 兼容性告警。 */
 const SHELL_NODE_MAJOR = 24
 /** 已知基线，仅用于展示与提示，不参与判定。 */
-const BASELINE = { version: '0.11.0', files: 218, rootHash: 'cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486' }
+const BASELINE = { version: '0.11.0', files: 218, rootHash: '8bf188561936b1ab9777410ecd41bb3df0974a41410058ddfa814508c84fba98' }
 
 const USAGE = `插件升级工具（Daniel Bot 桌面端内嵌插件）
 

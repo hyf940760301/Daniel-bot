@@ -41,7 +41,7 @@ const WORK = join('/tmp', `qa-g1-${String(process.pid)}`)
 const VENDOR_ROOT = join(SRC, 'apps', 'desktop', 'resources', 'vendor')
 const PLUGIN_DIR = join(VENDOR_ROOT, PLUGIN)
 /** 插件 0.11.0 的 known-good root_hash（CHECKPOINT §1 / sync 脚本输出）。升级插件必须同时改这里。 */
-const KNOWN_GOOD = { version: '0.11.0', files: 218, rootHash: 'cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486' }
+const KNOWN_GOOD = { version: '0.11.0', files: 218, rootHash: '8bf188561936b1ab9777410ecd41bb3df0974a41410058ddfa814508c84fba98' }
 const gate = new Gate('G1', '契约门禁')
 
 const env = { PATH: `${TOOLCHAIN}:${process.env.PATH ?? ''}`, DSH_SRC: SRC }

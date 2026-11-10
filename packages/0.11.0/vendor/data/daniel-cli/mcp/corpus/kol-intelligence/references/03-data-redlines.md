@@ -1,4 +1,4 @@
-<!-- 本文件是 `docs/marketing/skills/kol-intelligence.md` L3982–L3991 的**逐字切片**（语料版本 0.9.206）；请勿在此改写判据，改动须回流源文件后重跑切分器 -->
+<!-- 本文件是 `docs/marketing/skills/kol-intelligence.md` L3982–L3991 的**逐字切片**（语料版本 0.9.207）；请勿在此改写判据，改动须回流源文件后重跑切分器 -->
 <!-- 源节：§9 数据红线 -->
 
 ## 9. 数据红线（同 AGENTS.md / STATUS.md 精神）

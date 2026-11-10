@@ -1,19 +1,19 @@
 ---
 name: kol-negotiation
-version: 0.9.206
+version: 0.9.207
 description: "KOL 报价与价格谈判的**判据与工序**（一页执行清单、CPM 初步评估、已回复 KOL 报价审核方法论、问价／砍价／再还价／条款回传处置），以及**四表交付标准**（对内审核表／对外审核表／红人复用／排除 KOL 的分工与列位、行结构、价格合理性三种判断词、邮箱列、对外价格 ×1.1、反馈列固定句式、数据列对内对外统一、表头颜色归属、Shorts 合作倾向、往既有飞书在线表追加数据）。Use when 要评估已回复报价、做砍价／还价、出对内或对外审核表、往既有飞书表追加数据；关键词：报价、CPM、砍价、counter offer、谈判、审核表、四表、飞书表格。"
 whenToUse: "阶段 4（谈判）与任何四表类交付物开工前加载；出表前必过 §13.8 交付前校验清单。"
 metadata:
-  corpus_version: "0.9.206"
+  corpus_version: "0.9.207"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "20a42e61e38033ed25208f41d6be2bbbcc0d16b6af7f6902423ec1215ab79a31"
+  corpus_sha256: "f324d21ee3655f9c476d573b8fe9385964d107672f8454d212598141e3bdd005"
   corpus_slices: "L3210-L3779,L4093-L4341"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
 
 # KOL 报价谈判（阶段 4）与四表交付标准
 
-> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.206）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
+> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.207）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
 
 ## 一、本束覆盖的源节
 
@@ -158,11 +158,11 @@ tRPC 同源 `/api/trpc`；`auth.login` 换 cookie；**凭证由用户提供、�
 
 | 项 | 值 |
 |---|---|
-| 语料版本 | `0.9.206` |
+| 语料版本 | `0.9.207` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `20a42e61e38033ed25208f41d6be2bbbcc0d16b6af7f6902423ec1215ab79a31` |
+| 源文件 sha256 | `f324d21ee3655f9c476d573b8fe9385964d107672f8454d212598141e3bdd005` |
 | 本束源行区间 | `L3210-L3779,L4093-L4341` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |
 
-> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.206」。
+> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.207」。

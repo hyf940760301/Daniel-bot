@@ -1,7 +1,9 @@
 # CHECKPOINT · 第一组改造（独立 home / 内嵌插件 / 隐藏插件 UI）
 
 > 时间：2026-11-01 18:27（Asia/Shanghai）· 状态：**代码已改完并已跑通类型与单测；未打包**
-> 2026-11-08 插件内容更新：`lib/worker.py` 补 deep 提交审计（`_audit_deep_commit`，与 open 同一份 `daniel account audit`）、`lib/index.js` deep commit 回传「审计」块、新增 `tests/test_deep_audit.py`；tgz 重打为 **218 文件 / `cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486`**，G1 KNOWN_GOOD 与 `upgrade-plugin.mjs` BASELINE 已同步。
+> 2026-11-08 插件内容更新（历史）：`lib/worker.py` 补 deep 提交审计（`_audit_deep_commit`，与 open 同一份 `daniel account audit`）、`lib/index.js` deep commit 回传「审计」块、新增 `tests/test_deep_audit.py`；tgz 重打为 **218 文件 / `cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486`**，G1 KNOWN_GOOD 与 `upgrade-plugin.mjs` BASELINE 已同步。
+> 2026-11-09 插件内容更新（**P0 语义层落地 · 同版本重打 · `DECISIONS-A.md` D-079**）：母本附录 B 补 5 概念 ＋ 10 指标 →重切语料（0.9.207）→ `_ONTOLOGY.json` 4 → **19 条**（新增 `schema_version: 2`）→ 契约 `kol-list.json` 补 M3 列名；tgz 重打为 **218 文件 / `268cec49c55d8f948cc78f5591852cf642678f8fbbd6b4649bbd8030825b056c`**（`--allow-republish` 授权见 D-079），G1 `KNOWN_GOOD` 与 `upgrade-plugin.mjs` `BASELINE` 已同步。
+> 2026-11-09 插件内容更新（**母本 B.4 措辞 · 同版本重打 · `DECISIONS-A.md` D-080**）：`docs/marketing/skills/kol-intelligence.md` L6979「`owner` 必填（业务角色）」→「（业务角色或授权代签）」，源文件仍 **7,524 行** → 重切语料（0.9.207，25 条切片区间全部不变）→ `check_corpus_sync.py --sync` 绿；tgz 重打为 **218 文件 / `8bf188561936b1ab9777410ecd41bb3df0974a41410058ddfa814508c84fba98`**（18 个文件内容变、文件数不变；`--allow-republish` 见 D-080），G1 `KNOWN_GOOD` 与 `upgrade-plugin.mjs` `BASELINE` 已同步。
 > 源码位置：`/tmp/dsh-build/dsh-src`（**会被关机清空**，本文件＋补丁已落工作区）
 > 基线 commit：`ce7073d5`
 
@@ -56,9 +58,8 @@ git apply "/Users/huyifan/Desktop/DeepSeek Harness/daniel-bot/app/desktop-patche
 # 2) 生成随包插件目录（可重复执行；tgz 是唯一真源）
 node apps/desktop/scripts/sync-daniel-plugin.mjs \
   --from "/Users/huyifan/Desktop/DeepSeek Harness/daniel-bot/releases/daniel-dsh-plugin-0.11.0.tgz"
-# 期望输出：daniel-dsh-plugin@0.11.0 · 218 个文件 · cca08a5a6557
-#   （2026-11-08「deep 提交补审计」重打后的基线；P1-READ 重打后是 217 · c81af4dd14bd，
-#     更早是 216 · 5b9cf918c4481edd）
+# 期望输出：daniel-dsh-plugin@0.11.0 · 218 个文件 · 06ef17a7bc63
+#   （2026-11-09「母本 B.4 措辞」重打后的基线；上一包是 268cec49c55d，更早 P1-READ 重打后是 217 · c81af4dd14bd）
 
 # 3) 类型 + 单测（打包前自检）
 cd apps/desktop && ../../node_modules/.bin/tsc -b && cd ../..

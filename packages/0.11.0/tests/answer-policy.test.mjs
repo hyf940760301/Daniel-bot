@@ -56,6 +56,19 @@ test('③ 不残留任何旧模块名', () => {
 
 test('④ 格式要求是"交付完成后"执行，不是可选建议', () => {
   assert.match(ANSWER_POLICY, /交付完成后，单独一行写/u)
-  // 格式句必须落在策略末尾（模型对结尾的硬要求更敏感），且整段是同一份字符串。
-  assert.ok(ANSWER_POLICY.trimEnd().endsWith('（模块名必须是上面九个之一）。'))
+  // 这句仍是硬要求；2026-11-09 起策略末尾追加的是**可选**说明段，不影响它的强制性。
+  assert.ok(ANSWER_POLICY.includes('（模块名必须是上面九个之一）。'))
+})
+
+test('⑤ 可选说明段：业务思路 1–4 条、自我检讨 1–3 条，没内容不写、不得编造', () => {
+  assert.ok(ANSWER_POLICY.includes('业务思路：'), '缺少「业务思路：」标题行')
+  assert.ok(ANSWER_POLICY.includes('自我检讨：'), '缺少「自我检讨：」标题行')
+  assert.ok(ANSWER_POLICY.includes('可选'), '没有说明这两段是可选输出')
+  assert.ok(ANSWER_POLICY.includes('只在确实有内容时才写'), '没有要求没有内容就不写')
+  assert.ok(ANSWER_POLICY.includes('禁止编造'), '没有禁止编造说明段')
+  assert.ok(ANSWER_POLICY.includes('1–4 条'), '业务思路缺少条数上限')
+  assert.ok(ANSWER_POLICY.includes('1–3 条'), '自我检讨缺少条数上限')
+  assert.ok(ANSWER_POLICY.includes('这次没有明显问题'), '缺少"没有明显问题"的写法')
+  // 两段同样禁止系统内部词（与主体同一约束）。
+  assert.ok(ANSWER_POLICY.includes('这两段同样禁止出现接口名、字段名、模块名'))
 })

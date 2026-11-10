@@ -128,13 +128,19 @@ node scripts/clean-install-check.mjs --tgz ../../releases/daniel-dsh-plugin-<版
 
 | 版本 | 文件数 | root hash |
 |---|---|---|
-| 0.11.0（deep 审计补齐 · **当前**） | 218 | `cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486` |
+| 0.11.0（B.4 措辞 · **当前** · 2026-11-09） | 218 | `8bf188561936b1ab9777410ecd41bb3df0974a41410058ddfa814508c84fba98` |
+| 0.11.0（P0 语义层落地 · 2026-11-09） | 218 | `268cec49c55d8f948cc78f5591852cf642678f8fbbd6b4649bbd8030825b056c` |
+| 0.11.0（deep 审计补齐） | 218 | `cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486` |
 | 0.11.0（P1-READ 重打后） | 217 | `c81af4dd14bdf8ec3017b13672b41ca87a4f59ccbc25b47b573e31efd4ec4e2d` |
 | 0.11.0（P1-READ 重打前） | 216 | `5b9cf918c4481edd26c36392e2e41a4ffd80bc1fa46edcbdf43edefe09b0a121` |
 
-> 同一版本号下出现过**三个**包：P1-READ（5 条只读命令 ＋ 1 个测试文件 ＋ 假客户端增补）
+> 同一版本号下出现过**五个**包：P1-READ（5 条只读命令 ＋ 1 个测试文件 ＋ 假客户端增补）
 > 用 `--allow-republish` 重打，216 → 217；2026-11-08 补齐 deep 提交审计（`lib/worker.py`
-> ＋ `tests/test_deep_audit.py`，文件数 217 → 218）再次 `--allow-republish` 重打。
+> ＋ `tests/test_deep_audit.py`，文件数 217 → 218）再次 `--allow-republish` 重打；
+> 2026-11-09 落地 P0 语义层（母本附录 B ＋ `_ONTOLOGY.json` 19 条 ＋ 契约 M3 列名，见 `specs/DECISIONS-A.md` D-079）
+> **文件数不变、内容变 47 个文件**，第四次 `--allow-republish` 重打；
+> 2026-11-09 改母本附录 B.4 一句措辞（`owner` 必填（业务角色）→（业务角色或授权代签），见 `specs/DECISIONS-A.md` D-080）
+> 重切语料并**文件数不变、内容变 18 个文件**，第五次 `--allow-republish` 重打。
 > **判定一律用上表第一行。**
 
 复算任意目录（vendor / `.app` 内副本 / profile 副本都行）：
@@ -156,7 +162,7 @@ node daniel-bot/app/scripts/upgrade-plugin.mjs --verify \
   /tmp/dsh-build/dsh-src/apps/desktop/resources/vendor/daniel-dsh-plugin
 ```
 
-预期：`版本 0.11.0` / `文件数 218` / `root hash cca08a5a6557…`（与上表第一行一致）。
+预期：`版本 0.11.0` / `文件数 218` / `root hash 06ef17a7bc63…`（与上表第一行一致）。
 **把这三行贴到发布记录里**——回滚后要拿它比对。
 
 ```bash
@@ -181,21 +187,21 @@ node daniel-bot/app/scripts/upgrade-plugin.mjs \
 插件升级 · 干跑（只解包到临时目录，不碰 vendor，退出前删除）
 ────────────────────────────────────────────────────────────────────────
   新包 tgz      /Users/huyifan/Desktop/DeepSeek Harness/daniel-bot/releases/daniel-dsh-plugin-0.11.0.tgz
-  tgz 体积      1,682,277 字节 / 1.6 MB
+  tgz 体积      1,747,121 字节 / 1.7 MB
   解包位置      /tmp/dsh-build/.plugin-upgrade/36496（跑完即删）
   目标目录      /tmp/dsh-build/dsh-src/apps/desktop/resources/vendor/daniel-dsh-plugin
 
   ✓ package/package.json 存在
   ✓ 包名 daniel-dsh-plugin
   ✓ 版本 0.11.0 与文件名一致
-  ✓ 文件数 210（阈值 ≥100）
+  ✓ 文件数 218（阈值 ≥100）
   ✓ dsh.bundle.patch = ./cordis.patch.yml（文件在包内）
   ✓ 壳写死的入口 vendor/data/daniel-cli/bin/daniel
 
 现状 → 新包
   版本        0.11.0                → 0.11.0
-  文件数      210                   → 210
-  总字节      5,518,706             → 5,518,706 字节（5.3 MB）
+  文件数      218                   → 218
+  总字节      5,742,282             → 5,742,282 字节（5.5 MB）
   目录类型    真目录                → 真目录（sync 用 rename 落地）
   版本判定    0.11.0（版本号没变）
 
@@ -209,8 +215,8 @@ node daniel-bot/app/scripts/upgrade-plugin.mjs \
 
 结论
   与现状一致，无需升级（版本 0.11.0、218 个文件、hash 完全相同）
-  root hash（现状）：cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486
-  root hash（新包）：cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486
+  root hash（现状）：8bf188561936b1ab9777410ecd41bb3df0974a41410058ddfa814508c84fba98
+  root hash（新包）：8bf188561936b1ab9777410ecd41bb3df0974a41410058ddfa814508c84fba98
   退出码 0；未写盘。
 ```
 
@@ -404,8 +410,8 @@ upgrade-plugin: 同版本号不同内容：0.11.0 的 hash 1ce31013… → a17ce
 ```
 结论
   与现状一致，无需升级（版本 0.11.0、218 个文件、hash 完全相同）
-  root hash（现状）：cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486
-  root hash（新包）：cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486
+  root hash（现状）：8bf188561936b1ab9777410ecd41bb3df0974a41410058ddfa814508c84fba98
+  root hash（新包）：8bf188561936b1ab9777410ecd41bb3df0974a41410058ddfa814508c84fba98
   退出码 0；未写盘。
 ```
 
@@ -618,7 +624,7 @@ node -p "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')).dsh.prof
 
 | 来源 | 拼串 | 0.11.0 的结果 |
 |---|---|---|
-| **本手册 / `upgrade-plugin.mjs` / G1 门禁** | `path\0bytes\0sha256\n` | `cca08a5a65578ee98d8aa2ec1944ab2c42d633a072da135d400c5ea4daaf4486` |
+| **本手册 / `upgrade-plugin.mjs` / G1 门禁** | `path\0bytes\0sha256\n` | `8bf188561936b1ab9777410ecd41bb3df0974a41410058ddfa814508c84fba98` |
 | `seed-profile.sh --write-manifest` 生成的 `PLUGIN-MANIFEST.json` | `sha256  size  path\n`（两个空格分隔） | `sha256:6395329196c4bacd0ae63dc9e28f654e60ae0c5f7dec9737c4b5b4139ca56309`（P1-READ 重打前的水印；本包未生成清单） |
 
 两者**都叫 root hash**，但结果不同。拿 seed 的 `root_hash` 去对 G1 / 本脚本，会得到"永远不一致"的假故障。

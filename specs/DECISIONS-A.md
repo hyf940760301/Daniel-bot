@@ -1,5 +1,37 @@
 # 管线 A 决策记录（Daniel Bot）
 
+## D-080 · 插件 0.11.0 再次同版本重打（母本 B.4 一句措辞 · `owner` 允许授权代签）
+
+| 项 | 内容 |
+|---|---|
+| 日期 | 2026-11-09 |
+| 触发 | Jack 已批：规矩允许代签、数据保持代签 ⇒ 母本 `docs/marketing/skills/kol-intelligence.md` 附录 B.4（L6979）「`owner` 必填（业务角色）」改为「`owner` 必填（业务角色或授权代签）」。只改这一句：源文件仍 **7,524 行**、25 条切片区间全部不变 |
+| 决定 | **插件版本号仍为 0.11.0，允许同版本重打**（`upgrade-plugin.mjs --allow-republish`，第五次） |
+| 为什么不升 0.11.1 | 与 D-079 同理：改的是语料正文，不是插件接口；升版本会连带改 G1 默认 tgz 路径、`KNOWN_GOOD.version`、`BASELINE.version` 与两处文档期望值，收益为零 |
+| 范围 | 仅语料与其索引：`.agents/skills/kol-*/`（8 个 `SKILL.md` ＋ 8 个 `_CORPUS.json` ＋ 1 个切片 `12-ontology-registry.md`）、`data/daniel-cli/mcp/corpus/`（同上 ＋ `_MANIFEST.json`）→ 同步进 `packages/0.11.0/vendor/`。`_ONTOLOGY.json` **零差异**（登记纪律正文不进登记项，重建后逐字节相同） |
+| content hash | `268cec49c55d8f948cc78f5591852cf642678f8fbbd6b4649bbd8030825b056c` → **`06ef17a7bc63a25a44c98eb9c43013e87021b658e295afa84a77b6427964739e`**（218 文件不变，18 个文件内容变） |
+| tgz sha256 | `daniel-bot/releases/daniel-dsh-plugin-0.11.0.tgz` ＝ `da85feba011b06f4bcaed5c1085c4c58e720171267a83bb7c0feedceefe760f4` |
+| 语料版本 | 仍 `0.9.207`（源文件 7,524 行；`source_sha256` `3c01903ba342…` → `f324d21ee365…`） |
+| 回滚 | 旧 tgz 备份 `/tmp/dsh-build/.plugin-backup-20261109-182528/daniel-dsh-plugin-0.11.0.tgz`（sha256 `8c01a20d721f…`），vendor 快照同目录；回滚＝换回旧 tgz 后 `upgrade-plugin.mjs --apply --allow-republish`，并把 G1 `KNOWN_GOOD` / `BASELINE` 改回 `268cec49…` |
+| 已知代价 | 与 D-079 相同：已发 DMG 内嵌的仍是旧包，需重打 DMG 才生效（本轮不打包 DMG） |
+
+---
+
+## D-079 · 插件 0.11.0 同版本重打（P0 语义层落地 · `--allow-republish` 的授权记录）
+
+| 项 | 内容 |
+|---|---|
+| 日期 | 2026-11-09 |
+| 触发 | 按 `specs/PHASE0-ONTOLOGY-FINAL.md` 落地 P0 语义层：母本附录 B 补 5 概念 ＋ 10 指标 → 重切语料 → 重建 `_ONTOLOGY.json`（4 → 19 条、`schema_version: 2`）→ 契约补 M3 列名 |
+| 决定 | **插件版本号仍为 0.11.0，允许同版本重打**（`upgrade-plugin.mjs --allow-republish`） |
+| 为什么升版本号不是更省事 | 版本号升 0.11.1 会连带改 G1 默认 tgz 路径（`g1-contract-gate.mjs:33`）、`KNOWN_GOOD.version`、`upgrade-plugin.mjs` 的 `BASELINE.version`、`CHECKPOINT.md` 与 `UPGRADE-PLUGIN.md` 的期望输出；本轮改的是**语料与其索引**，不是插件接口。按「一次改动一处真源」保持版本号、把差异记在 content hash 上（G1-1 判据本来就是 hash，不是版本号）。 |
+| 已知代价 | 已发 DMG（`daniel-bot-0.2.2-alpha.2-mac-arm64-unsigned.dmg`）内嵌的是旧 218 文件包；升级必须重打 DMG 才生效（`upgrade-plugin.mjs` 只写源码树 vendor，不改 DMG） |
+| content hash | `cee1315f957f054f886ab4a07d4bf0d31694b7384187ee670807ba6de240a50f` → **`268cec49c55d8f948cc78f5591852cf642678f8fbbd6b4649bbd8030825b056c`**（218 文件不变，47 个文件内容变）｜历史记录，**已被 D-080 重打覆盖**：`268cec49…` → `06ef17a7…` |
+| tgz sha256 | `daniel-bot/releases/daniel-dsh-plugin-0.11.0.tgz` ＝ `8c01a20d721f2b98dfd4b8fcc78398d00167e9ecb87fb340904febafe2e2cddc`｜历史记录，**现包为 D-080 的 `da85feba…`** |
+| 回滚 | 旧包备份在 `tmp` 之外的本轮备份目录（`/tmp/ont-work/backup/daniel-dsh-plugin-0.11.0.tgz`，sha256 见回报）；回滚＝换回旧 tgz 后 `upgrade-plugin.mjs --apply --allow-republish`，并把 G1 `KNOWN_GOOD` / `BASELINE` 改回 `cee1315f…` |
+
+---
+
 ## D-078 · 定位改为营销助手，交互与结果区按新方案执行（2026-11-08）
 
 | 项 | 内容 |

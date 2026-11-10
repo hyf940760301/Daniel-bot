@@ -1,19 +1,19 @@
 ---
 name: kol-execution-sov
-version: 0.9.206
+version: 0.9.207
 description: "KOL 执行后半程的三个阶段：阶段 5 执行（内容上线与审稿／回收清单）、阶段 6 SOV 口径与执行（固定竞争集内提及份额＋情感）、阶段 7 热点／趋势追踪流程（可行动信号周更）。Use when 要做内容上线后的审稿与数据回收、出 SOV 报告、做热点／趋势周更；关键词：执行、审稿、回收、SOV、share of voice、热点、趋势、trend watch。"
 whenToUse: "阶段 5–7 开工前加载；SOV 与热点跟踪的产出结构与口径以本束为准。"
 metadata:
-  corpus_version: "0.9.206"
+  corpus_version: "0.9.207"
   corpus_source: "docs/marketing/skills/kol-intelligence.md"
-  corpus_sha256: "20a42e61e38033ed25208f41d6be2bbbcc0d16b6af7f6902423ec1215ab79a31"
+  corpus_sha256: "f324d21ee3655f9c476d573b8fe9385964d107672f8454d212598141e3bdd005"
   corpus_slices: "L3780-L3946,L3947-L3963,L3964-L3981"
   generated_by: "TICKET-148-语料束切分器.py"
 ---
 
 # KOL 执行（阶段 5–7）：审稿回收 · SOV · 热点追踪
 
-> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.206）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
+> 本束是 `docs/marketing/skills/kol-intelligence.md`（版本 0.9.207）的**逐字切片**：判据原文在 `references/`，本文件只做导航与逐字摘录，**不改写任何判据**。
 
 ## 一、本束覆盖的源节
 
@@ -129,11 +129,11 @@ metadata:
 
 | 项 | 值 |
 |---|---|
-| 语料版本 | `0.9.206` |
+| 语料版本 | `0.9.207` |
 | 源文件 | `docs/marketing/skills/kol-intelligence.md` |
-| 源文件 sha256 | `20a42e61e38033ed25208f41d6be2bbbcc0d16b6af7f6902423ec1215ab79a31` |
+| 源文件 sha256 | `f324d21ee3655f9c476d573b8fe9385964d107672f8454d212598141e3bdd005` |
 | 本束源行区间 | `L3780-L3946,L3947-L3963,L3964-L3981` |
 | 切分器 | `docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py` |
 | 零丢失校验 | `python3 docs/product/daniel-copilot/_impl/TICKET-148-语料束切分器.py --verify` |
 
-> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.206」。
+> 产物回填口径：交付物/回报中写明「本次用语料版本 0.9.207」。

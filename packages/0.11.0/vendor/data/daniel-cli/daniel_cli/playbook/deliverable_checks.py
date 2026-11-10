@@ -18,7 +18,7 @@
 ----------------
 `spec` 由调用方传入（通常来自 `_ONTOLOGY.json` 与任务确认结果）：
   spec = {
-    "指标口径": {"长视频均播（近28天中位数）": "metric.creator.avg_views_long.median", ...},
+    "指标口径": {"长视频均播（近28天中位数）": "metric.creator.avg_views.drawer_28d", ...},
     "不可靠指标": ["metric.creator.avg_views_long.reported"],
     "禁用词": ["非常好", "绝对", "肯定没问题", "大概"],
     "未筛维度": ["受众性别/年龄", "商业合作"],
